@@ -1,3 +1,42 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8" />-->
+<!--    <title>SmartRetail360 Docs</title>-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css" />-->
+<!--</head>-->
+<!--<body>-->
+<!--<div id="app">Loading...</div>-->
+<!--&lt;!&ndash;<script>&ndash;&gt;-->
+<!--&lt;!&ndash;    window.$docsify = {&ndash;&gt;-->
+<!--&lt;!&ndash;        loadSidebar: true,&ndash;&gt;-->
+<!--&lt;!&ndash;        subMaxLevel: 2,&ndash;&gt;-->
+<!--&lt;!&ndash;        basePath: '/smartretail360/',&ndash;&gt;-->
+<!--&lt;!&ndash;        alias: {&ndash;&gt;-->
+<!--&lt;!&ndash;            '/zh-cn/(.*)': '/zh-cn/$1',&ndash;&gt;-->
+<!--&lt;!&ndash;            '/en/(.*)': '/en/$1',&ndash;&gt;-->
+<!--&lt;!&ndash;            '/(.*)': '/en/$1'&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+<!--&lt;!&ndash;    };&ndash;&gt;-->
+<!--&lt;!&ndash;</script>&ndash;&gt;-->
+<!--&lt;!&ndash;<script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>&ndash;&gt;-->
+<!--<script>-->
+<!--    window.$docsify = {-->
+<!--        basePath: '/smartretail360/',-->
+<!--        loadSidebar: true,-->
+<!--        subMaxLevel: 2,-->
+<!--        alias: {-->
+<!--            '/zh-cn/(.*)': '/smartretail360/zh-cn/$1',-->
+<!--            '/en/(.*)': '/smartretail360/en/$1',-->
+<!--            '/(.*)': '/smartretail360/en/$1'-->
+<!--        }-->
+<!--    };-->
+<!--</script>-->
+<!--<script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,17 +47,24 @@
 </head>
 <body>
 <div id="app">Loading...</div>
+
+<!-- ✅ 自动判断是否部署在 GitHub Pages 下的子目录 -->
 <script>
+    const isGithubPages = location.hostname.includes('github.io');
+    const repoPath = '/smartretail360/';
+
     window.$docsify = {
         loadSidebar: true,
         subMaxLevel: 2,
+        basePath: isGithubPages ? repoPath : '/',
         alias: {
-            '/zh-cn/(.*)': '/zh-cn/$1',
-            '/en/(.*)': '/en/$1',
-            '/(.*)': '/en/$1'
+            '/zh-cn/(.*)': (isGithubPages ? repoPath : '/') + 'zh-cn/$1',
+            '/en/(.*)': (isGithubPages ? repoPath : '/') + 'en/$1',
+            '/(.*)': (isGithubPages ? repoPath : '/') + 'en/$1'
         }
     };
 </script>
+
 <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
 </body>
 </html>
