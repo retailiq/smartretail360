@@ -1,0 +1,14 @@
+{
+  "name": "smartretail360",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/retailiq/smartretail360.git",
+  "author": "Daniel Tate <daniel.tate.au@hotmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "docs:serve": "docsify serve docs"
+  },
+  "devDependencies": {
+    "docsify-cli": "^4.4.4"
+  }
+}

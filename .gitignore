@@ -1,0 +1,76 @@
+# IDE
+.idea/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+dist/
+.next/
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+venv/
+.env
+.env.*
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VSCode / JetBrains
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+*.out
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# Data
+data/raw/
+data/tmp/
+*.sqlite
+*.db
+*.parquet
+
+# Build & coverage
+build/
+coverage/
+coverage-report/
+htmlcov/
+*.lcov
+
+# Docker
+*.pid
+docker-compose.override.yml
+
+# Test results
+test-results/
+.nyc_output/
+
+# CI
+.github/workflows/*.bak
+
+# Docsify/VuePress
+docs/.vuepress/dist/
+docs/node_modules/
+
+# Others
+*.swp
