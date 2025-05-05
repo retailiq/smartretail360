@@ -74,3 +74,7 @@ docs/node_modules/
 
 # Others
 *.swp
+
+# Nx
+.nx/cache
+.nx/workspace-data

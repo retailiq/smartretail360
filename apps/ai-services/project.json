@@ -1,0 +1,26 @@
+{
+  "name": "ai-services",
+  "targets": {
+    "serve": {
+      "executor": "@nx/workspace:run-commands",
+      "options": {
+        "command": "uvicorn app:app --reload --port 8003",
+        "cwd": "apps/ai-services"
+      }
+    },
+    "generate-embeddings": {
+      "executor": "@nx/workspace:run-commands",
+      "options": {
+        "command": "python scripts/embed_generator.py",
+        "cwd": "apps/ai-services"
+      }
+    },
+    "recommend-products": {
+      "executor": "@nx/workspace:run-commands",
+      "options": {
+        "command": "python scripts/recommend.py",
+        "cwd": "apps/ai-services"
+      }
+    }
+  }
+}

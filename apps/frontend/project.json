@@ -1,0 +1,19 @@
+{
+  "name": "frontend",
+  "targets": {
+    "dev": {
+      "executor": "@nx/workspace:run-commands",
+      "options": {
+        "command": "yarn dev",
+        "cwd": "apps/frontend"
+      }
+    },
+    "build": {
+      "executor": "@nx/workspace:run-commands",
+      "options": {
+        "command": "yarn build",
+        "cwd": "apps/frontend"
+      }
+    }
+  }
+}

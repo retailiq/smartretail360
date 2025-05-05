@@ -1,0 +1,12 @@
+{
+  "name": "data-engineering",
+  "targets": {
+    "run": {
+      "executor": "@nx/workspace:run-commands",
+      "options": {
+        "command": "python main.py",
+        "cwd": "apps/data-engineering"
+      }
+    }
+  }
+}

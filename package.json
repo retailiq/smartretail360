@@ -9,6 +9,9 @@
     "docs:serve": "docsify serve docs"
   },
   "devDependencies": {
-    "docsify-cli": "^4.4.4"
-  }
+    "@nx/workspace": "^20.8.1",
+    "docsify-cli": "^4.4.4",
+    "nx": "20.8.1"
+  },
+  "nx": {}
 }
