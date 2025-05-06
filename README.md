@@ -1,6 +1,6 @@
 # SmartRetail360
 
-📘 **[Online Documentation (Docsify)](https://retailiq.github.io/smartretail360)**
+📘 <a href="https://retailiq.github.io/smartretail360" target="_blank">Online Documentation (Docsify)</a>
 
 SmartRetail360 is a cloud-native intelligent retail analytics and automation platform for small to mid-sized e-commerce businesses. It integrates full-stack development, data engineering, data science, and AI to deliver sales analysis, forecasting, personalized recommendations, and customer service automation.
 
