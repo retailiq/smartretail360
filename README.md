@@ -1,42 +1,26 @@
 # SmartRetail360
 
-📘 **[Online Documentation (Docsify)](https://retailiq.github.io/smartretail360)**
+📘 **[Online Docs](https://retailiq.github.io/smartretail360)**
 
-SmartRetail360 is a cloud-native intelligent retail analytics and automation platform for small to mid-sized e-commerce businesses. It integrates full-stack development, data engineering, data science, and AI to deliver sales analysis, forecasting, personalized recommendations, and customer service automation.
+SmartRetail360 is a cloud-native, enterprise-grade intelligent retail analytics platform designed for small to mid-sized e-commerce businesses. It seamlessly integrates full-stack development, data engineering, data science, and AI to deliver end-to-end intelligent solutions for sales analysis, forecasting, recommendation, and customer automation.
 
 ## 🔧 Tech Stack Overview
 
 - **Frontend**: Next.js, Tailwind CSS, Zustand, GraphQL
 - **Backend**:
-    - .NET 8: User management, file processing, analytics services
-    - NestJS: AI Gateway, charting, recommender, Copilot chat
+  - .NET 8: Authentication, file handling, analytics, RBAC
+  - NestJS: AI Gateway, chart engine, recommender, Copilot chatbot
 - **Data Engineering**: PySpark, Flink, Airflow, Delta Lake (MinIO)
 - **Data Science**: LightGBM, Prophet, DoubleML, scikit-learn
-- **AI**: LangChain, Mistral LLM, CLIP, Weaviate (RAG)
-- **Databases & Messaging**:
-    - PostgreSQL: Structured data storage
-    - Redis: Caching
-    - MinIO: Data lake storage (Bronze/Silver/Gold)
-    - Kafka: Event streaming
-    - Weaviate: Vector database for semantic search
-- **Infrastructure**: Kubernetes, AWS Lambda, Terraform, Prometheus, Loki
+- **AI/LLM**: LangChain, Mistral, CLIP, Weaviate (RAG)
+- **Storage & Messaging**: PostgreSQL, Redis, MinIO, Kafka, Weaviate
+- **Infrastructure**: Kubernetes, AWS Lambda, Terraform, Prometheus, Loki, Vault
 
-## 🧩 System Architecture
+## 🌍 Key Features & Advantages
 
-- **Presentation Layer**: Next.js dashboard and embedded AI Copilot
-- **Application Layer**: .NET and NestJS microservices
-- **AI Layer**: LangChain + LLMs for recommendation, Q&A, summarization
-- **Data Engineering Layer**: Ingestion, ETL, feature engineering
-- **Storage Layer**: Hybrid storage across PostgreSQL, Redis, MinIO, Weaviate
-- **Infrastructure Layer**: K8s + Serverless with monitoring & observability
-
-## 🚀 Key Features
-
-- Upload and validate CSV/Parquet sales data
-- Auto ETL pipeline from Bronze → Silver → Gold (Delta Lake)
-- Interactive dashboards and sales forecasting
-- Customer segmentation and product conversion funnel
-- AI Copilot for natural language queries and visual insights
-- Intelligent customer service and content generation
-- Semantic search and vector-based product discovery
-- Multi-tenant support, RBAC, and audit logging
+- ⚡ **FAANG-level architecture**: Microservice-based (Next.js, .NET, NestJS) with hybrid cloud deployment using Kubernetes and AWS Lambda.
+- 🧠 **End-to-end AI intelligence**: Includes personalized recommendations, natural language Copilot, multimodal input (text, image, voice), and content generation.
+- 📊 **Modern Data Stack**: Fully automated ETL across Delta Lake's bronze-silver-gold layers, semantic search, and production-ready ML pipelines.
+- 🛡 **Secure and compliant**: Full support for GDPR/CCPA, RBAC access control, and multi-tenant isolation.
+- 🚀 **High scalability**: Real-time stream processing with Kafka, AI inference via Lambda, Redis caching, and multi-region CDN distribution.
+- 📈 **Advanced analytics tools**: Interactive dashboards, sales funnel analysis, churn prediction, and marketing automation with A/B testing support.
