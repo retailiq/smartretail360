@@ -57,7 +57,7 @@ SmartRetail360 adopts a layered microservices architecture, combining event-driv
    - **Technologies**: JWT + OAuth, RBAC, bcrypt, TLS, Vault, AWS Macie, Cloudflare WAF, AWS KMS, FluentValidation.  
 
 ### 2.2 Architecture Diagram Validation
-![system-architecture](/Users/jinyuanzhang/IdeaProjects/smartretail360/docs/images/system-architecture.png)
+![system-architecture](../images/system-architecture.png)
 
 ### 2.3 Data Flow Design
 

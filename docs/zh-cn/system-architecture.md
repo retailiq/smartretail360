@@ -58,7 +58,7 @@ SmartRetail360 采用分层微服务架构，结合事件驱动（Kafka）和 AP
 
 ### 2.2 架构图验证
 
-![system-architecture](/Users/jinyuanzhang/IdeaProjects/smartretail360/docs/images/system-architecture.png)
+![system-architecture](../images/system-architecture.png)
 
 ### 2.3 数据流设计
 1. **用户请求发起**:
