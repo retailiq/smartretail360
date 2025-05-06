@@ -1,8 +1,8 @@
 # Features Document
 
-## 🟢 Release 1 Features
+## 1. Release 1 Features
 
-### Basic Features
+### 1.1 Basic Features
 
 ##### Overview
 The platform provides basic functions such as user management, multi-language support, and permission configuration to ensure a stable operating experience for multiple users and tenants.
@@ -24,9 +24,9 @@ The platform provides basic functions such as user management, multi-language su
 - Login history / activity record viewing (audit log)
 - Subscription and billing module: Supports multi-tenant billing plans, package quotas, and subscription management
 
-### Business Features
+### 1.2 Business Features
 
-#### 📊 Home Dashboard Overview
+#### 1.2.1 Home Dashboard Overview
 
 ##### Overview 
 The system homepage provides a unified data entry point, enabling users to quickly access key metrics and navigate to core functional modules.
@@ -42,7 +42,7 @@ All users
 
 ---
 
-#### Sales Data Import
+#### 1.2.2 Sales Data Import
 
 ##### Overview
 
@@ -65,7 +65,7 @@ Operators / Data administrators
 
 ---
 
-#### Sales Analysis Reports and Chart Display
+#### 1.2.3 Sales Analysis Reports and Chart Display
 
 ##### Overview
 After uploading sales data, users can view 8 core charts (total sales, year-over-year changes, top-selling categories, channel performance, etc.) on the `dashboard page` and export reports for presentations or internal use.
@@ -92,7 +92,7 @@ Merchants / Analysts
 
 ---
 
-#### Sales Forecasting
+#### 1.2.4 Sales Forecasting
 
 ##### Overview
 Users can view sales amount, return rate, and top-selling category forecasts for the next 7 to 30 days, along with the forecast basis, to adjust operations and inventory plans in advance.
@@ -117,7 +117,7 @@ Analysts / Operations supervisors
 
 ---
 
-#### Recommendation System
+#### 1.2.5 Recommendation System
 
 ##### Overview
 
@@ -139,7 +139,7 @@ Merchants / Marketers / Copilot module
 
 ---
 
-#### User Segmentation and Value Assessment
+#### 1.2.6 User Segmentation and Value Assessment
 
 ##### Overview
 Users can segment customer groups based on historical behavior data, such as high-value customers, inactive users, and potential churn users, and export tagged user lists for marketing campaigns.
@@ -155,7 +155,7 @@ Marketers / CRM managers
 
 ---
 
-#### Product Funnel Conversion Analysis
+#### 1.2.7 Product Funnel Conversion Analysis
 
 ##### Overview
 Users can view conversion rates at each step from browsing to transaction (browse → click → add to cart → order → transaction), identify products with conversion drop-offs, and adjust strategies.
@@ -171,7 +171,7 @@ Product operators / Analysts
 
 ---
 
-#### AI Copilot Assistant
+#### 1.2.8 AI Copilot Assistant
 
 ##### Overview
 Users can ask questions in natural language to quickly obtain charts, KPI data, trend analysis, and automated suggestions without needing SQL or chart configuration knowledge.
@@ -195,7 +195,7 @@ All platform users
 
 ---
 
-#### Intelligent Search Engine
+#### 1.2.9 Intelligent Search Engine
 
 ##### Overview
 Users can enter keywords or natural language to quickly navigate to desired charts, documents, or functional modules, supporting semantic fuzzy matching and multi-language.
@@ -211,7 +211,7 @@ All platform users
 
 ---
 
-#### Report Management
+#### 1.2.10 Report Management
 
 ##### Overview
 Users can view historically generated reports, supporting batch downloading, renaming, and deletion operations.
@@ -225,9 +225,9 @@ All users
 - Batch export
 - Automatic file naming with date and version number
 
-## 🔜 Future Development Features (Planned)
+## 2. Future Development Features (Planned)
 
-#### Marketing Content Generation
+#### 2.1 Marketing Content Generation
 
 ##### Overview
 Users can generate product titles, promotional copy, and social media content (e.g., tweets, WeChat Moments) and conduct A/B testing.
@@ -237,7 +237,7 @@ Marketing operators
 
 ---
 
-#### Intelligent Customer Service System
+#### 2.2 Intelligent Customer Service System
 
 ##### Overview
 Supports automated replies for logistics/orders/after-sales issues, integrated with WhatsApp, WeChat, and other platforms.
@@ -247,7 +247,7 @@ Customers / Customer service operators
 
 ---
 
-#### Dynamic Dashboard Customization
+#### 2.3 Dynamic Dashboard Customization
 
 ##### Overview
 Users can drag-and-drop to customize report layouts and chart combinations, saving personalized dashboard interfaces.
@@ -257,7 +257,7 @@ Merchants / Analysts
 
 ---
 
-#### Multi-Dimensional Cross Analysis
+#### 2.4 Multi-Dimensional Cross Analysis
 
 ##### Overview
 Generate interactive Pivot analysis results by combining dimensions (e.g., region × time × category).
@@ -267,7 +267,7 @@ Analysts
 
 ---
 
-#### Self-Service Portal
+#### 2.5 Self-Service Portal
 
 ##### Overview
 Supports end customers in viewing order status, return progress, etc., through the system without contacting human customer service.

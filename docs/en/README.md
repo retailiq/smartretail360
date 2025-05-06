@@ -1,7 +1,6 @@
 # Welcome to SmartRetail360 Docs
 
-This is the English homepage.
-
 - [Features](features.md)
+- [Module Breakdown and Functional Analysis](module-breakdown-and-functional-analysis.md)
 - [Architecture](architecture.md)
 - [RBAC Model](rbac-model.md)
