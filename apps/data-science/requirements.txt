@@ -1,0 +1,16 @@
+lightgbm
+prophet
+scikit-learn
+# 或直接使用 scikit-learn 中的 KMeans, DBSCAN
+kmeans-smote
+dbscan
+doubleml
+shap
+pycaret
+pandas
+matplotlib
+h2o
+featuretools
+# 如果用 scikit-learn 的 IsolationForest，可忽略此项
+isolation-forest
+mlflow

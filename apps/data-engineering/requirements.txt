@@ -1,0 +1,12 @@
+psycopg2-binary==2.9.9
+pyspark
+apache-flink
+delta-spark
+apache-airflow[postgres,aws]==2.8.2
+dagster
+great-expectations
+apache-atlas
+polars
+boto3
+pandas
+pyarrow
