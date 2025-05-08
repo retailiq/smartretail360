@@ -1,0 +1,2 @@
+# 这样在不同项目中切换目录时，asdf 会自动切换到当前项目对应的语言版本。
+legacy_version_file = yes
