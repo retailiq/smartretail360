@@ -1,6 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360", "SmartRetail360\SmartRetail360.csproj", "{989AAED0-786D-482B-B2F4-42472241F59E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.API", "SmartRetail360.API\SmartRetail360.API.csproj", "{989AAED0-786D-482B-B2F4-42472241F59E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Domain", "SmartRetail360.Domain\SmartRetail360.Domain.csproj", "{491E44BC-5BD5-412A-8529-733994A02731}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Application", "SmartRetail360.Application\SmartRetail360.Application.csproj", "{75E5D03C-0745-427C-B4E2-23CB238B3A87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Infrastructure", "SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj", "{E6431653-4773-4107-9A17-0B0AEBB8FF97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Shared", "SmartRetail360.Shared\SmartRetail360.Shared.csproj", "{F35629D1-0550-4102-9DE2-800B90AB0FA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +20,21 @@ Global
 		{989AAED0-786D-482B-B2F4-42472241F59E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{989AAED0-786D-482B-B2F4-42472241F59E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{989AAED0-786D-482B-B2F4-42472241F59E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{491E44BC-5BD5-412A-8529-733994A02731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{491E44BC-5BD5-412A-8529-733994A02731}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{491E44BC-5BD5-412A-8529-733994A02731}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{491E44BC-5BD5-412A-8529-733994A02731}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75E5D03C-0745-427C-B4E2-23CB238B3A87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75E5D03C-0745-427C-B4E2-23CB238B3A87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75E5D03C-0745-427C-B4E2-23CB238B3A87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75E5D03C-0745-427C-B4E2-23CB238B3A87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6431653-4773-4107-9A17-0B0AEBB8FF97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6431653-4773-4107-9A17-0B0AEBB8FF97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6431653-4773-4107-9A17-0B0AEBB8FF97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6431653-4773-4107-9A17-0B0AEBB8FF97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F35629D1-0550-4102-9DE2-800B90AB0FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F35629D1-0550-4102-9DE2-800B90AB0FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F35629D1-0550-4102-9DE2-800B90AB0FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F35629D1-0550-4102-9DE2-800B90AB0FA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
