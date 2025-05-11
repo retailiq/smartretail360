@@ -1,9 +1,13 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.Options;
+using SmartRetail360.API.Extensions;
+using SmartRetail360.API.Middlewares;
+using SmartRetail360.Application;
+using SmartRetail360.Infrastructure;
+using SmartRetail360.Infrastructure.Middlewares;
 
 namespace SmartRetail360.API;
 
@@ -20,59 +24,75 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddAuthorization();
-        // Add MVC services
-        services.AddControllers(); 
-        services.AddEndpointsApiExplorer();
-        
-        // Configure Swagger Token Authentication
-        services.AddSwaggerGen(options =>
-        {
-            // 添加 JWT bearer token 支持
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Enter: **Bearer {your JWT token}**"
-            });
 
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
+        // 注册三层依赖
+        services.AddApplicationLayer();
+        services.AddInfrastructureLayer(Configuration);
+        services.AddApiLayer(Configuration);
+
+        // API 版本控制
+        services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ReportApiVersions = true;
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new UrlSegmentApiVersionReader()
+            );
+        });
+
+        // Swagger API 文档版本化
+        services.AddVersionedApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
         });
     }
 
     // Configure HTTP middleware pipeline
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // 本地化设置（必须在异常中间件前）
+        var locOptions = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+        app.UseRequestLocalization(locOptions.Value);
+
+        // 读取 X-Locale 设置当前线程文化
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Headers.TryGetValue("X-Locale", out var cultureValues))
+            {
+                var culture = cultureValues.ToString();
+                if (!string.IsNullOrEmpty(culture))
+                {
+                    var cultureInfo = new CultureInfo(culture);
+                    CultureInfo.CurrentCulture = cultureInfo;
+                    CultureInfo.CurrentUICulture = cultureInfo;
+                }
+            }
+
+            await next();
+        });
+
+        // 全局异常中间件
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+
         if (env.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(options =>
+            {
+                var provider = app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>();
+                foreach (var desc in provider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", desc.GroupName.ToUpperInvariant());
+                }
+            });
         }
 
         app.UseHttpsRedirection();
-
+        app.UseMiddleware<ContextHeaderMiddleware>();
         app.UseRouting();
-
         app.UseAuthorization();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

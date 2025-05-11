@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+    </resheader>
+
+    <!-- File operations -->
+    <data name="UploadSuccess" xml:space="preserve"><value>Upload completed successfully</value></data>
+
+    <!-- Email Sending -->
+    <data name="EmailResent" xml:space="preserve"><value>Activation email has been resent</value></data>
+
+    <!-- Registration -->
+    <data name="TenantRegistered" xml:space="preserve"><value>Tenant registered successfully. An activation link has been sent to your email, please verify to complete registration.</value></data>
+    <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>Your account has been successfully activated. You may now log in securely.</value></data>
+    
+    <!-- Email Template -->
+    <data name="AccountActivationTitle" xml:space="preserve"><value>Dear Valued Customer,</value></data>
+    <data name="AccountActivationGreeting" xml:space="preserve"><value>Thank you for registering.</value></data>
+    <data name="AccountActivationInstruction" xml:space="preserve"><value>Please click the button below to activate your account.</value></data>
+    <data name="AccountActivationCtaText" xml:space="preserve"><value>Activate Now</value></data>
+    <data name="AccountActivationFooter" xml:space="preserve"><value>This email was sent automatically. Please do not reply.</value></data>
+    <data name="AccountActivationSubject" xml:space="preserve"><value>Activate Your Account</value></data>
+    <data name="UnsupportedEmailTemplate" xml:space="preserve"><value>Unsupported email template.</value></data>
+    
+    <!-- General errors -->
+    <data name="InternalServerError" xml:space="preserve"><value>Internal server error</value></data>
+    <data name="DatabaseUnavailable" xml:space="preserve"><value>Database unavailable</value></data>
+    <data name="ValidationFailed" xml:space="preserve"><value>Validation failed</value></data>
+
+    <!-- Authorization / Access control -->
+    <data name="Unauthorized" xml:space="preserve"><value>Unauthorized</value></data>
+    <data name="Forbidden" xml:space="preserve"><value>Access denied</value></data>
+
+    <!-- Tenant / Account-related errors -->
+    <data name="EmailExists" xml:space="preserve"><value>Email already exists</value></data>
+    <data name="TenantNotFound" xml:space="preserve"><value>Tenant not found</value></data>
+    <data name="InvalidPassword" xml:space="preserve"><value>Invalid password</value></data>
+    <data name="AccountLocked" xml:space="preserve"><value>Account is locked</value></data>
+    <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>
+    <data name="InvalidToken" xml:space="preserve"><value>Invalid token</value></data>
+    <data name="TokenExpired" xml:space="preserve"><value>Token has expired</value></data>
+    <data name="AccountAlreadyActivated" xml:space="preserve"><value>Account has already been activated</value></data>
+    <data name="AccountExists" xml:space="preserve"><value>The account already exists</value></data>
+    
+    <!-- Operation restrictions -->
+    <data name="RateLimitExceeded" xml:space="preserve"><value>Rate limit exceeded</value></data>
+    <data name="OperationNotAllowed" xml:space="preserve"><value>Operation is not allowed</value></data>
+    <data name="TooFrequentEmailRequest" xml:space="preserve"><value>Too many email requests. Please try again later.</value></data>
+    <data name="InvalidTokenOrAccountAlreadyActivated" xml:space="preserve"><value>The activation link is invalid or the account has already been activated.</value>
+</data>
+
+    <!-- External dependencies -->
+    <data name="ExternalServiceUnavailable" xml:space="preserve"><value>External service is unavailable</value></data>
+</root>

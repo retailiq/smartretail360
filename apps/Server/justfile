@@ -1,0 +1,27 @@
+# justfile
+
+migrate-init:
+  dotnet ef migrations add Init \
+    --project ./SmartRetail360.Infrastructure/SmartRetail360.Infrastructure.csproj \
+    --startup-project ./SmartRetail360.API/SmartRetail360.API.csproj \
+    --output-dir Data/Migrations \
+    --context AppDbContext
+
+# just migrate-add name=AddLastEmailSentAtToTenant
+migrate-update:
+  dotnet ef database update \
+    --project ./SmartRetail360.Infrastructure/SmartRetail360.Infrastructure.csproj \
+    --startup-project ./SmartRetail360.API/SmartRetail360.API.csproj \
+    --context AppDbContext
+    
+migrate-add:
+  dotnet ef migrations add {{name}} \
+    --project ./SmartRetail360.Infrastructure/SmartRetail360.Infrastructure.csproj \
+    --startup-project ./SmartRetail360.API/SmartRetail360.API.csproj \
+    --output-dir Data/Migrations \
+    --context AppDbContext    
+    
+migrate-clean:
+  rm -rf SmartRetail360.Infrastructure/Data/Migrations/*
+  psql -U danieltate -h localhost -p 5000 -d sr360-dev -c \
+  "DROP TABLE IF EXISTS \"__EFMigrationsHistory\", \"Tenants\" CASCADE;"

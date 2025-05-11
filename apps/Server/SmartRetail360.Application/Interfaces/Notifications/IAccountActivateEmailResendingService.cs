@@ -1,0 +1,9 @@
+using SmartRetail360.Domain.Entities;
+using SmartRetail360.Shared.Responses;
+
+namespace SmartRetail360.Application.Interfaces.Notifications;
+
+public interface IAccountActivateEmailResendingService
+{
+    Task<ApiResponse<object>> ResendEmailAsync(string adminEmail);
+}

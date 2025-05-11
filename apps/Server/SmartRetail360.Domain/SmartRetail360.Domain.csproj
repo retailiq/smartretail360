@@ -7,4 +7,8 @@
         <RootNamespace>SmartRetail360.Domain</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+    </ItemGroup>
+
 </Project>
