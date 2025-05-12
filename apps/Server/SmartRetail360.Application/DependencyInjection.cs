@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Validators;
 using SmartRetail360.Application.Validators.Auth;
 
 namespace SmartRetail360.Application;

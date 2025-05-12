@@ -18,9 +18,9 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpPost("send-email")]
-    public async Task<IActionResult> SendEmail([FromBody] SendEmailRequest request)
+    public async Task<IActionResult> SendEmail([FromBody] EmailNotificationRequest notificationRequest)
     {
-        var result = await _dispatchService.DispatchAsync(request.Template, request.Email);
+        var result = await _dispatchService.DispatchAsync(notificationRequest.Template, notificationRequest.Email);
         return Ok(result);
     }
 }

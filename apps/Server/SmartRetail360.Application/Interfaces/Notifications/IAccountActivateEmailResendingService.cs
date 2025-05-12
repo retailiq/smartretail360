@@ -5,5 +5,5 @@ namespace SmartRetail360.Application.Interfaces.Notifications;
 
 public interface IAccountActivateEmailResendingService
 {
-    Task<ApiResponse<object>> ResendEmailAsync(string adminEmail);
+    Task<ApiResponse<object>> ResendEmailAsync(string email);
 }

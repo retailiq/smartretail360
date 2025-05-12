@@ -1,3 +1,4 @@
+using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Application.Interfaces.Auth;

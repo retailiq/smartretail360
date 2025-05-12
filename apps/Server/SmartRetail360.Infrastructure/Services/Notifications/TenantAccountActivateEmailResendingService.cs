@@ -42,9 +42,9 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         _activationStrategy = activationStrategy;
     }
 
-    public async Task<ApiResponse<object>> ResendEmailAsync(string adminEmail)
+    public async Task<ApiResponse<object>> ResendEmailAsync(string email)
     {
-        var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == adminEmail);
+        var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == email);
         var limitMinutes = int.Parse(_appOptions.EmailSendLimitMinutes);
         
         if (tenant == null) throw new SecurityException(ErrorCodes.TenantNotFound);

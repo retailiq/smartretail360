@@ -1,15 +1,12 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using SmartRetail360.Application.DTOs.Auth.Requests;
-using SmartRetail360.Application.DTOs.Auth.Responses;
+using SmartRetail360.Application.DTOs.AccountRegistration.Requests;
+using SmartRetail360.Application.DTOs.AccountRegistration.Responses;
+using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Application.Interfaces.Common;
-using SmartRetail360.Application.Interfaces.Notifications;
-using SmartRetail360.Application.Interfaces.Notifications.Strategies;
-using SmartRetail360.Application.Interfaces.TenantManagement;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
-using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Exceptions;
@@ -17,7 +14,7 @@ using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
 
-namespace SmartRetail360.Infrastructure.Services.TenantManagement;
+namespace SmartRetail360.Infrastructure.Services.AccountRegistration;
 
 public class TenantRegistrationService : ITenantRegistrationService
 {
@@ -25,27 +22,23 @@ public class TenantRegistrationService : ITenantRegistrationService
     private readonly IUserContextService _userContext;
     private readonly MessageLocalizer _localizer;
     private readonly EmailContext _emailContext;
-    private readonly IEmailStrategy _activationStrategy;
 
     public TenantRegistrationService(
         AppDbContext db, 
         IUserContextService userContext, 
         MessageLocalizer localizer,
-        IEmailNotificationService emailNotificationService, 
-        EmailContext emailContext,
-        TenantAccountActivationEmailStrategy activationStrategy)
+        EmailContext emailContext)
     {
         _db = db;
         _userContext = userContext;
         _localizer = localizer;
         _emailContext = emailContext;
-        _activationStrategy = activationStrategy;
     }
 
     public async Task<ApiResponse<TenantRegisterResponse>> RegisterTenantAsync(TenantRegisterRequest request)
     {
         _userContext.LogAllContext();
-
+        
         // Generate a Slug
         var slug = GenerateSlug(request.AdminEmail);
 
@@ -58,6 +51,7 @@ public class TenantRegistrationService : ITenantRegistrationService
 
         // Check if the AdminEmail is existing (to avoid duplicate registration)
         var existingTenant = await _db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == request.AdminEmail);
+        
         if (existingTenant != null) throw new CommonException(ErrorCodes.AccountExists, HttpStatusCode.Conflict);
 
         // Hash the password

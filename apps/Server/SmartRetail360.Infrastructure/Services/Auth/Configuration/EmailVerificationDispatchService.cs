@@ -1,28 +1,29 @@
+using SmartRetail360.Application.Interfaces.Auth;
+using SmartRetail360.Application.Interfaces.Auth.Configuration;
 using SmartRetail360.Application.Interfaces.Notifications;
-using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Exceptions;
 using SmartRetail360.Shared.Responses;
 
-namespace SmartRetail360.Infrastructure.Services.Notifications.Configuration;
+namespace SmartRetail360.Infrastructure.Services.Auth.Configuration;
 
-public class EmailVerificationDispatchService : IEmailDispatchService
+public class EmailVerificationDispatchService : IEmailVerificationDispatchService
 {
-    private readonly IAccountActivateEmailResendingService _resendingTenantAccountActivateEmailService;
+    private readonly IEmailVerificationService _tenantAccountEmailVerificationService;
 
     public EmailVerificationDispatchService(
-        IAccountActivateEmailResendingService resendingTenantAccountActivateEmailService
+        IEmailVerificationService tenantAccountEmailVerificationService
     )
     {
-        _resendingTenantAccountActivateEmailService = resendingTenantAccountActivateEmailService;
+        _tenantAccountEmailVerificationService = tenantAccountEmailVerificationService;
     }
 
-    public async Task<ApiResponse<object>> DispatchAsync(EmailTemplate template, string email)
+    public async Task<ApiResponse<object>> DispatchAsync(AccountType type, string token)
     {
-        return template switch
+        return type switch
         {
-            EmailTemplate.TenantAccountActivation => await _resendingTenantAccountActivateEmailService.ResendEmailAsync(email),
+            AccountType.TenantAccount => await _tenantAccountEmailVerificationService.VerifyEmailAsync(token),
             _ => throw new CommonException(ErrorCodes.UnsupportedEmailTemplate)
         };
     }

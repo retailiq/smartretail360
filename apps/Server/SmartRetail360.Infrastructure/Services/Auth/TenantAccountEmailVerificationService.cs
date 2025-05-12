@@ -9,14 +9,13 @@ using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Infrastructure.Services.Auth;
 
-public class EmailVerificationService : IEmailVerificationService
+public class TenantAccountEmailVerificationService : IEmailVerificationService
 {
     private readonly AppDbContext _dbContext;
     private readonly IUserContextService _userContext;
     private readonly MessageLocalizer _localizer;
-
-
-    public EmailVerificationService(AppDbContext dbContext, IUserContextService userContext, MessageLocalizer localizer)
+    
+    public TenantAccountEmailVerificationService(AppDbContext dbContext, IUserContextService userContext, MessageLocalizer localizer)
     {
         _dbContext = dbContext;
         _userContext = userContext;

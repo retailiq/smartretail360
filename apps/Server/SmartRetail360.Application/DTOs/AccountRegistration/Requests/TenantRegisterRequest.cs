@@ -1,4 +1,4 @@
-namespace SmartRetail360.Application.DTOs.Auth.Requests;
+namespace SmartRetail360.Application.DTOs.AccountRegistration.Requests;
 
 public class TenantRegisterRequest
 {

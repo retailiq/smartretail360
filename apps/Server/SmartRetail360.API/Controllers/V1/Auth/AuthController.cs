@@ -13,11 +13,11 @@ namespace SmartRetail360.API.Controllers.V1.Auth;
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _dbContext;
-    private readonly IEmailNotificationService _emailNotificationService;
+    // private readonly IEmailNotificationService _emailNotificationService;
 
-    public AuthController(AppDbContext dbContext, IEmailNotificationService emailNotificationService)
-    {
-        _dbContext = dbContext;
-        _emailNotificationService = emailNotificationService;
-    }
+    // public AuthController(AppDbContext dbContext, IEmailNotificationService emailNotificationService)
+    // {
+    //     _dbContext = dbContext;
+    //     _emailNotificationService = emailNotificationService;
+    // }
 }

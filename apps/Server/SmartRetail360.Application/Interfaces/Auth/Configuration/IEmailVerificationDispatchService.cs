@@ -5,5 +5,5 @@ namespace SmartRetail360.Application.Interfaces.Auth.Configuration;
 
 public interface IEmailVerificationDispatchService
 {
-    Task<ApiResponse<object>> DispatchAsync(EmailTemplate template, string token);
+    Task<ApiResponse<object>> DispatchAsync(AccountType type, string token);
 }

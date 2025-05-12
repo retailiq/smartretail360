@@ -4,7 +4,7 @@ using SmartRetail360.Application.DTOs.Notification;
 
 namespace SmartRetail360.Application.Validators.Notification;
 
-public class EmailNotificationRequestValidator : AbstractValidator<SendEmailRequest>
+public class EmailNotificationRequestValidator : AbstractValidator<EmailNotificationRequest>
 {
     public EmailNotificationRequestValidator()
     {
