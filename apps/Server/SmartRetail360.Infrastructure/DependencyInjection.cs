@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Application.Interfaces.Notifications.Configuration;
+using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Application.Interfaces.TenantManagement;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Interceptors;
@@ -32,13 +33,14 @@ public static class DependencyInjection
         // 邮件相关服务
         services.AddScoped<IEmailNotificationService, EmailNotificationService>();
         services.AddScoped<IEmailVerificationService, EmailVerificationService>();
-        services.AddScoped<IAccountActivateEmailResendingService, AccountActivateEmailResendingService>();
+        services.AddScoped<IAccountActivateEmailResendingService, TenantAccountActivateEmailResendingService>();
         services.AddScoped<IEmailSender, MailKitEmailSender>();
         services.AddScoped<IEmailTemplateProvider, DefaultEmailTemplateProvider>();
         services.AddScoped<AccountActivationTemplate>();
         services.AddScoped<IEmailDispatchService, EmailDispatchService>();
         services.AddScoped<EmailContext>();
-        services.AddScoped<AccountActivationEmailStrategy>();
+        services.AddScoped<TenantAccountActivationEmailStrategy>();
+        services.AddScoped<IEmailStrategy, TenantAccountActivationEmailStrategy>();
         // services.AddScoped<VerificationCodeEmailStrategy>();
 
         // 注册租户服务

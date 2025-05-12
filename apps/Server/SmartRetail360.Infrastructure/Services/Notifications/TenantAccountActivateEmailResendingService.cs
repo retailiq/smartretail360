@@ -12,11 +12,12 @@ using Microsoft.Extensions.Options;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
+using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications;
 
-public class AccountActivateEmailResendingService : IAccountActivateEmailResendingService
+public class TenantAccountActivateEmailResendingService : IAccountActivateEmailResendingService
 {
     private readonly AppDbContext _dbContext;
     private readonly AppOptions _appOptions;
@@ -25,13 +26,13 @@ public class AccountActivateEmailResendingService : IAccountActivateEmailResendi
     private readonly EmailContext _emailContext;
     private readonly IEmailStrategy _activationStrategy;
     
-    public AccountActivateEmailResendingService(
+    public TenantAccountActivateEmailResendingService(
         AppDbContext dbContext,
         IOptions<AppOptions> options,
         IUserContextService userContext,
         MessageLocalizer localizer,
         EmailContext emailContext,
-        AccountActivationEmailStrategy activationStrategy)
+        TenantAccountActivationEmailStrategy activationStrategy)
     {
         _dbContext = dbContext;
         _appOptions = options.Value;
@@ -57,9 +58,22 @@ public class AccountActivateEmailResendingService : IAccountActivateEmailResendi
         tenant.EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
         tenant.LastEmailSentAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();
+        
+        // Send the activation email
+        var variables = new Dictionary<string, string>
+        {
+            ["traceId"] = _userContext.TraceId ?? string.Empty,
+            ["tenantId"] = tenant.Id.ToString(),
+            ["locale"] = _userContext.Locale ?? "en",
+            ["token"] = tenant.EmailVerificationToken,
+            ["timestamp"] = DateTime.UtcNow.ToString("o")
+        };
 
-        _emailContext.SetStrategy(_activationStrategy);
-        await _emailContext.ExecuteAsync(tenant);
+        await _emailContext.SendAsync(
+            EmailTemplate.TenantAccountActivation,
+            toEmail: tenant.AdminEmail,
+            variables: variables
+        );
         
         return ApiResponse<object>.Ok(
             null,

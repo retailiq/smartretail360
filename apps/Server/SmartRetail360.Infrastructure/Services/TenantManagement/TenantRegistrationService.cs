@@ -2,14 +2,12 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Application.DTOs.Auth.Requests;
 using SmartRetail360.Application.DTOs.Auth.Responses;
-using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Application.Interfaces.TenantManagement;
 using SmartRetail360.Domain.Entities;
-using SmartRetail360.Infrastructure.Services.Notifications;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Shared.Constants;
@@ -35,7 +33,7 @@ public class TenantRegistrationService : ITenantRegistrationService
         MessageLocalizer localizer,
         IEmailNotificationService emailNotificationService, 
         EmailContext emailContext,
-        AccountActivationEmailStrategy activationStrategy)
+        TenantAccountActivationEmailStrategy activationStrategy)
     {
         _db = db;
         _userContext = userContext;
@@ -77,10 +75,22 @@ public class TenantRegistrationService : ITenantRegistrationService
         };
         _db.Tenants.Add(tenant);
         await _db.SaveChangesAsync();
+        
+        // Send the activation email
+        var variables = new Dictionary<string, string>
+        {
+            ["traceId"] = _userContext.TraceId ?? string.Empty,
+            ["tenantId"] = tenant.Id.ToString(),
+            ["locale"] = _userContext.Locale ?? "en",
+            ["token"] = tenant.EmailVerificationToken,
+            ["timestamp"] = DateTime.UtcNow.ToString("o")
+        };
 
-        // Send activation email
-        _emailContext.SetStrategy(_activationStrategy);
-        await _emailContext.ExecuteAsync(tenant);
+        await _emailContext.SendAsync(
+            EmailTemplate.TenantAccountActivation,
+            toEmail: tenant.AdminEmail,
+            variables: variables
+        );
 
         return ApiResponse<TenantRegisterResponse>.Ok(
             new TenantRegisterResponse

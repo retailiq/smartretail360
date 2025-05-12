@@ -1,22 +1,23 @@
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
-using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Options;
 using SmartRetail360.Shared.Utils;
 using Microsoft.Extensions.Options;
 using SmartRetail360.Application.Interfaces.Common;
-using SmartRetail360.Shared.Localization;
+using SmartRetail360.Shared.Extensions;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 
-public class AccountActivationEmailStrategy : IEmailStrategy
+public class UserAccountActivationEmailStrategy : IEmailStrategy
 {
     private readonly IEmailSender _emailSender;
     private readonly AppOptions _appOptions;
     private readonly IUserContextService _userContext;
+    
+    public EmailTemplate StrategyKey => EmailTemplate.UserAccountActivation;
 
-    public AccountActivationEmailStrategy(
+    public UserAccountActivationEmailStrategy(
         IEmailSender emailSender, 
         IOptions<AppOptions> options,
         IUserContextService userContext)
@@ -26,7 +27,7 @@ public class AccountActivationEmailStrategy : IEmailStrategy
         _userContext = userContext;
     }
 
-    public async Task ExecuteAsync(Tenant tenant)
+    public async Task ExecuteAsync(string toEmail, IDictionary<string, string> data)
     {
         var link = UrlBuilder.BuildApiUrl(
             _appOptions.BaseUrl,
@@ -34,15 +35,17 @@ public class AccountActivationEmailStrategy : IEmailStrategy
             path: _appOptions.EmailVerificationUrl,
             queryParams: new()
             {
-                ["token"] = tenant.EmailVerificationToken!,
-                ["locale"] = _userContext.Locale ?? "en",
-                ["traceId"] = _userContext.TraceId ?? string.Empty,
-                ["tenantId"] = tenant.Id.ToString(),
-                ["timestamp"] = DateTime.UtcNow.ToString("o")
+                ["token"] = data?["token"],
+                ["locale"] = data.GetOrDefault("locale", "en"),
+                ["traceId"] = data?["traceId"],
+                ["tenantId"] = data?["tenantId"],
+                ["userId"] = data?["userId"],
+                ["timestamp"] = data?["timestamp"]
             });
+
 
         var variables = new Dictionary<string, string> { ["activation_link"] = link! };
 
-        await _emailSender.SendAsync(tenant.AdminEmail, EmailTemplate.AccountActivation, variables);
+        await _emailSender.SendAsync(toEmail, EmailTemplate.UserAccountActivation, variables);
     }
 }

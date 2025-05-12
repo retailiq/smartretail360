@@ -14,7 +14,6 @@ public class EmailVerificationController : ControllerBase
 {
     private readonly IEmailVerificationService _emailVerificationService;
     
-
     public EmailVerificationController(IEmailVerificationService emailVerificationService)
     {
         _emailVerificationService = emailVerificationService;

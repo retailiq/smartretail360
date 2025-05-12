@@ -1,20 +1,22 @@
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 
 public class EmailContext
 {
-    private IEmailStrategy? _strategy;
+    private readonly Dictionary<EmailTemplate, IEmailStrategy> _strategies;
 
-    public void SetStrategy(IEmailStrategy strategy)
+    public EmailContext(IEnumerable<IEmailStrategy> strategies)
     {
-        _strategy = strategy;
+        _strategies = strategies.ToDictionary(s => s.StrategyKey);
     }
 
-    public async Task ExecuteAsync(Tenant tenant)
+    public Task SendAsync(EmailTemplate template, string toEmail, IDictionary<string, string> variables)
     {
-        if (_strategy == null) throw new InvalidOperationException("Email strategy not set.");
-        await _strategy.ExecuteAsync(tenant);
+        if (!_strategies.TryGetValue(template, out var strategy))
+            throw new InvalidOperationException($"No strategy found for template: {template}");
+        return strategy.ExecuteAsync(toEmail, variables);
     }
 }

@@ -20,7 +20,7 @@ public class DefaultEmailTemplateProvider : IEmailTemplateProvider
 
     public string GetSubject(EmailTemplate template) => template switch
     {
-        EmailTemplate.AccountActivation => _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationSubject),
+        EmailTemplate.TenantAccountActivation => _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationSubject),
         EmailTemplate.PasswordReset => "重置您的密码",
         EmailTemplate.VerificationCode => "您的验证码",
         EmailTemplate.Marketing => "为您推荐好物",
@@ -31,7 +31,7 @@ public class DefaultEmailTemplateProvider : IEmailTemplateProvider
     {
         return template switch
         {
-            EmailTemplate.AccountActivation => _accountActivationTemplate.GetHtml(variables),
+            EmailTemplate.TenantAccountActivation => _accountActivationTemplate.GetHtml(variables),
 
             EmailTemplate.VerificationCode =>
                 $"<p>您的验证码是：<strong>{variables["code"]}</strong></p>",

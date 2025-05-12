@@ -7,11 +7,11 @@ using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 
-public class EmailDispatchService : IEmailDispatchService
+public class EmailVerificationDispatchService : IEmailDispatchService
 {
     private readonly IAccountActivateEmailResendingService _resendingTenantAccountActivateEmailService;
 
-    public EmailDispatchService(
+    public EmailVerificationDispatchService(
         IAccountActivateEmailResendingService resendingTenantAccountActivateEmailService
     )
     {
