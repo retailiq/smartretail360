@@ -8,5 +8,7 @@ public interface IUserContextService
     string? TraceId { get; }
     string? Locale { get; }
     
+    string IpAddress { get; }
+    
     void LogAllContext();
 }

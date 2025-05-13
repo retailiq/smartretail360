@@ -20,5 +20,7 @@ public class AppOptions
     
     public string EmailVerificationUrl { get; set; } = string.Empty;
     
-    public string EmailSendLimitMinutes { get; set; } = "3";
+    public double EmailSendLimitMinutes { get; set; } = 3;
+    
+    public double RegistrationLockTtlSeconds { get; set; } = 10;
 }

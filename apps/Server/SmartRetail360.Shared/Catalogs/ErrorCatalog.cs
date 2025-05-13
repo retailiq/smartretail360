@@ -11,6 +11,7 @@ public static class ErrorCatalog
         { ErrorCodes.DatabaseUnavailable, "DatabaseUnavailable" },
         { ErrorCodes.ValidationFailed, "ValidationFailed" },
         { ErrorCodes.UnsupportedEmailTemplate, "UnsupportedEmailTemplate"},
+        { ErrorCodes.DuplicateRegisterAttempt, "DuplicateRegisterAttempt" },
 
         // Authorization / Access control
         { ErrorCodes.Unauthorized, "Unauthorized" },

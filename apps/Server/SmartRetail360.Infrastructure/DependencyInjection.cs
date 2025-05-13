@@ -4,18 +4,22 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Auth.Configuration;
+using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
+using SmartRetail360.Application.Interfaces.Services;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Interceptors;
 using SmartRetail360.Infrastructure.Services.AccountRegistration;
 using SmartRetail360.Infrastructure.Services.Auth;
 using SmartRetail360.Infrastructure.Services.Auth.Configuration;
+using SmartRetail360.Infrastructure.Services.Common;
 using SmartRetail360.Infrastructure.Services.Notifications;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
+using StackExchange.Redis;
 
 namespace SmartRetail360.Infrastructure;
 
@@ -49,6 +53,19 @@ public static class DependencyInjection
         // Register Email Verification
         services.AddScoped<IEmailVerificationDispatchService, EmailVerificationDispatchService>();
         services.AddScoped<IEmailVerificationService, TenantAccountEmailVerificationService>();
+        
+        // Redis Service
+        // Redis Configuration
+        var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]);
+        services.AddSingleton<IConnectionMultiplexer>(redis);
+        // Redis Limiter
+        services.AddScoped<ILimiterService, RedisLimiterService>();
+        // Redis Lock
+        services.AddScoped<ILockService, RedisLockService>();
+        
+        // Register the Audit Logger
+        services.AddScoped<IAuditLogger, AuditLogger>();
+        
         
         return services;
     }

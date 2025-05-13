@@ -36,6 +36,7 @@
     <data name="InternalServerError" xml:space="preserve"><value>Internal server error</value></data>
     <data name="DatabaseUnavailable" xml:space="preserve"><value>Database unavailable</value></data>
     <data name="ValidationFailed" xml:space="preserve"><value>Validation failed</value></data>
+    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>Your registration is already in progress. Please try again later.</value></data>
 
     <!-- Authorization / Access control -->
     <data name="Unauthorized" xml:space="preserve"><value>Unauthorized</value></data>

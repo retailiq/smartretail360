@@ -75,6 +75,7 @@ public class Startup
 
         // 全局异常中间件
         app.UseMiddleware<ExceptionHandlingMiddleware>();
+        app.UseMiddleware<AuditLogMiddleware>();
 
         if (env.IsDevelopment())
         {

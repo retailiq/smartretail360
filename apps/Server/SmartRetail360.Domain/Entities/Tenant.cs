@@ -9,7 +9,7 @@ public class Tenant
     public Guid Id { get; set; } = Guid.NewGuid();
     public string? Name { get; set; } = null;
     public string Slug { get; set; } = string.Empty;
-    public string? AdminEmail { get; set; } = string.Empty;
+    public string AdminEmail { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? Industry { get; set; } = string.Empty;

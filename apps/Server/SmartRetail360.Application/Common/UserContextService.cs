@@ -25,7 +25,26 @@ public class UserContextService : IUserContextService
     public Guid? RoleId => TryParseGuid("RoleId");
     public string? TraceId => Get("TraceId");
     public string? Locale => Get("Locale");
+    public string IpAddress
+    {
+        get
+        {
+            var context = _http.HttpContext;
 
+            if (context == null)
+                return "unknown";
+
+            // 优先检查是否有代理转发头
+            if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var forwarded))
+            {
+                return forwarded.ToString().Split(',')[0].Trim(); // 拿第一个 IP
+            }
+
+            // 否则取直连 IP
+            return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        }
+    }
+    
     private Guid? TryParseGuid(string key)
     {
         var value = Get(key);

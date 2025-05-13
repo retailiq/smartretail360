@@ -7,6 +7,7 @@ public static class ErrorCodes
     public const int DatabaseUnavailable = 10001;
     public const int ValidationFailed = 10002;
     public const int UnsupportedEmailTemplate = 10003;
+    public const int DuplicateRegisterAttempt = 10004;
 
     // Authorization / Access control
     public const int Unauthorized = 401;

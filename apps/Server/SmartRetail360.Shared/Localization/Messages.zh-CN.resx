@@ -36,6 +36,7 @@
     <data name="InternalServerError" xml:space="preserve"><value>服务器内部错误</value></data>
     <data name="DatabaseUnavailable" xml:space="preserve"><value>数据库暂时不可用</value></data>
     <data name="ValidationFailed" xml:space="preserve"><value>参数验证失败</value></data>
+    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试。</value></data>
 
     <!-- Authorization / Access control -->
     <data name="Unauthorized" xml:space="preserve"><value>未授权访问</value></data>
