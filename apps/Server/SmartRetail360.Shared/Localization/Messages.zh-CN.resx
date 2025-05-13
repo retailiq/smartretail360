@@ -18,7 +18,8 @@
 
     <!-- Email Sending -->
     <data name="EmailResent" xml:space="preserve"><value>激活邮件已重新发送</value></data>
-
+    <data name="SendEmailFailed" xml:space="preserve"><value>邮件发送失败</value></data>
+    
     <!-- Registration -->
     <data name="TenantRegistered" xml:space="preserve"><value>账户注册成功，请前往邮箱验证以激活账户</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>账户激活成功，您现在可以安全登录平台</value></data>

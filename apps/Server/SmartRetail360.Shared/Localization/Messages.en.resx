@@ -18,7 +18,8 @@
 
     <!-- Email Sending -->
     <data name="EmailResent" xml:space="preserve"><value>Activation email has been resent</value></data>
-
+    <data name="SendEmailFailed" xml:space="preserve"><value>Failed to send email</value></data>
+    
     <!-- Registration -->
     <data name="TenantRegistered" xml:space="preserve"><value>Tenant registered successfully. An activation link has been sent to your email, please verify to complete registration.</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>Your account has been successfully activated. You may now log in securely.</value></data>

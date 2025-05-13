@@ -75,6 +75,7 @@ public class Startup
 
         // 全局异常中间件
         app.UseMiddleware<ExceptionHandlingMiddleware>();
+        app.UseMiddleware<ContextHeaderMiddleware>();
         app.UseMiddleware<AuditLogMiddleware>();
 
         if (env.IsDevelopment())
@@ -91,7 +92,6 @@ public class Startup
         }
 
         app.UseHttpsRedirection();
-        app.UseMiddleware<ContextHeaderMiddleware>();
         app.UseRouting();
         app.UseAuthorization();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

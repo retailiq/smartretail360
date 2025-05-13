@@ -20,6 +20,12 @@ using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
+using Scrutor;
+using SmartRetail360.Infrastructure.AuditLogging;
+// using SmartRetail360.Infrastructure.Services.AccountRegistration.Loggers;
+using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+using SmartRetail360.Shared.Localization;
+using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure;
 
@@ -64,8 +70,19 @@ public static class DependencyInjection
         services.AddScoped<ILockService, RedisLockService>();
         
         // Register the Audit Logger
-        services.AddScoped<IAuditLogger, AuditLogger>();
+        services.AddScoped<AuditLogger>();
         
+        // Register the Tenant Registration Dependencies
+        services.AddScoped<TenantRegistrationDependencies>(sp => new TenantRegistrationDependencies
+        {
+            Db = sp.GetRequiredService<AppDbContext>(),
+            UserContext = sp.GetRequiredService<IUserContextService>(),
+            Localizer = sp.GetRequiredService<MessageLocalizer>(),
+            EmailContext = sp.GetRequiredService<EmailContext>(),
+            LockService = sp.GetRequiredService<ILockService>(),
+            AppOptions = sp.GetRequiredService<AppOptions>(),
+            AuditLogger = sp.GetRequiredService<AuditLogger>(),
+        });
         
         return services;
     }

@@ -35,7 +35,10 @@ public static class ErrorCatalog
         { ErrorCodes.InvalidTokenOrAccountAlreadyActivated, "InvalidTokenOrAccountAlreadyActivated" },
 
         // External dependencies
-        { ErrorCodes.ExternalServiceUnavailable, "ExternalServiceUnavailable" }
+        { ErrorCodes.ExternalServiceUnavailable, "ExternalServiceUnavailable" },
+        
+        // Email-related
+        { ErrorCodes.EmailSendFailed, "EmailSendFailed" }
     };
 
     public static string GetKey(int code)

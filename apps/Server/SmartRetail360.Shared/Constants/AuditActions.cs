@@ -54,4 +54,10 @@ public static class AuditActions
     
     // ===== General =====
     public const string RequestReceived = "REQUEST_RECEIVED";
+    
+    // ===== Redis =====
+    public const string GenerateAccountLockFailed = "GENERATE_ACCOUNT_LOCK_FAILED";
+    
+    // ===== Email Sending =====
+    public const string SendEmailFailed = "SEND_EMAIL_FAILED";
 }

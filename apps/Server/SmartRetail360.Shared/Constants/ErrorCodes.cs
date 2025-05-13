@@ -32,4 +32,7 @@ public static class ErrorCodes
 
     // External dependencies
     public const int ExternalServiceUnavailable = 7001;
+    
+    // Email-related
+    public const int EmailSendFailed = 8001;
 }

@@ -1,0 +1,21 @@
+using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Services;
+using SmartRetail360.Infrastructure.AuditLogging;
+using SmartRetail360.Infrastructure.Data;
+using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
+using SmartRetail360.Shared.Localization;
+using SmartRetail360.Shared.Options;
+
+namespace SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+
+public class TenantRegistrationDependencies
+{
+    public required AppDbContext Db { get; init; }
+    public required IUserContextService UserContext { get; init; }
+    public required MessageLocalizer Localizer { get; init; }
+    public required EmailContext EmailContext { get; init; }
+    public required ILockService LockService { get; init; }
+    public required AppOptions AppOptions { get; init; }
+    public required AuditLogger AuditLogger { get; init; }
+    
+}
