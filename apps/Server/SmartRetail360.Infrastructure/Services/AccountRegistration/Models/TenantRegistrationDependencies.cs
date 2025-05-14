@@ -16,6 +16,6 @@ public class TenantRegistrationDependencies
     public required EmailContext EmailContext { get; init; }
     public required ILockService LockService { get; init; }
     public required AppOptions AppOptions { get; init; }
-    public required AuditLogger AuditLogger { get; init; }
-    
+    public IAuditLogger AuditLogger { get; init; } 
+    public required ILogDispatcher LogDispatcher { get; init; }
 }

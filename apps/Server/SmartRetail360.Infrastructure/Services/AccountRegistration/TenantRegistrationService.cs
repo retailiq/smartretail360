@@ -22,12 +22,11 @@ public class TenantRegistrationService : ITenantRegistrationService
     public TenantRegistrationService(TenantRegistrationDependencies dep)
     {
         _dep = dep;
+        _dep.UserContext.Module = LogSourceModules.RegisterTenantService;
     }
 
     public async Task<ApiResponse<TenantRegisterResponse>> RegisterTenantAsync(TenantRegisterRequest request)
     {
-        _dep.UserContext.LogAllContext();
-
         var slug = SlugGenerator.GenerateSlug(request.AdminEmail);
 
         var traceId = _dep.UserContext.TraceId;
@@ -38,19 +37,28 @@ public class TenantRegistrationService : ITenantRegistrationService
 
         var lockKey = RedisKeys.RegisterAccountLock(request.AdminEmail.ToLower());
         var lockAcquired =
-            await _dep.LockService.AcquireLockAsync(lockKey, TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
+            await _dep.LockService.AcquireLockAsync(lockKey,
+                TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
         if (!lockAcquired)
         {
-            await _dep.AuditLogger.LogLockFailedAsync(request.AdminEmail);
+            await _dep.LogDispatcher.Dispatch(
+                LogEventType.RegisterFailure,
+                reason: LogReasons.LockNotAcquired
+            );
             throw new CommonException(ErrorCodes.DuplicateRegisterAttempt);
         }
+
+        // await Task.Delay(TimeSpan.FromSeconds(30));
 
         try
         {
             var existingTenant = await _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == request.AdminEmail);
             if (existingTenant != null)
             {
-                await _dep.AuditLogger.LogAccountExistsAsync(request.AdminEmail);
+                await _dep.LogDispatcher.Dispatch(
+                    LogEventType.RegisterFailure,
+                    reason: LogReasons.TenantAlreadyExists
+                );
                 throw new CommonException(ErrorCodes.AccountExists, HttpStatusCode.Conflict);
             }
 
@@ -88,12 +96,17 @@ public class TenantRegistrationService : ITenantRegistrationService
             }
             catch (Exception ex)
             {
-                await _dep.AuditLogger.LogEmailFailedAsync(request.AdminEmail, ex.Message);
+                await _dep.LogDispatcher.Dispatch(
+                    LogEventType.RegisterFailure,
+                    reason: LogReasons.EmailSendFailed,
+                    errorStack: ex.Message
+                );
+
                 throw new CommonException(ErrorCodes.EmailSendFailed, HttpStatusCode.ServiceUnavailable);
             }
-            
-            await _dep.AuditLogger.LogRegisterSuccessAsync(tenant.AdminEmail);
-            
+
+            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess);
+
             return ApiResponse<TenantRegisterResponse>.Ok(
                 new TenantRegisterResponse
                 {

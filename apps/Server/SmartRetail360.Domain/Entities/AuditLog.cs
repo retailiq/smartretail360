@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.Extensions.Logging;
+using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Domain.Entities;
 
@@ -12,7 +14,9 @@ public class AuditLog
     public string TraceId { get; set; } = string.Empty;
     public string? DetailsJson { get; set; }
     public DateTime EvaluatedAt { get; set; } = DateTime.UtcNow;
+    public LogLevel Level { get; set; } = LogLevel.Information;
+    public string? SourceModule { get; set; }
     
-    [NotMapped] // ✅ 不映射到数据库，只是给 AuditLogger 内部使用
+    [NotMapped]
     public Dictionary<string, string>? UnserializedDetails { get; set; }
 }

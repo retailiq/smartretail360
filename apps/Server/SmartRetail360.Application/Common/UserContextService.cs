@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Application.Common;
 
@@ -25,6 +26,16 @@ public class UserContextService : IUserContextService
     public Guid? RoleId => TryParseGuid("RoleId");
     public string? TraceId => Get("TraceId");
     public string? Locale => Get("Locale");
+    public string? Module { get; set; }
+    public string? ClientEmail => Get("ClientEmail");
+    public AccountType? AccountType
+    {
+        get
+        {
+            var value = Get("AccountType");
+            return Enum.TryParse<AccountType>(value, out var parsed) ? parsed : null;
+        }
+    }
     public string IpAddress
     {
         get

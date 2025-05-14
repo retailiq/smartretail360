@@ -1,3 +1,5 @@
+using SmartRetail360.Shared.Enums;
+
 namespace SmartRetail360.Application.Interfaces.Common;
 
 public interface IUserContextService
@@ -7,8 +9,10 @@ public interface IUserContextService
     Guid? RoleId { get; }
     string? TraceId { get; }
     string? Locale { get; }
-    
     string IpAddress { get; }
+    string? Module { get; set; }
+    string? ClientEmail { get; }
+    AccountType? AccountType { get; }
     
     void LogAllContext();
 }

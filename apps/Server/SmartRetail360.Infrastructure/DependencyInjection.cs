@@ -22,6 +22,11 @@ using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
 using Scrutor;
 using SmartRetail360.Infrastructure.AuditLogging;
+using SmartRetail360.Infrastructure.Logging;
+using SmartRetail360.Infrastructure.Logging.Dispatcher;
+using SmartRetail360.Infrastructure.Logging.Handlers;
+using SmartRetail360.Infrastructure.Logging.Loggers;
+using SmartRetail360.Infrastructure.Logging.Policies;
 // using SmartRetail360.Infrastructure.Services.AccountRegistration.Loggers;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Localization;
@@ -70,7 +75,7 @@ public static class DependencyInjection
         services.AddScoped<ILockService, RedisLockService>();
         
         // Register the Audit Logger
-        services.AddScoped<AuditLogger>();
+        // services.AddScoped<AuditLogger>();
         
         // Register the Tenant Registration Dependencies
         services.AddScoped<TenantRegistrationDependencies>(sp => new TenantRegistrationDependencies
@@ -81,8 +86,23 @@ public static class DependencyInjection
             EmailContext = sp.GetRequiredService<EmailContext>(),
             LockService = sp.GetRequiredService<ILockService>(),
             AppOptions = sp.GetRequiredService<AppOptions>(),
-            AuditLogger = sp.GetRequiredService<AuditLogger>(),
+            AuditLogger = sp.GetRequiredService<IAuditLogger>(),
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>() 
         });
+        
+        services.AddScoped<ILogDispatcher, LogDispatcher>();
+        services.AddScoped<IAuditLogger, AuditLogger>();
+        
+        services.Scan(scan => scan
+            .FromAssemblyOf<RegisterSuccessLogHandler>()
+            .AddClasses(c => c.AssignableTo<ILogEventHandler>())
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        
+        services.AddSingleton<ILogWritePolicyProvider, DefaultLogWritePolicyProvider>();
+        services.AddScoped<ILogWriter, DefaultLogWriter>();
+        services.AddSingleton<ILogActionResolver, DefaultLogActionResolver>();
+        
         
         return services;
     }

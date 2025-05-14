@@ -1,42 +1,45 @@
 namespace SmartRetail360.Shared.Constants;
 
-public static class AuditLogReasons
+public static class LogReasons
 {
     // General operation failures
-    public const string LockNotAcquired = "LockNotAcquired";
-    public const string EmailAlreadyExists = "EmailAlreadyExists";
-    public const string InvalidEmailFormat = "InvalidEmailFormat";
-    public const string PasswordTooWeak = "PasswordTooWeak";
-    public const string DatabaseSaveFailed = "DatabaseSaveFailed";
-    public const string MissingRequiredFields = "MissingRequiredFields";
-    public const string UnexpectedError = "UnexpectedError";
-    public const string InvalidRequest = "InvalidRequest";
+    public const string LockNotAcquired = "LOCK_NOT_ACQUIRED";
+    public const string EmailAlreadyExists = "EMAIL_ALREADY_EXISTS";
+    public const string InvalidEmailFormat = "INVALID_EMAIL_FORMAT";
+    public const string PasswordTooWeak = "PASSWORD_TOO_WEAK";
+    public const string DatabaseSaveFailed = "DATABASE_SAVE_FAILED";
+    public const string MissingRequiredFields = "MISSING_REQUIRED_FIELDS";
+    public const string UnexpectedError = "UNEXPECTED_ERROR";
+    public const string InvalidRequest = "INVALID_REQUEST";
 
     // Authentication / Token
-    public const string InvalidToken = "InvalidToken";
-    public const string TokenExpired = "TokenExpired";
-    public const string TokenGenerationError = "TokenGenerationError";
+    public const string InvalidToken = "INVALID_TOKEN";
+    public const string TokenExpired = "TOKEN_EXPIRED";
+    public const string TokenGenerationError = "TOKEN_GENERATION_ERROR";
 
     // Tenant-specific
-    public const string TenantAlreadyExists = "TenantAlreadyExists";
-    public const string TenantNotFound = "TenantNotFound";
+    public const string TenantAlreadyExists = "TENANT_ALREADY_EXISTS";
+    public const string TenantNotFound = "TENANT_NOT_FOUND";
 
     // Email & Notification
-    public const string ActivationEmailFailed = "ActivationEmailFailed";
-    public const string EmailTokenGenerationError = "EmailTokenGenerationError";
+    public const string ActivationEmailFailed = "ACTIVATION_EMAIL_FAILED";
+    public const string EmailTokenGenerationError = "EMAIL_TOKEN_GENERATION_ERROR";
 
     // Infrastructure / System
-    public const string RedisUnavailable = "RedisUnavailable";
-    public const string PasswordHashingError = "PasswordHashingError";
-    public const string ExternalServiceUnavailable = "ExternalServiceUnavailable";
+    public const string RedisUnavailable = "REDIS_UNAVAILABLE";
+    public const string PasswordHashingError = "PASSWORD_HASHING_ERROR";
+    public const string ExternalServiceUnavailable = "EXTERNAL_SERVICE_UNAVAILABLE";
 
     // Access control
-    public const string Unauthorized = "Unauthorized";
-    public const string Forbidden = "Forbidden";
+    public const string Unauthorized = "UNAUTHORIZED";
+    public const string Forbidden = "FORBIDDEN";
 
     // Rate limiting
-    public const string RateLimited = "RateLimited";
-    public const string TooFrequentEmailRequest = "TooFrequentEmailRequest";
+    public const string RateLimited = "RATE_LIMITED";
+    public const string TooFrequentEmailRequest = "TOO_FREQUENT_EMAIL_REQUEST";
+    
+    // Email request
+    public const string EmailSendFailed = "EMAIL_SEND_FAILED";
 
     // Optional: Map to description
     public static readonly Dictionary<string, string> Descriptions = new()
@@ -68,6 +71,8 @@ public static class AuditLogReasons
         { Forbidden, "User does not have permission" },
 
         { RateLimited, "Too many requests in short time" },
-        { TooFrequentEmailRequest, "Email requests are too frequent" }
+        { TooFrequentEmailRequest, "Email requests are too frequent" },
+        
+        { EmailSendFailed, "Failed to send email" },
     };
 }

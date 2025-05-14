@@ -26,6 +26,8 @@ public class ContextHeaderMiddleware
         Set("RoleId", "X-Role-Id");
         Set("TraceId", "X-Trace-Id");
         Set("Locale", "X-Locale");
+        Set("ClientEmail", "X-Client-Email");
+        Set("AccountType", "X-Account-Type");
 
         await _next(context);
     }

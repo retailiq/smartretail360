@@ -1,6 +1,6 @@
 namespace SmartRetail360.Shared.Constants;
 
-public static class AuditActions
+public static class LogActions
 {
     // ===== Tenant operations =====
     public const string RegisterTenant = "REGISTER_TENANT";

@@ -2,7 +2,7 @@ using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.Application.Interfaces.Common;
 
-public interface IAuditLogger
+public interface ILogWriter
 {
-    Task LogAsync(AuditContext ctx);
+    Task WriteAsync(LogContext context, LogWriteRule rule);
 }

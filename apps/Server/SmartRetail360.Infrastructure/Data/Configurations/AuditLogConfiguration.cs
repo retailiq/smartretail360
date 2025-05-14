@@ -24,6 +24,13 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         auditLog.Property(x => x.TraceId)
             .IsRequired();
 
+        auditLog.Property(x => x.Level)
+            .HasConversion<string>()
+            .IsRequired();
+        
+        auditLog.Property(x => x.SourceModule)
+            .IsRequired(false);
+
         auditLog.Property(x => x.DetailsJson)
             .HasColumnName("Details")
             .HasColumnType("jsonb")
