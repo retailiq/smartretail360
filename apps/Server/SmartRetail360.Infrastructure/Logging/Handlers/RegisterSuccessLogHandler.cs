@@ -1,5 +1,6 @@
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Infrastructure.Logging.Policies;
+using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
 
@@ -26,12 +27,9 @@ public class RegisterSuccessLogHandler : ILogEventHandler
     public Task HandleAsync(LogContext context)
     {
         var policy = _policyProvider.GetPolicy(EventType, null);
-
-        context.IsSuccess = true;
         context.Action = _userContext.AccountType == AccountType.UserAccount
-            ? "USER_REGISTER"
-            : "REGISTER_TENANT";
-
+            ? LogActions.UserRegister
+            : LogActions.TenantRegister;
         return _logWriter.WriteAsync(context, policy);
     }
 }

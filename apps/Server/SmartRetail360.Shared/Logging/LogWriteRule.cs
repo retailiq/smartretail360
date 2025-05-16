@@ -6,7 +6,9 @@ public class LogWriteRule
 {
     public bool WriteAudit { get; set; } = true;
     public bool WriteSystemLog { get; set; } = false;
-    public string? SystemLogAction { get; set; }
-    public string? SystemLogCategory { get; set; }
-    public LogLevel SystemLogLevel { get; set; } = LogLevel.Information;
+    public bool SendToSentry { get; set; } = false;
+    public LogLevel LogLevel { get; set; } = LogLevel.Information;
+    public string? LogAction { get; set; }      
+    public bool? IsSuccess { get; set; }      
+    public string? LogCategory { get; set; }  
 }

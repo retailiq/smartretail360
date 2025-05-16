@@ -14,7 +14,7 @@ migrate-update:
     --startup-project ./SmartRetail360.API/SmartRetail360.API.csproj \
     --context AppDbContext
     
-migrate-add:
+migrate-add name:
   dotnet ef migrations add {{name}} \
     --project ./SmartRetail360.Infrastructure/SmartRetail360.Infrastructure.csproj \
     --startup-project ./SmartRetail360.API/SmartRetail360.API.csproj \

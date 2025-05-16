@@ -23,4 +23,12 @@ public class AppOptions
     public double EmailSendLimitMinutes { get; set; } = 3;
     
     public double RegistrationLockTtlSeconds { get; set; } = 10;
+    
+    public double LogSamplingLimitMinutes { get; set; } = 2;
+    
+    public long RequestTimeoutThresholdMs { get; set; } = 3000;
+    public int RequestBodyMaxLength { get; set; } = 2048;
+    public bool EnableRequestBodyLogging { get; set; } = true;
+    public bool EnableSensitiveFieldMasking { get; set; } = true;
+    public List<string> SensitiveFields { get; set; } = new() { "password", "token", "apiKey" };
 }

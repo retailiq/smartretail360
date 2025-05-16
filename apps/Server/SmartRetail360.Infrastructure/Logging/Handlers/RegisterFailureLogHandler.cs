@@ -4,22 +4,21 @@ using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
 
+namespace SmartRetail360.Infrastructure.Logging.Handlers;
+
 public class RegisterFailureLogHandler : ILogEventHandler
 {
     private readonly ILogWritePolicyProvider _policyProvider;
     private readonly ILogWriter _logWriter;
-    private readonly ILogActionResolver _actionResolver;
-
+    
     public LogEventType EventType => LogEventType.RegisterFailure;
 
     public RegisterFailureLogHandler(
         ILogWritePolicyProvider policyProvider,
-        ILogWriter logWriter,
-        ILogActionResolver actionResolver)
+        ILogWriter logWriter)
     {
         _policyProvider = policyProvider;
         _logWriter = logWriter;
-        _actionResolver = actionResolver;
     }
 
     public Task HandleAsync(LogContext context)

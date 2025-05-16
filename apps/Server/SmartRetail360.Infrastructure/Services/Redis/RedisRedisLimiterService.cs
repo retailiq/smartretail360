@@ -1,13 +1,13 @@
 using SmartRetail360.Application.Interfaces.Services;
 using StackExchange.Redis;
 
-namespace SmartRetail360.Infrastructure.Services.Common;
+namespace SmartRetail360.Infrastructure.Services.Redis;
 
-public class RedisLimiterService : ILimiterService
+public class RedisRedisLimiterService : IRedisLimiterService
 {
     private readonly IDatabase _redis;
 
-    public RedisLimiterService(IConnectionMultiplexer redis)
+    public RedisRedisLimiterService(IConnectionMultiplexer redis)
     {
         _redis = redis.GetDatabase();
     }

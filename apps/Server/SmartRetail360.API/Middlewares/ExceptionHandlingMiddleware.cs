@@ -9,6 +9,8 @@ using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Exceptions;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Responses;
+using Sentry;
+using Sentry.Protocol;
 
 namespace SmartRetail360.API.Middlewares;
 
@@ -33,10 +35,37 @@ public class ExceptionHandlingMiddleware
     {
         try
         {
-            await _next(context); // 调用下一个中间件
+            await _next(context); // call the next middleware
         }
         catch (Exception ex)
         {
+            var userContext = context.RequestServices.GetService<IUserContextService>();
+
+            var userId = userContext?.UserId;
+
+            SentrySdk.ConfigureScope(scope =>
+            {
+                if (userId is Guid uid)
+                {
+                    scope.User = new SentryUser
+                    {
+                        Id = uid.ToString(),
+                        Email = userContext?.ClientEmail
+                    };
+                }
+
+                if (userContext?.TenantId is Guid tenantId)
+                    scope.SetTag("TenantId", tenantId.ToString());
+
+                if (!string.IsNullOrWhiteSpace(userContext?.TraceId))
+                    scope.SetTag("TraceId", userContext.TraceId);
+
+                if (!string.IsNullOrWhiteSpace(userContext?.Module))
+                    scope.SetTag("Module", userContext.Module);
+            });
+
+            SentrySdk.CaptureException(ex);
+            
             _logger.LogError(ex, "Unhandled exception occurred.");
             await HandleExceptionAsync(context, ex);
         }
@@ -80,3 +109,4 @@ public class ExceptionHandlingMiddleware
         await context.Response.WriteAsync(json);
     }
 }
+

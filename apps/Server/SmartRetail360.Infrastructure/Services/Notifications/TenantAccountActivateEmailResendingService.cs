@@ -26,7 +26,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
     private readonly IUserContextService _userContext;
     private readonly MessageLocalizer _localizer;
     private readonly EmailContext _emailContext;
-    private readonly ILimiterService _limiterService;
+    private readonly IRedisLimiterService _redisLimiterService;
     
     public TenantAccountActivateEmailResendingService(
         AppDbContext dbContext,
@@ -34,7 +34,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         IUserContextService userContext,
         MessageLocalizer localizer,
         EmailContext emailContext,
-        ILimiterService limiterService
+        IRedisLimiterService redisLimiterService
         )
     {
         _dbContext = dbContext;
@@ -42,7 +42,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         _userContext = userContext;
         _localizer = localizer;
         _emailContext = emailContext;
-        _limiterService = limiterService;
+        _redisLimiterService = redisLimiterService;
     }
 
     public async Task<ApiResponse<object>> ResendEmailAsync(string email)
@@ -53,7 +53,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         if (tenant.IsEmailVerified) throw new CommonException(ErrorCodes.AccountAlreadyActivated);
         
         var redisKey = RedisKeys.ResendAccountActivationEmail(email);
-        if (await _limiterService.IsLimitedAsync(redisKey))
+        if (await _redisLimiterService.IsLimitedAsync(redisKey))
             throw new CommonException(ErrorCodes.TooFrequentEmailRequest);
 
         tenant.EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
@@ -76,7 +76,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
             variables: variables
         );
         
-        await _limiterService.SetLimitAsync(redisKey, TimeSpan.FromMinutes(_appOptions.EmailSendLimitMinutes));
+        await _redisLimiterService.SetLimitAsync(redisKey, TimeSpan.FromMinutes(_appOptions.EmailSendLimitMinutes));
         
         return ApiResponse<object>.Ok(
             null,

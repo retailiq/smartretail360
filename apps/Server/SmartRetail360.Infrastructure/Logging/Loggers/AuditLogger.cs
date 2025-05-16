@@ -30,6 +30,7 @@ public class AuditLogger : IAuditLogger
 
         var log = new AuditLog
         {
+            LogId = ctx.LogId,
             Action = ctx.Action,
             IsSuccess = ctx.IsSuccess,
             TraceId = _userContext.TraceId ?? Guid.NewGuid().ToString(),

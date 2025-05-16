@@ -51,8 +51,8 @@
     <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>
     <data name="InvalidToken" xml:space="preserve"><value>Invalid token</value></data>
     <data name="TokenExpired" xml:space="preserve"><value>Token has expired</value></data>
-    <data name="AccountAlreadyActivated" xml:space="preserve"><value>Account has already been activated</value></data>
-    <data name="AccountExists" xml:space="preserve"><value>The account already exists</value></data>
+    <data name="AccountExistsButNotActivated" xml:space="preserve"><value>This account already exists but has not been activated yet. Please check your email or resend the activation link.</value></data>
+    <data name="AccountAlreadyActivated" xml:space="preserve"><value>This account has already been activated. Please log in directly.</value></data>
     
     <!-- Operation restrictions -->
     <data name="RateLimitExceeded" xml:space="preserve"><value>Rate limit exceeded</value></data>

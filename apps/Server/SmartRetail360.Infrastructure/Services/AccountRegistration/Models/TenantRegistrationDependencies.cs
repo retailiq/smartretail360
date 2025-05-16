@@ -14,7 +14,7 @@ public class TenantRegistrationDependencies
     public required IUserContextService UserContext { get; init; }
     public required MessageLocalizer Localizer { get; init; }
     public required EmailContext EmailContext { get; init; }
-    public required ILockService LockService { get; init; }
+    public required IRedisLockService RedisLockService { get; init; }
     public required AppOptions AppOptions { get; init; }
     public IAuditLogger AuditLogger { get; init; } 
     public required ILogDispatcher LogDispatcher { get; init; }

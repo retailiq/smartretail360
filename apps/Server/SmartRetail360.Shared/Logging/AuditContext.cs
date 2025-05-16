@@ -5,6 +5,7 @@ namespace SmartRetail360.Shared.Logging;
 
 public class AuditContext
 {
+    public required string LogId { get; init; }
     public required string Action { get; init; }
     public required bool IsSuccess { get; init; }
     public LogLevel Level { get; init; } = LogLevel.Information;

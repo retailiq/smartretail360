@@ -11,9 +11,9 @@ public class DefaultLogActionResolver : ILogActionResolver
         return (eventType, accountType) switch
         {
             (LogEventType.RegisterSuccess, AccountType.UserAccount) => LogActions.UserRegister,
-            (LogEventType.RegisterSuccess, AccountType.TenantAccount) => LogActions.RegisterTenant,
+            (LogEventType.RegisterSuccess, AccountType.TenantAccount) => LogActions.TenantRegister,
             (LogEventType.RegisterFailure, AccountType.UserAccount) => LogActions.UserRegister,
-            (LogEventType.RegisterFailure, AccountType.TenantAccount) => LogActions.RegisterTenant,
+            (LogEventType.RegisterFailure, AccountType.TenantAccount) => LogActions.TenantRegister,
             _ => "UNKNOWN_ACTION"
         };
     }

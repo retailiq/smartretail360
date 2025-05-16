@@ -51,8 +51,8 @@
     <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>
     <data name="InvalidToken" xml:space="preserve"><value>令牌无效</value></data>
     <data name="TokenExpired" xml:space="preserve"><value>令牌已过期</value></data>
-    <data name="AccountAlreadyActivated" xml:space="preserve"><value>该账户已激活，请重复操作</value></data>
-    <data name="AccountExists" xml:space="preserve"><value>该账户已存在</value></data>
+    <data name="AccountExistsButNotActivated" xml:space="preserve"><value>该账户已存在但尚未激活。请检查您的邮箱或重新发送激活链接。</value></data>
+    <data name="AccountAlreadyActivated" xml:space="preserve"><value>该账户已激活，请直接登录。</value></data>
     
     <!-- Operation restrictions -->
     <data name="RateLimitExceeded" xml:space="preserve"><value>请求过于频繁</value></data>

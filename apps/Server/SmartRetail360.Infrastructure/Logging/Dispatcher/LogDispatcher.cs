@@ -1,40 +1,48 @@
 using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Infrastructure.Services.Redis;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
+using SmartRetail360.Shared.Options;
+using SmartRetail360.Shared.Redis;
 
 namespace SmartRetail360.Infrastructure.Logging.Dispatcher;
 
 public class LogDispatcher : ILogDispatcher
 {
     private readonly Dictionary<LogEventType, ILogEventHandler> _handlers;
-    private readonly ILogActionResolver _actionResolver;
-    private readonly IUserContextService _userContext;
+    private readonly IRedisLogSamplingService _redisLogSampling;
+    private readonly AppOptions _appOptions;
 
     public LogDispatcher(IEnumerable<
-        ILogEventHandler> handlers, 
-        ILogActionResolver actionResolver,
-        IUserContextService userContext)
+            ILogEventHandler> handlers,
+        IRedisLogSamplingService redisLogSampling,
+        AppOptions appOptions)
     {
         _handlers = handlers.ToDictionary(h => h.EventType);
-        _actionResolver = actionResolver;
-        _userContext = userContext;
+        _redisLogSampling = redisLogSampling;
+        _appOptions = appOptions;
     }
 
-    public Task Dispatch(LogEventType eventType, string? email = null, string? reason = null, string? errorStack = null)
+    public async Task Dispatch(LogEventType eventType, string? email = null, string? reason = null,
+        string? errorStack = null)
     {
         if (_handlers.TryGetValue(eventType, out var handler))
         {
             var context = new LogContext
             {
+                LogId = Guid.NewGuid().ToString(),
                 Email = email,
                 Reason = reason,
-                ErrorStack = errorStack,
-                Action = _actionResolver.ResolveAction(eventType, _userContext.AccountType)
+                ErrorStack = errorStack
             };
 
-            return handler.HandleAsync(context);
-        }
+            var samplingKey = RedisKeys.LogSampling(eventType, reason ?? "unknown");
 
-        return Task.CompletedTask;
+            if (_appOptions.LogSamplingLimitMinutes <= 0 ||
+                await _redisLogSampling.ShouldSampleAsync(samplingKey, TimeSpan.FromMinutes(_appOptions.LogSamplingLimitMinutes)))
+            {
+                await handler.HandleAsync(context);
+            }
+        }
     }
 }

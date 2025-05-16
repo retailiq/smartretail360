@@ -26,6 +26,8 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
+appsettings.json
+appsettings.Development.json
 
 # VSCode / JetBrains
 .vscode/

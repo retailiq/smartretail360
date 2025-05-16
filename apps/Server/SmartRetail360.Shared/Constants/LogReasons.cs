@@ -7,7 +7,6 @@ public static class LogReasons
     public const string EmailAlreadyExists = "EMAIL_ALREADY_EXISTS";
     public const string InvalidEmailFormat = "INVALID_EMAIL_FORMAT";
     public const string PasswordTooWeak = "PASSWORD_TOO_WEAK";
-    public const string DatabaseSaveFailed = "DATABASE_SAVE_FAILED";
     public const string MissingRequiredFields = "MISSING_REQUIRED_FIELDS";
     public const string UnexpectedError = "UNEXPECTED_ERROR";
     public const string InvalidRequest = "INVALID_REQUEST";
@@ -16,9 +15,11 @@ public static class LogReasons
     public const string InvalidToken = "INVALID_TOKEN";
     public const string TokenExpired = "TOKEN_EXPIRED";
     public const string TokenGenerationError = "TOKEN_GENERATION_ERROR";
+    public const string InvalidCredentials = "INVALID_CREDENTIALS";
 
     // Tenant-specific
-    public const string TenantAlreadyExists = "TENANT_ALREADY_EXISTS";
+    public const string TenantAccountAlreadyExists = "TENANT_ACCOUNT_ALREADY_EXISTS";
+    public const string TenantAccountExistsButNotActivated = "TENANT_ACCOUNT_EXISTS_BUT_NOT_ACTIVATED";
     public const string TenantNotFound = "TENANT_NOT_FOUND";
 
     // Email & Notification
@@ -40,7 +41,10 @@ public static class LogReasons
     
     // Email request
     public const string EmailSendFailed = "EMAIL_SEND_FAILED";
-
+    
+    // Database operations
+    public const string DatabaseOperationFailed = "DATABASE_OPERATION_FAILED";
+    
     // Optional: Map to description
     public static readonly Dictionary<string, string> Descriptions = new()
     {
@@ -48,7 +52,6 @@ public static class LogReasons
         { EmailAlreadyExists, "AdminEmail already exists" },
         { InvalidEmailFormat, "Invalid email format" },
         { PasswordTooWeak, "Password does not meet complexity rules" },
-        { DatabaseSaveFailed, "Failed to save tenant to database" },
         { MissingRequiredFields, "One or more required fields are missing" },
         { UnexpectedError, "Unexpected internal error occurred" },
         { InvalidRequest, "The request payload is invalid" },
@@ -57,7 +60,7 @@ public static class LogReasons
         { TokenExpired, "Token has expired" },
         { TokenGenerationError, "Failed to generate token" },
 
-        { TenantAlreadyExists, "Tenant with same slug or email already exists" },
+        { TenantAccountAlreadyExists, "Tenant with same slug or email already exists" },
         { TenantNotFound, "Target tenant was not found" },
 
         { ActivationEmailFailed, "Failed to send activation email" },
@@ -74,5 +77,7 @@ public static class LogReasons
         { TooFrequentEmailRequest, "Email requests are too frequent" },
         
         { EmailSendFailed, "Failed to send email" },
+        
+        { DatabaseOperationFailed, "Database operation failed" },
     };
 }

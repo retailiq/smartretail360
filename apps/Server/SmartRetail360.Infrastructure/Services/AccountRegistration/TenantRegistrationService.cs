@@ -1,14 +1,12 @@
-using System.Net;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using SmartRetail360.Application.DTOs.AccountRegistration.Requests;
 using SmartRetail360.Application.DTOs.AccountRegistration.Responses;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
-using SmartRetail360.Shared.Catalogs;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
-using SmartRetail360.Shared.Exceptions;
 using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
@@ -22,7 +20,6 @@ public class TenantRegistrationService : ITenantRegistrationService
     public TenantRegistrationService(TenantRegistrationDependencies dep)
     {
         _dep = dep;
-        _dep.UserContext.Module = LogSourceModules.RegisterTenantService;
     }
 
     public async Task<ApiResponse<TenantRegisterResponse>> RegisterTenantAsync(TenantRegisterRequest request)
@@ -37,15 +34,20 @@ public class TenantRegistrationService : ITenantRegistrationService
 
         var lockKey = RedisKeys.RegisterAccountLock(request.AdminEmail.ToLower());
         var lockAcquired =
-            await _dep.LockService.AcquireLockAsync(lockKey,
+            await _dep.RedisLockService.AcquireLockAsync(lockKey,
                 TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
         if (!lockAcquired)
         {
             await _dep.LogDispatcher.Dispatch(
                 LogEventType.RegisterFailure,
-                reason: LogReasons.LockNotAcquired
+                reason: LogReasons.LockNotAcquired,
+                email: request.AdminEmail
             );
-            throw new CommonException(ErrorCodes.DuplicateRegisterAttempt);
+            return ApiResponse<TenantRegisterResponse>.Fail(
+                ErrorCodes.DuplicateRegisterAttempt,
+                _dep.Localizer.GetErrorMessage(ErrorCodes.DuplicateRegisterAttempt),
+                traceId
+            );
         }
 
         // await Task.Delay(TimeSpan.FromSeconds(30));
@@ -53,13 +55,40 @@ public class TenantRegistrationService : ITenantRegistrationService
         try
         {
             var existingTenant = await _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == request.AdminEmail);
-            if (existingTenant != null)
+            if (existingTenant is { IsEmailVerified: true })
             {
                 await _dep.LogDispatcher.Dispatch(
                     LogEventType.RegisterFailure,
-                    reason: LogReasons.TenantAlreadyExists
+                    reason: LogReasons.TenantAccountAlreadyExists,
+                    email: request.AdminEmail
                 );
-                throw new CommonException(ErrorCodes.AccountExists, HttpStatusCode.Conflict);
+
+                // await _dep.LogDispatcher.Dispatch(
+                //     LogEventType.LoginFailure,
+                //     reason: LogReasons.InvalidCredentials,
+                //     email: request.AdminEmail
+                // );
+
+                return ApiResponse<TenantRegisterResponse>.Fail(
+                    ErrorCodes.AccountAlreadyActivated,
+                    _dep.Localizer.GetErrorMessage(ErrorCodes.AccountAlreadyActivated),
+                    traceId
+                );
+            }
+            
+            if (existingTenant is { IsEmailVerified: false })
+            {
+                await _dep.LogDispatcher.Dispatch(
+                    LogEventType.RegisterFailure,
+                    reason: LogReasons.TenantAccountExistsButNotActivated,
+                    email: request.AdminEmail
+                );
+                
+                return ApiResponse<TenantRegisterResponse>.Fail(
+                    ErrorCodes.AccountExistsButNotActivated,
+                    _dep.Localizer.GetErrorMessage(ErrorCodes.AccountExistsButNotActivated),
+                    traceId
+                );
             }
 
             var passwordHash = PasswordHelper.HashPassword(request.Password);
@@ -74,8 +103,30 @@ public class TenantRegistrationService : ITenantRegistrationService
                 LastEmailSentAt = DateTime.UtcNow
             };
             // await Task.Delay(TimeSpan.FromSeconds(30));
-            _dep.Db.Tenants.Add(tenant);
-            await _dep.Db.SaveChangesAsync();
+            // _dep.Db.Tenants.Add(tenant);
+            // await _dep.Db.SaveChangesAsync();
+
+            try
+            {
+                _dep.Db.Tenants.Add(tenant);
+                await _dep.Db.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
+            {
+                await _dep.LogDispatcher.Dispatch(
+                    LogEventType.RegisterFailure,
+                    reason: LogReasons.DatabaseOperationFailed,
+                    errorStack: pgEx.Message,
+                    email: request.AdminEmail
+                );
+
+                return ApiResponse<TenantRegisterResponse>.Fail(
+                    ErrorCodes.DatabaseUnavailable,
+                    _dep.Localizer.GetErrorMessage(ErrorCodes.DatabaseUnavailable),
+                    traceId
+                );
+            }
+
 
             var variables = new Dictionary<string, string>
             {
@@ -99,13 +150,18 @@ public class TenantRegistrationService : ITenantRegistrationService
                 await _dep.LogDispatcher.Dispatch(
                     LogEventType.RegisterFailure,
                     reason: LogReasons.EmailSendFailed,
-                    errorStack: ex.Message
+                    errorStack: ex.Message,
+                    email: request.AdminEmail
                 );
 
-                throw new CommonException(ErrorCodes.EmailSendFailed, HttpStatusCode.ServiceUnavailable);
+                return ApiResponse<TenantRegisterResponse>.Fail(
+                    ErrorCodes.EmailSendFailed,
+                    _dep.Localizer.GetErrorMessage(ErrorCodes.EmailSendFailed),
+                    traceId
+                );
             }
 
-            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess);
+            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess, email: request.AdminEmail);
 
             return ApiResponse<TenantRegisterResponse>.Ok(
                 new TenantRegisterResponse
@@ -120,7 +176,7 @@ public class TenantRegistrationService : ITenantRegistrationService
         }
         finally
         {
-            await _dep.LockService.ReleaseLockAsync(lockKey);
+            await _dep.RedisLockService.ReleaseLockAsync(lockKey);
         }
     }
 }

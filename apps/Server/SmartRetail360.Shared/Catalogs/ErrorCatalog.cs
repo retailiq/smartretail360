@@ -26,7 +26,7 @@ public static class ErrorCatalog
         { ErrorCodes.InvalidToken, "InvalidToken" },
         { ErrorCodes.TokenExpired, "TokenExpired" },
         { ErrorCodes.AccountAlreadyActivated, "AccountAlreadyActivated" },
-        { ErrorCodes.AccountExists, "AccountExists"},
+        { ErrorCodes.AccountExistsButNotActivated, "AccountExistsButNotActivated" },
 
         // Operation restrictions
         { ErrorCodes.RateLimitExceeded, "RateLimitExceeded" },

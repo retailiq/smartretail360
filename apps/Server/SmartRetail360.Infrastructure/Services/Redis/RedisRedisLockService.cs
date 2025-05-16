@@ -3,11 +3,11 @@ using StackExchange.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Common;
 
-public class RedisLockService : ILockService
+public class RedisRedisLockService : IRedisLockService
 {
     private readonly IDatabase _redis;
 
-    public RedisLockService(IConnectionMultiplexer connection)
+    public RedisRedisLockService(IConnectionMultiplexer connection)
     {
         _redis = connection.GetDatabase();
     }

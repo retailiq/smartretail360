@@ -27,8 +27,8 @@ using SmartRetail360.Infrastructure.Logging.Dispatcher;
 using SmartRetail360.Infrastructure.Logging.Handlers;
 using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
-// using SmartRetail360.Infrastructure.Services.AccountRegistration.Loggers;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+using SmartRetail360.Infrastructure.Services.Redis;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 
@@ -70,12 +70,11 @@ public static class DependencyInjection
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]);
         services.AddSingleton<IConnectionMultiplexer>(redis);
         // Redis Limiter
-        services.AddScoped<ILimiterService, RedisLimiterService>();
+        services.AddScoped<IRedisLimiterService, RedisRedisLimiterService>();
         // Redis Lock
-        services.AddScoped<ILockService, RedisLockService>();
-        
-        // Register the Audit Logger
-        // services.AddScoped<AuditLogger>();
+        services.AddScoped<IRedisLockService, RedisRedisLockService>();
+        // Redis Log Sampling
+        services.AddScoped<IRedisLogSamplingService, RedisLogSamplingLogSamplingService>();
         
         // Register the Tenant Registration Dependencies
         services.AddScoped<TenantRegistrationDependencies>(sp => new TenantRegistrationDependencies
@@ -84,7 +83,7 @@ public static class DependencyInjection
             UserContext = sp.GetRequiredService<IUserContextService>(),
             Localizer = sp.GetRequiredService<MessageLocalizer>(),
             EmailContext = sp.GetRequiredService<EmailContext>(),
-            LockService = sp.GetRequiredService<ILockService>(),
+            RedisLockService = sp.GetRequiredService<IRedisLockService>(),
             AppOptions = sp.GetRequiredService<AppOptions>(),
             AuditLogger = sp.GetRequiredService<IAuditLogger>(),
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>() 
@@ -101,8 +100,9 @@ public static class DependencyInjection
         
         services.AddSingleton<ILogWritePolicyProvider, DefaultLogWritePolicyProvider>();
         services.AddScoped<ILogWriter, DefaultLogWriter>();
-        services.AddSingleton<ILogActionResolver, DefaultLogActionResolver>();
+        // services.AddSingleton<ILogActionResolver, DefaultLogActionResolver>();
         
+       
         
         return services;
     }

@@ -20,7 +20,7 @@ public class ContextHeaderMiddleware
             if (headers.TryGetValue(headerKey, out var value))
                 context.Items[key] = value.ToString();
         }
-
+        
         Set("UserId", "X-User-Id");
         Set("TenantId", "X-Tenant-Id");
         Set("RoleId", "X-Role-Id");
@@ -28,7 +28,18 @@ public class ContextHeaderMiddleware
         Set("Locale", "X-Locale");
         Set("ClientEmail", "X-Client-Email");
         Set("AccountType", "X-Account-Type");
-
+        
+        // Add TraceId to response headers
+        context.Response.OnStarting(() =>
+        {
+            if (context.Items.TryGetValue("TraceId", out var traceIdObj) && traceIdObj is string traceId)
+            {
+                context.Response.Headers["X-Trace-Id"] = traceId;
+            }
+            return Task.CompletedTask;
+        });
+        
         await _next(context);
+        
     }
 }

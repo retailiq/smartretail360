@@ -16,9 +16,11 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             {
                 WriteAudit = true,
                 WriteSystemLog = true,
-                SystemLogAction = LogActions.SendEmailFailed,
-                SystemLogCategory = LogCategory.System,
-                SystemLogLevel = LogLevel.Error
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogAction = LogActions.TenantRegister,
+                LogCategory = LogCategory.System
             }
         },
         {
@@ -27,18 +29,37 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             {
                 WriteAudit = true,
                 WriteSystemLog = true,
-                SystemLogAction = LogActions.GenerateAccountLockFailed,
-                SystemLogCategory = LogCategory.System,
-                SystemLogLevel = LogLevel.Error
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.TenantRegister,
+                LogCategory = LogCategory.System
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.TenantAlreadyExists),
+            (LogEventType.RegisterFailure, LogReasons.DatabaseOperationFailed),
             new LogWriteRule
             {
                 WriteAudit = true,
                 WriteSystemLog = true,
-                SystemLogLevel = LogLevel.Error
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.TenantRegister,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.RegisterFailure, LogReasons.TenantAccountAlreadyExists),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.TenantRegister,
+                LogCategory = LogCategory.Application
             }
         },
         {
@@ -47,9 +68,46 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             {
                 WriteAudit = true,
                 WriteSystemLog = true,
-                SystemLogAction = "RegisterSuccess",
-                SystemLogCategory = LogCategory.Application,
-                SystemLogLevel = LogLevel.Information
+                SendToSentry = false,
+                IsSuccess = true,
+                LogAction = LogActions.TenantRegister,
+                LogLevel = LogLevel.Information,
+                LogCategory = LogCategory.Application
+            }
+        },
+        {
+            (LogEventType.LoginFailure, LogReasons.InvalidCredentials),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.UserLogin,
+                LogCategory = LogCategory.Security
+            }
+        },
+        {
+            (LogEventType.LoginSuccess, null),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.UserLogin,
+                IsSuccess = true,
+                LogCategory = LogCategory.Security
+            }
+        },
+        {
+            (LogEventType.CopilotQuery, null),
+            new LogWriteRule
+            {
+                WriteAudit = false,
+                WriteSystemLog = true,
+                LogLevel = LogLevel.Information
             }
         }
     };
@@ -58,6 +116,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
     {
         return _rules.TryGetValue((eventType, reason), out var rule)
             ? rule
-            : new LogWriteRule { WriteAudit = true }; // 默认策略：只写审计日志
+            : new LogWriteRule { WriteAudit = true };
     }
 }
+// Default Mode: Audit 

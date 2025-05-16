@@ -7,6 +7,7 @@ namespace SmartRetail360.Domain.Entities;
 public class AuditLog
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public string LogId { get; set; } = string.Empty;
     public Guid? UserId { get; set; }
     public Guid? TenantId { get; set; }
     public string Action { get; set; } = string.Empty;

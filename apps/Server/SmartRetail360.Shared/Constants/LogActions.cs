@@ -3,14 +3,13 @@ namespace SmartRetail360.Shared.Constants;
 public static class LogActions
 {
     // ===== Tenant operations =====
-    public const string RegisterTenant = "REGISTER_TENANT";
+    public const string TenantRegister = "TENANT_REGISTER";
     public const string UpdateTenantInfo = "UPDATE_TENANT_INFO";
     public const string DeleteTenant = "DELETE_TENANT";
 
     // ===== User operations =====
     public const string UserRegister = "USER_REGISTER";
-    public const string UserLoginSuccess = "USER_LOGIN_SUCCESS";
-    public const string UserLoginFailed = "USER_LOGIN_FAILED";
+    public const string UserLogin = "USER_LOGIN";
     public const string UserLogout = "USER_LOGOUT";
     public const string UserResetPassword = "USER_RESET_PASSWORD";
     public const string UserUpdateProfile = "USER_UPDATE_PROFILE";
@@ -60,4 +59,7 @@ public static class LogActions
     
     // ===== Email Sending =====
     public const string SendEmailFailed = "SEND_EMAIL_FAILED";
+    
+    // ===== Others =====
+    public const string UnknownError = "UNKNOWN_ERROR";
 }

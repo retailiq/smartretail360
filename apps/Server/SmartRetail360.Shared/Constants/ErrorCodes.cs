@@ -22,7 +22,7 @@ public static class ErrorCodes
     public const int InvalidToken = 5006;
     public const int TokenExpired = 5007;
     public const int AccountAlreadyActivated = 5008;
-    public const int AccountExists = 5009;
+    public const int AccountExistsButNotActivated = 5009;
 
     // Operation restrictions
     public const int RateLimitExceeded = 6001;
@@ -35,4 +35,7 @@ public static class ErrorCodes
     
     // Email-related
     public const int EmailSendFailed = 8001;
+    
+    //Others
+    public const int InvalidEmailFormat = 9001;
 }

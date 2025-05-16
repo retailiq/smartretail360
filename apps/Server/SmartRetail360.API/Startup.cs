@@ -6,7 +6,9 @@ using Microsoft.Extensions.Options;
 using SmartRetail360.API.Extensions;
 using SmartRetail360.API.Middlewares;
 using SmartRetail360.Application;
+using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure;
+using SmartRetail360.Infrastructure.Logging.Context;
 using SmartRetail360.Infrastructure.Middlewares;
 
 namespace SmartRetail360.API;
@@ -40,6 +42,9 @@ public class Startup
                 new UrlSegmentApiVersionReader()
             );
         });
+        
+        services.AddHttpContextAccessor();
+        services.AddScoped<ILogContextAccessor, LogContextAccessor>();
 
         // Swagger API 文档版本化
         services.AddVersionedApiExplorer(options =>
@@ -74,9 +79,10 @@ public class Startup
         });
 
         // 全局异常中间件
-        app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseMiddleware<ContextHeaderMiddleware>();
-        // app.UseMiddleware<AuditLogMiddleware>();
+        app.UseMiddleware<LoggingContextMiddleware>();
+        app.UseRequestLogging();
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         if (env.IsDevelopment())
         {

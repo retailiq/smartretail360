@@ -30,6 +30,9 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         
         auditLog.Property(x => x.SourceModule)
             .IsRequired(false);
+        
+        auditLog.Property(x => x.LogId)
+            .IsRequired();      
 
         auditLog.Property(x => x.DetailsJson)
             .HasColumnName("Details")

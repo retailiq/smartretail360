@@ -21,7 +21,7 @@ public class TenantAccountEmailVerificationService : IEmailVerificationService
         AppDbContext dbContext, 
         IUserContextService userContext, 
         MessageLocalizer localizer,
-        ILimiterService limiterService)
+        IRedisLimiterService redisLimiterService)
     {
         _dbContext = dbContext;
         _userContext = userContext;

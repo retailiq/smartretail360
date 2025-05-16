@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -6,6 +7,13 @@ using SmartRetail360.API.Middlewares;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 using System.Globalization;
+using Grafana.OpenTelemetry;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using SmartRetail360.Application.Interfaces.Logging;
+using SmartRetail360.Infrastructure.Logging.Context;
 
 namespace SmartRetail360.API.Extensions;
 
@@ -16,7 +24,8 @@ public static class DependencyInjection
         // Controller
         services.AddControllers().AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            options.JsonSerializerOptions.DefaultIgnoreCondition =
+                System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
         });
 
         services.AddEndpointsApiExplorer();
@@ -24,10 +33,10 @@ public static class DependencyInjection
         // App 配置
         services.Configure<AppOptions>(config.GetSection("App"));
         services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AppOptions>>().Value);
-        
+
         // Register MultiLanguage Resources
         services.AddLocalization(options => { options.ResourcesPath = "Localization"; });
-        
+
         // 国际化
         var appOptions = config.GetSection("App").Get<AppOptions>();
         var supportedCultures = appOptions.SupportedCultures?.Any() == true
@@ -40,7 +49,7 @@ public static class DependencyInjection
             options.SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
             options.SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
         });
-        
+
         services.AddScoped<MessageLocalizer>();
 
         // Swagger
@@ -71,8 +80,26 @@ public static class DependencyInjection
                 }
             });
         });
+        
         services.ConfigureOptions<ConfigureSwaggerOptions>();
-
+        
+        services.AddOpenTelemetry()
+            .ConfigureResource(r => r.AddService("SmartRetail360.API"))
+            .WithTracing(tracing =>
+            {
+                tracing
+                    .SetSampler(new TraceIdRatioBasedSampler(0.2)) // ✅ 设置采样率
+                    .AddSource("SmartRetail360.API")
+                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri("http://localhost:4317");
+                        opt.Protocol = OtlpExportProtocol.Grpc;
+                    });
+            });
+        
+        
         return services;
     }
 }
