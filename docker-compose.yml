@@ -8,13 +8,8 @@ services:
     volumes:
       - redis-data:/data
     command: redis-server --save 60 1 --loglevel warning
-
-  redis-insight:
-    image: redis/redisinsight:latest
-    container_name: redis-insight
-    ports:
-      - "8001:8001"
-    restart: unless-stopped
+    networks:
+      - smartretail360-net
 
   alloy:
     image: grafana/alloy:latest
@@ -27,6 +22,28 @@ services:
     ports:
       - "4317:4317"  # gRPC
       - "4318:4318"  # HTTP
+    networks:
+      - smartretail360-net
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-local
+    environment:
+      POSTGRES_USER: danieltate
+      POSTGRES_PASSWORD: danieltate123
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - smartretail360-net
 
 volumes:
   redis-data:
+  postgres_data:
+
+networks:
+  smartretail360-net:
+    name: smartretail360-net
+    driver: bridge

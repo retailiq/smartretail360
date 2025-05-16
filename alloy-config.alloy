@@ -59,6 +59,8 @@ loki.process "serilog_log_processor" {
       locale     = "Properties.Locale",
       log_category = "Properties.LogCategory",
       email = "Properties.Email",
+      action = "Properties.Action",
+      account_type = "Properties.AccountType",
     }
   }
 
@@ -79,6 +81,8 @@ loki.process "serilog_log_processor" {
       locale     = "locale",
       log_category = "log_category",
       email      = "email",
+      action     = "action",
+      account_type = "account_type",
     }
   }
 

@@ -10,6 +10,8 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
 {
     private static readonly Dictionary<(LogEventType, string?), LogWriteRule> _rules = new()
     {
+        #region Register - Success & Failures
+        
         {
             (LogEventType.RegisterFailure, LogReasons.EmailSendFailed),
             new LogWriteRule
@@ -63,6 +65,19 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
+            (LogEventType.RegisterFailure, LogReasons.TenantAccountExistsButNotActivated),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.TenantRegister,
+                LogCategory = LogCategory.Application
+            }
+        },
+        {
             (LogEventType.RegisterSuccess, null),
             new LogWriteRule
             {
@@ -75,6 +90,11 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 LogCategory = LogCategory.Application
             }
         },
+        
+        #endregion
+        
+        #region Login - Success & Failures
+        
         {
             (LogEventType.LoginFailure, LogReasons.InvalidCredentials),
             new LogWriteRule
@@ -110,6 +130,8 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 LogLevel = LogLevel.Information
             }
         }
+        
+        #endregion
     };
 
     public LogWriteRule GetPolicy(LogEventType eventType, string? reason = null)
