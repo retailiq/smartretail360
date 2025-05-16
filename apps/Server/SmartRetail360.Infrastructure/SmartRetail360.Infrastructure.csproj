@@ -30,4 +30,8 @@
       <ProjectReference Include="..\SmartRetail360.Domain\SmartRetail360.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Data\Migrations\" />
+    </ItemGroup>
+
 </Project>
