@@ -84,18 +84,21 @@ public static class DependencyInjection
         
         services.ConfigureOptions<ConfigureSwaggerOptions>();
         
+        
+        // otlp url
+        var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint");
         services.AddOpenTelemetry()
             .ConfigureResource(r => r.AddService("SmartRetail360.API"))
             .WithTracing(tracing =>
             {
                 tracing
-                    .SetSampler(new TraceIdRatioBasedSampler(0.2)) // ✅ 设置采样率
+                    .SetSampler(new TraceIdRatioBasedSampler(0.2)) // ✅ Sample 20% of traces
                     .AddSource("SmartRetail360.API")
                     .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
                     .AddOtlpExporter(opt =>
                     {
-                        opt.Endpoint = new Uri("http://localhost:4317");
+                        opt.Endpoint = new Uri(otlpEndpoint);
                         opt.Protocol = OtlpExportProtocol.Grpc;
                     });
             });

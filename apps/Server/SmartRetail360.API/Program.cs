@@ -16,18 +16,13 @@ builder.Host.UseSerilog((context, services, loggerConfig) =>
         .MinimumLevel.Debug() // Set minimum log level
         .ReadFrom.Configuration(context.Configuration)
         .Enrich.FromLogContext()
-        .Enrich.WithSpan()
-        ;
+        .Enrich.WithSpan();
 });
 
 // Configure Sentry
-builder.WebHost.UseSentry(o =>
+builder.WebHost.UseSentry((WebHostBuilderContext context, Sentry.AspNetCore.SentryAspNetCoreOptions options) =>
 {
-    o.Dsn = builder.Configuration["Sentry:Dsn"];
-    o.SendDefaultPii = true;
-    o.TracesSampleRate = 1.0;
-    o.AttachStacktrace = true;
-    o.Debug = true; // Enable debug mode
+    context.Configuration.GetSection("Sentry").Bind(options);
 });
 
 // Register services from Startup
