@@ -58,9 +58,9 @@
     <data name="RateLimitExceeded" xml:space="preserve"><value>Rate limit exceeded</value></data>
     <data name="OperationNotAllowed" xml:space="preserve"><value>Operation is not allowed</value></data>
     <data name="TooFrequentEmailRequest" xml:space="preserve"><value>Too many email requests. Please try again later.</value></data>
-    <data name="InvalidTokenOrAccountAlreadyActivated" xml:space="preserve"><value>The activation link is invalid or the account has already been activated.</value>
-</data>
-
+    <data name="InvalidTokenOrAccountAlreadyActivated" xml:space="preserve"><value>The activation link is invalid or the account has already been activated.</value></data>
+    <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>You are trying to activate your account too frequently. Please try again later.</value></data>
+    
     <!-- External dependencies -->
     <data name="ExternalServiceUnavailable" xml:space="preserve"><value>External service is unavailable</value></data>
 </root>

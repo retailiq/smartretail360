@@ -31,6 +31,7 @@ using SmartRetail360.Infrastructure.Logging.Handlers;
 using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Infrastructure.Services.Messaging;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Infrastructure.Services.Redis;
@@ -94,6 +95,18 @@ public static class DependencyInjection
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>()
+        });
+        
+        // Register the Auth Dependencies
+        services.AddScoped<AuthDependencies>(sp => new AuthDependencies
+        {
+            Db = sp.GetRequiredService<AppDbContext>(),
+            UserContext = sp.GetRequiredService<IUserContextService>(),
+            Localizer = sp.GetRequiredService<MessageLocalizer>(),
+            AppOptions = sp.GetRequiredService<AppOptions>(),
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
+            RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>()
         });
 
         // Register the Notification Dependencies

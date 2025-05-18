@@ -30,14 +30,26 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             {
                 WriteAudit = true,
                 WriteSystemLog = true,
-                SendToSentry = true,
+                SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
                 LogCategory = LogCategory.System
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.DatabaseOperationFailed),
+            (LogEventType.RegisterFailure, LogReasons.DatabaseSaveFailed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.RegisterFailure, LogReasons.DatabaseRetrievalFailed),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -135,19 +147,43 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             {
                 WriteAudit = true,
                 WriteSystemLog = true,
-                SendToSentry = true,
+                SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
                 LogCategory = LogCategory.Security
             }
         },
         {
-            (LogEventType.AccountActivateFailure, LogReasons.DatabaseOperationFailed),
+            (LogEventType.AccountActivateFailure, LogReasons.DatabaseSaveFailed),
             new LogWriteRule
             {
                 WriteAudit = true,
                 WriteSystemLog = true,
                 SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.DatabaseRetrievalFailed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.TooFrequentActivationAttempt),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
                 LogCategory = LogCategory.System
@@ -195,7 +231,19 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.EmailSendFailure, LogReasons.DatabaseOperationFailed),
+            (LogEventType.EmailSendFailure, LogReasons.DatabaseSaveFailed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.EmailSendFailure, LogReasons.DatabaseRetrievalFailed),
             new LogWriteRule
             {
                 WriteAudit = true,

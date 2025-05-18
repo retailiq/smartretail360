@@ -7,6 +7,9 @@ public static class RedisKeys
 {
     public static string ResendAccountActivationEmail(string email)
         => $"email_limit:activate:{email}";
+    
+    public static string VerifyEmailRateLimit(string token)
+        => $"email_limit:verify:{token}";
 
     public static string LogSampling(LogEventType eventType, string reason)
         =>$"log:sampling:{eventType}:{reason}";

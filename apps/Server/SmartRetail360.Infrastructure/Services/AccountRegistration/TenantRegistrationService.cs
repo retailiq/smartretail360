@@ -51,8 +51,9 @@ public class TenantRegistrationService : ITenantRegistrationService
             var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
                 () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == request.AdminEmail),
                 LogEventType.RegisterFailure,
-                LogReasons.DatabaseOperationFailed,
-                ErrorCodes.DatabaseUnavailable
+                LogReasons.DatabaseRetrievalFailed,
+                ErrorCodes.DatabaseUnavailable,
+                email: request.AdminEmail
             );
 
             if (!tenantResult.IsSuccess)
@@ -88,8 +89,10 @@ public class TenantRegistrationService : ITenantRegistrationService
                     await _dep.Db.SaveChangesAsync();
                 },
                 LogEventType.RegisterFailure,
-                LogReasons.DatabaseOperationFailed,
-                ErrorCodes.DatabaseUnavailable
+                LogReasons.DatabaseSaveFailed,
+                ErrorCodes.DatabaseUnavailable,
+                email: request.AdminEmail,
+                tenantId: tenant.Id
             );
 
             if (!saveResult.IsSuccess)
@@ -118,7 +121,7 @@ public class TenantRegistrationService : ITenantRegistrationService
             if (!emailResult.IsSuccess)
                 return emailResult.ToObjectResponse().To<TenantRegisterResponse>();
 
-            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess, email: request.AdminEmail);
+            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess, email: request.AdminEmail, tenantId: tenant.Id);
 
             return ApiResponse<TenantRegisterResponse>.Ok(
                 new TenantRegisterResponse

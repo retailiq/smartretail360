@@ -8,11 +8,17 @@ public interface ISafeExecutor
         Func<Task> action,
         LogEventType logEvent,
         string reasonOnFailure,
-        int errorCode);
+        int errorCode,
+        string? email = null,
+        Guid ? tenantId = null,
+        Guid ? userId = null);
 
     Task<SafeExecutionResult<T>> ExecuteAsync<T>(
         Func<Task<T>> action,
         LogEventType logEvent,
         string reasonOnFailure,
-        int errorCode);
+        int errorCode,
+        string? email = null,
+        Guid ? tenantId = null,
+        Guid ? userId = null);
 }

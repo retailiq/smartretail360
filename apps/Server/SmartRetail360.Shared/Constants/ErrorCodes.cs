@@ -29,7 +29,8 @@ public static class ErrorCodes
     public const int OperationNotAllowed = 6002;
     public const int TooFrequentEmailRequest = 6003;
     public const int InvalidTokenOrAccountAlreadyActivated = 6004;
-
+    public const int TooFrequentActivationAttempt = 6005;
+    
     // External dependencies
     public const int ExternalServiceUnavailable = 7001;
     

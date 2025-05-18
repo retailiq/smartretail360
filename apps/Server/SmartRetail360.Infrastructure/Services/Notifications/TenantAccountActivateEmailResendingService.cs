@@ -25,8 +25,9 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
             () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == email),
             LogEventType.EmailSendFailure,
-            LogReasons.DatabaseOperationFailed,
-            ErrorCodes.DatabaseUnavailable
+            LogReasons.DatabaseRetrievalFailed,
+            ErrorCodes.DatabaseUnavailable,
+            email: email
         );
 
         if (!tenantResult.IsSuccess)
@@ -55,8 +56,10 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         var saveResult = await _dep.SafeExecutor.ExecuteAsync(
             async () => { await _dep.Db.SaveChangesAsync(); },
             LogEventType.EmailSendFailure,
-            LogReasons.DatabaseOperationFailed,
-            ErrorCodes.DatabaseUnavailable
+            LogReasons.DatabaseSaveFailed,
+            ErrorCodes.DatabaseUnavailable,
+            email: email,
+            tenantId: tenant.Id
         );
 
         if (!saveResult.IsSuccess)
@@ -83,7 +86,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
             return sendResult.ToObjectResponse();
 
         await _dep.RedisLimiterService.SetLimitAsync(redisKey, TimeSpan.FromMinutes(_dep.AppOptions.EmailSendLimitMinutes));
-        await _dep.LogDispatcher.Dispatch(LogEventType.EmailSendSuccess, email: email);
+        await _dep.LogDispatcher.Dispatch(LogEventType.EmailSendSuccess, email: email, tenantId: tenant.Id);
 
         return ApiResponse<object>.Ok(
             null,

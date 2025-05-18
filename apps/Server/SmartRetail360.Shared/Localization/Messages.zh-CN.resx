@@ -59,6 +59,7 @@
     <data name="OperationNotAllowed" xml:space="preserve"><value>操作不被允许</value></data>
     <data name="TooFrequentEmailRequest" xml:space="preserve"><value>邮件发送请求过于频繁，请稍后再试</value></data>
     <data name="InvalidTokenOrAccountAlreadyActivated" xml:space="preserve"><value>激活链接无效或账户已激活</value></data>
+    <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>您激活账户的频率过高，请稍后再试。</value></data>
     
     <!-- External dependencies -->
     <data name="ExternalServiceUnavailable" xml:space="preserve"><value>外部服务不可用</value></data>

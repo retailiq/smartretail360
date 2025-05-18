@@ -31,4 +31,6 @@ public class AppOptions
     public bool EnableRequestBodyLogging { get; set; } = true;
     public bool EnableSensitiveFieldMasking { get; set; } = true;
     public List<string> SensitiveFields { get; set; } = new() { "password", "token", "apiKey" };
+    
+    public double AccountActivationLimitMinutes { get; set; } = 1;
 }

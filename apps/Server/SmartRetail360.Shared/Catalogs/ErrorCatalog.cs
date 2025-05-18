@@ -33,6 +33,7 @@ public static class ErrorCatalog
         { ErrorCodes.OperationNotAllowed, "OperationNotAllowed" },
         { ErrorCodes.TooFrequentEmailRequest, "TooFrequentEmailRequest" },
         { ErrorCodes.InvalidTokenOrAccountAlreadyActivated, "InvalidTokenOrAccountAlreadyActivated" },
+        { ErrorCodes.TooFrequentActivationAttempt, "TooFrequentActivationAttempt" },
 
         // External dependencies
         { ErrorCodes.ExternalServiceUnavailable, "ExternalServiceUnavailable" },

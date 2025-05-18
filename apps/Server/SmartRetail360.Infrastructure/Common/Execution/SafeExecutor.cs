@@ -29,7 +29,10 @@ public class SafeExecutor : ISafeExecutor
         Func<Task> action,
         LogEventType logEvent,
         string reasonOnFailure,
-        int errorCode)
+        int errorCode,
+        string? email = null,
+        Guid? tenantId = null,
+        Guid? userId = null)
     {
         try
         {
@@ -38,12 +41,13 @@ public class SafeExecutor : ISafeExecutor
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
         {
-            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: pgEx.Message);
+            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: pgEx.Message, email: email,
+                tenantId: tenantId, userId: userId);
             return SafeExecutionResult.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }
         catch (Exception ex)
         {
-            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: ex.Message);
+            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: ex.Message, email: email);
             return SafeExecutionResult.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }
     }
@@ -52,7 +56,10 @@ public class SafeExecutor : ISafeExecutor
         Func<Task<T>> action,
         LogEventType logEvent,
         string reasonOnFailure,
-        int errorCode)
+        int errorCode,
+        string? email = null,
+        Guid? tenantId = null,
+        Guid? userId = null)
     {
         try
         {
@@ -61,12 +68,14 @@ public class SafeExecutor : ISafeExecutor
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
         {
-            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: pgEx.Message);
+            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: pgEx.Message, email: email,
+                tenantId: tenantId, userId: userId);
             return SafeExecutionResult<T>.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }
         catch (Exception ex)
         {
-            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: ex.Message);
+            await _logDispatcher.Dispatch(logEvent, reason: reasonOnFailure, errorStack: ex.Message, email: email,
+                tenantId: tenantId, userId: userId);
             return SafeExecutionResult<T>.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }
     }
