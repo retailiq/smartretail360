@@ -11,7 +11,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
     private static readonly Dictionary<(LogEventType, string?), LogWriteRule> _rules = new()
     {
         #region Register - Success & Failures
-        
+
         {
             (LogEventType.RegisterFailure, LogReasons.EmailSendFailed),
             new LogWriteRule
@@ -21,7 +21,6 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogAction = LogActions.TenantRegister,
                 LogCategory = LogCategory.System
             }
         },
@@ -34,7 +33,6 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogAction = LogActions.TenantRegister,
                 LogCategory = LogCategory.System
             }
         },
@@ -46,8 +44,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
-                LogLevel = LogLevel.Warning,
-                LogAction = LogActions.TenantRegister,
+                LogLevel = LogLevel.Error,
                 LogCategory = LogCategory.System
             }
         },
@@ -60,7 +57,6 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogAction = LogActions.TenantRegister,
                 LogCategory = LogCategory.Application
             }
         },
@@ -73,7 +69,6 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogAction = LogActions.TenantRegister,
                 LogCategory = LogCategory.Application
             }
         },
@@ -85,16 +80,15 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = true,
-                LogAction = LogActions.TenantRegister,
                 LogLevel = LogLevel.Information,
                 LogCategory = LogCategory.Application
             }
         },
-        
+
         #endregion
-        
+
         #region Login - Success & Failures
-        
+
         {
             (LogEventType.LoginFailure, LogReasons.InvalidCredentials),
             new LogWriteRule
@@ -129,8 +123,126 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 WriteSystemLog = true,
                 LogLevel = LogLevel.Information
             }
+        },
+
+        #endregion
+
+        #region Account Activate - Success & Failures
+
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.InvalidTokenOrAccountAlreadyActivated),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategory = LogCategory.Security
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.DatabaseOperationFailed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.AccountActivateSuccess, null),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                IsSuccess = true,
+                LogLevel = LogLevel.Information,
+                LogCategory = LogCategory.Application
+            }
+        },
+
+        #endregion
+
+        #region Email Sending - Success & Failures
+
+        {
+            (LogEventType.EmailSendFailure, LogReasons.TooFrequentEmailRequest),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategory = LogCategory.Application
+            }
+        },
+        {
+            (LogEventType.EmailSendFailure, LogReasons.EmailSendFailed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.EmailSendFailure, LogReasons.DatabaseOperationFailed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.EmailSendFailure, LogReasons.TenantAccountAlreadyActivated),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategory = LogCategory.Application
+            }
+        },
+        {
+            (LogEventType.EmailSendFailure, LogReasons.TenantNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategory = LogCategory.Application
+            }
+        },
+        {
+            (LogEventType.EmailSendSuccess, null),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = false,
+                IsSuccess = true,
+                LogLevel = LogLevel.Information,
+                LogCategory = LogCategory.Application
+            }
         }
-        
+
         #endregion
     };
 

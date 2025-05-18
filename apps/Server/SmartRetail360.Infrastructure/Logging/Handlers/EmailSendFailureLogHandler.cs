@@ -6,15 +6,15 @@ using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.Infrastructure.Logging.Handlers;
 
-public class RegisterFailureLogHandler : ILogEventHandler
+public class EmailSendFailureLogHandler : ILogEventHandler
 {
+    public LogEventType EventType => LogEventType.EmailSendFailure;
+
     private readonly ILogWritePolicyProvider _policyProvider;
     private readonly ILogWriter _logWriter;
     private readonly IUserContextService _userContext;
-    
-    public LogEventType EventType => LogEventType.RegisterFailure;
 
-    public RegisterFailureLogHandler(
+    public EmailSendFailureLogHandler(
         ILogWritePolicyProvider policyProvider,
         ILogWriter logWriter,
         IUserContextService userContext)
@@ -27,10 +27,9 @@ public class RegisterFailureLogHandler : ILogEventHandler
     public Task HandleAsync(LogContext context)
     {
         var policy = _policyProvider.GetPolicy(EventType, context.Reason);
-        context.IsSuccess = false;
         context.Action = _userContext.AccountType == AccountType.UserAccount
-            ? LogActions.UserRegister
-            : LogActions.TenantRegister;
+            ? LogActions.UserAccountActivateEmailSend
+            : LogActions.TenantAccountActivateEmailSend;
         return _logWriter.WriteAsync(context, policy);
     }
 }

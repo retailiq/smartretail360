@@ -24,7 +24,7 @@ public class LogDispatcher : ILogDispatcher
     }
 
     public async Task Dispatch(LogEventType eventType, string? email = null, string? reason = null,
-        string? errorStack = null)
+        string? errorStack = null, Guid? tenantId = null, Guid? userId = null)
     {
         if (_handlers.TryGetValue(eventType, out var handler))
         {
@@ -33,13 +33,16 @@ public class LogDispatcher : ILogDispatcher
                 LogId = Guid.NewGuid().ToString(),
                 Email = email,
                 Reason = reason,
-                ErrorStack = errorStack
+                ErrorStack = errorStack,
+                TenantId = tenantId,
+                UserId = userId,
             };
 
             var samplingKey = RedisKeys.LogSampling(eventType, reason ?? "unknown");
 
             if (_appOptions.LogSamplingLimitMinutes <= 0 ||
-                await _redisLogSampling.ShouldSampleAsync(samplingKey, TimeSpan.FromMinutes(_appOptions.LogSamplingLimitMinutes)))
+                await _redisLogSampling.ShouldSampleAsync(samplingKey,
+                    TimeSpan.FromMinutes(_appOptions.LogSamplingLimitMinutes)))
             {
                 await handler.HandleAsync(context);
             }

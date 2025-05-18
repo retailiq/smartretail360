@@ -17,8 +17,12 @@ public static class LogReasons
     public const string TokenGenerationError = "TOKEN_GENERATION_ERROR";
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
 
+    // Account
+    public const string InvalidTokenOrAccountAlreadyActivated = "INVALID_TOKEN_OR_ACCOUNT_ALREADY_ACTIVATED";
+    
     // Tenant-specific
     public const string TenantAccountAlreadyExists = "TENANT_ACCOUNT_ALREADY_EXISTS";
+    public const string TenantAccountAlreadyActivated = "TENANT_ACCOUNT_ALREADY_ACTIVATED";
     public const string TenantAccountExistsButNotActivated = "TENANT_ACCOUNT_EXISTS_BUT_NOT_ACTIVATED";
     public const string TenantNotFound = "TENANT_NOT_FOUND";
 
@@ -79,5 +83,7 @@ public static class LogReasons
         { EmailSendFailed, "Failed to send email" },
         
         { DatabaseOperationFailed, "Database operation failed" },
+        
+        { InvalidTokenOrAccountAlreadyActivated , "Token is invalid or account is already activated" },
     };
 }

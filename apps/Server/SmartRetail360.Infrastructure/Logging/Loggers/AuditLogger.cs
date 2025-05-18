@@ -33,16 +33,16 @@ public class AuditLogger : IAuditLogger
             LogId = ctx.LogId,
             Action = ctx.Action,
             IsSuccess = ctx.IsSuccess,
-            TraceId = _userContext.TraceId ?? Guid.NewGuid().ToString(),
-            TenantId = _userContext.TenantId,
-            UserId = _userContext.UserId,
+            TenantId = ctx.TenantId ?? _userContext.TenantId,
+            UserId = ctx.UserId ?? _userContext.UserId,
             EvaluatedAt = DateTime.UtcNow,
+            TraceId = _userContext.TraceId ?? Guid.NewGuid().ToString(),
             UnserializedDetails = details,
             Level = ctx.Level,
             SourceModule = ctx.SourceModule,
             DetailsJson = JsonSerializer.Serialize(details)
         };
-
+        
         _db.AuditLogs.Add(log);
         await _db.SaveChangesAsync();
     }

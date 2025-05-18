@@ -6,10 +6,14 @@ public static class LogActions
     public const string TenantRegister = "TENANT_REGISTER";
     public const string UpdateTenantInfo = "UPDATE_TENANT_INFO";
     public const string DeleteTenant = "DELETE_TENANT";
+    public const string TenantAccountActivate = "TENANT_ACCOUNT_ACTIVATE";
+    public const string TenantAccountActivateEmailSend = "TENANT_ACCOUNT_ACTIVATE_EMAIL_SEND";
 
     // ===== User operations =====
     public const string UserRegister = "USER_REGISTER";
     public const string UserLogin = "USER_LOGIN";
+    public const string UserAccountActivate = "USER_ACCOUNT_ACTIVATE";
+    public const string UserAccountActivateEmailSend = "USER_ACCOUNT_ACTIVATE_EMAIL_SEND";
     public const string UserLogout = "USER_LOGOUT";
     public const string UserResetPassword = "USER_RESET_PASSWORD";
     public const string UserUpdateProfile = "USER_UPDATE_PROFILE";

@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.DTOs.AccountRegistration.Requests;
 using SmartRetail360.Application.DTOs.AccountRegistration.Responses;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Infrastructure.DTOs.Messaging;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
@@ -33,63 +34,41 @@ public class TenantRegistrationService : ITenantRegistrationService
         }
 
         var lockKey = RedisKeys.RegisterAccountLock(request.AdminEmail.ToLower());
-        var lockAcquired =
-            await _dep.RedisLockService.AcquireLockAsync(lockKey,
-                TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
-        if (!lockAcquired)
-        {
-            await _dep.LogDispatcher.Dispatch(
-                LogEventType.RegisterFailure,
-                reason: LogReasons.LockNotAcquired,
-                email: request.AdminEmail
-            );
-            return ApiResponse<TenantRegisterResponse>.Fail(
-                ErrorCodes.DuplicateRegisterAttempt,
-                _dep.Localizer.GetErrorMessage(ErrorCodes.DuplicateRegisterAttempt),
-                traceId
-            );
-        }
+        var lockAcquired = await _dep.RedisLockService.AcquireLockAsync(lockKey, TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
+        
+        var lockCheck = await new GuardChecker(_dep.LogDispatcher, _dep.UserContext, _dep.Localizer)
+            .WithEmail(request.AdminEmail)
+            .Check(() => !lockAcquired, LogEventType.RegisterFailure, LogReasons.LockNotAcquired, ErrorCodes.DuplicateRegisterAttempt)
+            .ValidateAsync();
 
+        if (lockCheck != null)
+            return lockCheck.To<TenantRegisterResponse>();
+        
         // await Task.Delay(TimeSpan.FromSeconds(30));
-
+        
         try
         {
-            var existingTenant = await _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == request.AdminEmail);
-            if (existingTenant is { IsEmailVerified: true })
-            {
-                await _dep.LogDispatcher.Dispatch(
-                    LogEventType.RegisterFailure,
-                    reason: LogReasons.TenantAccountAlreadyExists,
-                    email: request.AdminEmail
-                );
+            var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
+                () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == request.AdminEmail),
+                LogEventType.RegisterFailure,
+                LogReasons.DatabaseOperationFailed,
+                ErrorCodes.DatabaseUnavailable
+            );
 
-                // await _dep.LogDispatcher.Dispatch(
-                //     LogEventType.LoginFailure,
-                //     reason: LogReasons.InvalidCredentials,
-                //     email: request.AdminEmail
-                // );
+            if (!tenantResult.IsSuccess)
+                return tenantResult.ToObjectResponse().To<TenantRegisterResponse>();
 
-                return ApiResponse<TenantRegisterResponse>.Fail(
-                    ErrorCodes.AccountAlreadyActivated,
-                    _dep.Localizer.GetErrorMessage(ErrorCodes.AccountAlreadyActivated),
-                    traceId
-                );
-            }
+            var existingTenant = tenantResult.Response.Data;
             
-            if (existingTenant is { IsEmailVerified: false })
-            {
-                await _dep.LogDispatcher.Dispatch(
-                    LogEventType.RegisterFailure,
-                    reason: LogReasons.TenantAccountExistsButNotActivated,
-                    email: request.AdminEmail
-                );
-                
-                return ApiResponse<TenantRegisterResponse>.Fail(
-                    ErrorCodes.AccountExistsButNotActivated,
-                    _dep.Localizer.GetErrorMessage(ErrorCodes.AccountExistsButNotActivated),
-                    traceId
-                );
-            }
+            var guardResult = await new GuardChecker(_dep.LogDispatcher, _dep.UserContext, _dep.Localizer)
+                .WithEmail(request.AdminEmail)
+                .WithTenantId(existingTenant?.Id)
+                .Check(() => existingTenant is { IsEmailVerified: true }, LogEventType.RegisterFailure, LogReasons.TenantAccountAlreadyExists, ErrorCodes.AccountAlreadyActivated)
+                .Check(() => existingTenant is { IsEmailVerified: false }, LogEventType.RegisterFailure, LogReasons.TenantAccountExistsButNotActivated, ErrorCodes.AccountExistsButNotActivated)
+                .ValidateAsync();
+
+            if (guardResult != null)
+                return guardResult.To<TenantRegisterResponse>();
 
             var passwordHash = PasswordHelper.HashPassword(request.Password);
 
@@ -102,64 +81,42 @@ public class TenantRegistrationService : ITenantRegistrationService
                 EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken(),
                 LastEmailSentAt = DateTime.UtcNow
             };
-            // await Task.Delay(TimeSpan.FromSeconds(30));
-            // _dep.Db.Tenants.Add(tenant);
-            // await _dep.Db.SaveChangesAsync();
 
-            try
-            {
-                _dep.Db.Tenants.Add(tenant);
-                await _dep.Db.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
-            {
-                await _dep.LogDispatcher.Dispatch(
-                    LogEventType.RegisterFailure,
-                    reason: LogReasons.DatabaseOperationFailed,
-                    errorStack: pgEx.Message,
-                    email: request.AdminEmail
-                );
+            var saveResult = await _dep.SafeExecutor.ExecuteAsync(
+                async () => {
+                    _dep.Db.Tenants.Add(tenant);
+                    await _dep.Db.SaveChangesAsync();
+                },
+                LogEventType.RegisterFailure,
+                LogReasons.DatabaseOperationFailed,
+                ErrorCodes.DatabaseUnavailable
+            );
 
-                return ApiResponse<TenantRegisterResponse>.Fail(
-                    ErrorCodes.DatabaseUnavailable,
-                    _dep.Localizer.GetErrorMessage(ErrorCodes.DatabaseUnavailable),
-                    traceId
-                );
-            }
+            if (!saveResult.IsSuccess)
+                return saveResult.ToObjectResponse().To<TenantRegisterResponse>();
 
+            var emailResult = await _dep.SafeExecutor.ExecuteAsync(
+                async () =>
+                {
+                    var payload = new ActivationEmailPayload
+                    {
+                        Email = tenant.AdminEmail,
+                        Token = tenant.EmailVerificationToken,
+                        TraceId = traceId,
+                        TenantId = tenant.Id,
+                        Locale = _dep.UserContext.Locale ?? "en",
+                        Timestamp = DateTime.UtcNow.ToString("o")
+                    };
 
-            var variables = new Dictionary<string, string>
-            {
-                ["traceId"] = _dep.UserContext.TraceId ?? string.Empty,
-                ["tenantId"] = tenant.Id.ToString(),
-                ["locale"] = _dep.UserContext.Locale ?? "en",
-                ["token"] = tenant.EmailVerificationToken,
-                ["timestamp"] = DateTime.UtcNow.ToString("o")
-            };
+                    await _dep.EmailQueueProducer.SendAsync(payload);
+                },
+                LogEventType.RegisterFailure,
+                LogReasons.EmailSendFailed,
+                ErrorCodes.EmailSendFailed
+            );
 
-            try
-            {
-                await _dep.EmailContext.SendAsync(
-                    EmailTemplate.TenantAccountActivation,
-                    toEmail: tenant.AdminEmail,
-                    variables: variables
-                );
-            }
-            catch (Exception ex)
-            {
-                await _dep.LogDispatcher.Dispatch(
-                    LogEventType.RegisterFailure,
-                    reason: LogReasons.EmailSendFailed,
-                    errorStack: ex.Message,
-                    email: request.AdminEmail
-                );
-
-                return ApiResponse<TenantRegisterResponse>.Fail(
-                    ErrorCodes.EmailSendFailed,
-                    _dep.Localizer.GetErrorMessage(ErrorCodes.EmailSendFailed),
-                    traceId
-                );
-            }
+            if (!emailResult.IsSuccess)
+                return emailResult.ToObjectResponse().To<TenantRegisterResponse>();
 
             await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess, email: request.AdminEmail);
 

@@ -1,3 +1,4 @@
+using Amazon.SQS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,13 +22,17 @@ using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
 using Scrutor;
+using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Infrastructure.AuditLogging;
+using SmartRetail360.Infrastructure.Common.Execution;
 using SmartRetail360.Infrastructure.Logging;
 using SmartRetail360.Infrastructure.Logging.Dispatcher;
 using SmartRetail360.Infrastructure.Logging.Handlers;
 using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+using SmartRetail360.Infrastructure.Services.Messaging;
+using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Infrastructure.Services.Redis;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
@@ -44,7 +49,7 @@ public static class DependencyInjection
         {
             var interceptor = provider.GetRequiredService<EntityTimestampsInterceptor>();
             options.UseNpgsql(config.GetConnectionString("DefaultConnection"))
-                   .AddInterceptors(interceptor);
+                .AddInterceptors(interceptor);
         });
 
         // Email Related Services
@@ -60,11 +65,11 @@ public static class DependencyInjection
 
         // Register the Tenant Registration Service
         services.AddScoped<ITenantRegistrationService, TenantRegistrationService>();
-        
+
         // Register Email Verification
         services.AddScoped<IEmailVerificationDispatchService, EmailVerificationDispatchService>();
         services.AddScoped<IEmailVerificationService, TenantAccountEmailVerificationService>();
-        
+
         // Redis Service
         // Redis Configuration
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]);
@@ -75,7 +80,7 @@ public static class DependencyInjection
         services.AddScoped<IRedisLockService, RedisRedisLockService>();
         // Redis Log Sampling
         services.AddScoped<IRedisLogSamplingService, RedisLogSamplingLogSamplingService>();
-        
+
         // Register the Tenant Registration Dependencies
         services.AddScoped<TenantRegistrationDependencies>(sp => new TenantRegistrationDependencies
         {
@@ -86,24 +91,51 @@ public static class DependencyInjection
             RedisLockService = sp.GetRequiredService<IRedisLockService>(),
             AppOptions = sp.GetRequiredService<AppOptions>(),
             AuditLogger = sp.GetRequiredService<IAuditLogger>(),
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>() 
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
+            EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>()
         });
-        
+
+        // Register the Notification Dependencies
+        services.AddScoped<NotificationDependencies>(sp => new NotificationDependencies
+        {
+            Db = sp.GetRequiredService<AppDbContext>(),
+            AppOptions = sp.GetRequiredService<AppOptions>(),
+            UserContext = sp.GetRequiredService<IUserContextService>(),
+            Localizer = sp.GetRequiredService<MessageLocalizer>(),
+            RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>(),
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
+            EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>()
+        });
+
         services.AddScoped<ILogDispatcher, LogDispatcher>();
         services.AddScoped<IAuditLogger, AuditLogger>();
-        
+
         services.Scan(scan => scan
             .FromAssemblyOf<RegisterSuccessLogHandler>()
             .AddClasses(c => c.AssignableTo<ILogEventHandler>())
             .AsImplementedInterfaces()
             .WithScopedLifetime());
-        
+
         services.AddSingleton<ILogWritePolicyProvider, DefaultLogWritePolicyProvider>();
         services.AddScoped<ILogWriter, DefaultLogWriter>();
-        // services.AddSingleton<ILogActionResolver, DefaultLogActionResolver>();
-        
-       
-        
+
+        services.AddSingleton<SqsEmailProducer>();
+
+        services.AddSingleton<IAmazonSQS>(sp =>
+        {
+            return new AmazonSQSClient(
+                config["AWS:AccessKey"],
+                config["AWS:SecretKey"],
+                new AmazonSQSConfig
+                {
+                    RegionEndpoint = Amazon.RegionEndpoint.APSoutheast2
+                });
+        });
+
+        services.AddScoped<ISafeExecutor, SafeExecutor>();
+
         return services;
     }
 }

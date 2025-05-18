@@ -17,7 +17,7 @@ public class DefaultLogWriter : ILogWriter
     private readonly ILogContextAccessor _logContextAccessor;
 
     public DefaultLogWriter(
-        IAuditLogger auditLogger, 
+        IAuditLogger auditLogger,
         IUserContextService userContext,
         ILogContextAccessor logContextAccessor)
     {
@@ -31,7 +31,7 @@ public class DefaultLogWriter : ILogWriter
         context.Action ??= rule.LogAction;
         context.IsSuccess = rule.IsSuccess ?? context.IsSuccess;
         context.LogCategory ??= rule.LogCategory;
-        
+
         var tasks = new List<Task>();
 
         if (rule.WriteAudit)
@@ -45,31 +45,37 @@ public class DefaultLogWriter : ILogWriter
                 Reason = context.Reason,
                 ErrorStack = context.ErrorStack,
                 Level = rule.LogLevel,
-                SourceModule = _userContext.Module ?? LogSourceModules.Unknown
+                SourceModule = _userContext.Module ?? LogSourceModules.Unknown,
+                UserId = context.UserId,
+                TenantId = context.TenantId
             }));
         }
-        
+
         if (rule.WriteSystemLog)
         {
             tasks.Add(Task.Run(() =>
             {
                 using var _ = LogContextEnricher.EnrichFromContext(_logContextAccessor);
 
-                Log.Write(rule.LogLevel switch
-                    {
-                        LogLevel.Error => LogEventLevel.Error,
-                        LogLevel.Warning => LogEventLevel.Warning,
-                        _ => LogEventLevel.Information
-                    },
-                    "[{Category}] {Action} | Email: {Email} | Reason: {Reason}",
-                    rule.LogCategory,
-                    rule.LogAction ?? context.Action,
-                    context.Email ?? _userContext.ClientEmail ?? GeneralConstants.Unknown,
-                    context.Reason ?? "-"
-                );
+                using (LogContextPushHelper.Push(context, _logContextAccessor))
+                {
+                    Log.Write(rule.LogLevel switch
+                        {
+                            LogLevel.Error => LogEventLevel.Error,
+                            LogLevel.Warning => LogEventLevel.Warning,
+                            _ => LogEventLevel.Information
+                        },
+                        "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason}",
+                        rule.LogCategory,
+                        rule.LogAction ?? context.Action,
+                        context.Email ?? _userContext.ClientEmail ?? GeneralConstants.Unknown,
+                        context.IsSuccess,
+                        context.Reason ?? "-"
+                    );
+                }
             }));
         }
-        
+
         if (rule.SendToSentry)
         {
             if (!string.IsNullOrWhiteSpace(context.ErrorStack))
@@ -91,7 +97,7 @@ public class DefaultLogWriter : ILogWriter
                 }));
             }
         }
-        
+
         await Task.WhenAll(tasks);
     }
 }

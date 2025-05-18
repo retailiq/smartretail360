@@ -39,33 +39,6 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            var userContext = context.RequestServices.GetService<IUserContextService>();
-
-            var userId = userContext?.UserId;
-
-            SentrySdk.ConfigureScope(scope =>
-            {
-                if (userId is Guid uid)
-                {
-                    scope.User = new SentryUser
-                    {
-                        Id = uid.ToString(),
-                        Email = userContext?.ClientEmail
-                    };
-                }
-
-                if (userContext?.TenantId is Guid tenantId)
-                    scope.SetTag("TenantId", tenantId.ToString());
-
-                if (!string.IsNullOrWhiteSpace(userContext?.TraceId))
-                    scope.SetTag("TraceId", userContext.TraceId);
-
-                if (!string.IsNullOrWhiteSpace(userContext?.Module))
-                    scope.SetTag("Module", userContext.Module);
-            });
-
-            SentrySdk.CaptureException(ex);
-            
             _logger.LogError(ex, "Unhandled exception occurred.");
             await HandleExceptionAsync(context, ex);
         }
@@ -88,7 +61,7 @@ public class ExceptionHandlingMiddleware
             
             // MailKit.Net.Smtp.SmtpCommandException smtpEx 
             //     when smtpEx.Message.Contains("unique recipients limit") =>
-            //     ((int)HttpStatusCode.TooManyRequests, ErrorCodes.EmailQuotaExceeded),
+            //     ((int)HttpStatusCode.TooManyRequests, ErrorCodes.TooFrequentEmailRequest),
             
             Npgsql.NpgsqlException or Npgsql.PostgresException =>
                 ((int)HttpStatusCode.ServiceUnavailable, ErrorCodes.DatabaseUnavailable),

@@ -81,6 +81,7 @@ public class Startup
         // 全局异常中间件
         app.UseMiddleware<ContextHeaderMiddleware>();
         app.UseMiddleware<LoggingContextMiddleware>();
+        app.UseMiddleware<SentryContextMiddleware>();
         app.UseRequestLogging();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 

@@ -14,6 +14,7 @@ public static class ModuleResolver
         return path switch
         {
             var p when p.Contains("/api/v1/tenants") => LogSourceModules.RegisterTenantService,
+            var p when p.Contains("/api/v1/notifications") => LogSourceModules.NotificationService,
             var p when p.Contains("/api/v1/auth") => LogSourceModules.AuthService,
             var p when p.Contains("/api/v1/products") => LogSourceModules.ProductService,
             var p when p.Contains("/api/v1/orders") => LogSourceModules.OrderService,

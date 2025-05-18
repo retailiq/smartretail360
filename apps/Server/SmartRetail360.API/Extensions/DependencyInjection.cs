@@ -50,7 +50,8 @@ public static class DependencyInjection
             options.SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
         });
 
-        services.AddScoped<MessageLocalizer>();
+        services.AddScoped<
+            MessageLocalizer>();
 
         // Swagger
         services.AddSwaggerGen(options =>

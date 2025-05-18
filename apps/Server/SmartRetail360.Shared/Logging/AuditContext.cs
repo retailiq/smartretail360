@@ -13,4 +13,6 @@ public class AuditContext
     public string? Email { get; init; }
     public string? ErrorStack { get; init; }
     public string? Reason { get; init; }
+    public Guid? UserId { get; init; }
+    public Guid? TenantId { get; init; }
 }
