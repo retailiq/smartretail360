@@ -86,7 +86,8 @@ public static class DependencyInjection
         
         
         // otlp url
-        var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint");
+        var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint")
+                           ?? "http://localhost:4317";
         services.AddOpenTelemetry()
             .ConfigureResource(r => r.AddService("SmartRetail360.API"))
             .WithTracing(tracing =>
