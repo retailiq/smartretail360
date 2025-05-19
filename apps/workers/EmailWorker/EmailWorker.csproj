@@ -23,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\SmartRetail360.Application\SmartRetail360.Application.csproj" />
-    <ProjectReference Include="..\..\..\src\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\src\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
-    <ProjectReference Include="..\..\..\src\SmartRetail360.WorkerBootstrap\SmartRetail360.WorkerBootstrap.csproj" />
+    <ProjectReference Include="..\..\Server\SmartRetail360.Application\SmartRetail360.Application.csproj" />
+    <ProjectReference Include="..\..\Server\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Server\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+    <ProjectReference Include="..\..\Server\SmartRetail360.WorkerBootstrap\SmartRetail360.WorkerBootstrap.csproj" />
   </ItemGroup>
 
 

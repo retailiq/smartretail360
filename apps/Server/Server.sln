@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.API", "SmartRetail360.API\SmartRetail360.API.csproj", "{989AAED0-786D-482B-B2F4-42472241F59E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Domain", "..\..\src\SmartRetail360.Domain\SmartRetail360.Domain.csproj", "{491E44BC-5BD5-412A-8529-733994A02731}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Domain", "SmartRetail360.Domain\SmartRetail360.Domain.csproj", "{491E44BC-5BD5-412A-8529-733994A02731}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Application", "..\..\src\SmartRetail360.Application\SmartRetail360.Application.csproj", "{75E5D03C-0745-427C-B4E2-23CB238B3A87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Application", "SmartRetail360.Application\SmartRetail360.Application.csproj", "{75E5D03C-0745-427C-B4E2-23CB238B3A87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Infrastructure", "..\..\src\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj", "{E6431653-4773-4107-9A17-0B0AEBB8FF97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Infrastructure", "SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj", "{E6431653-4773-4107-9A17-0B0AEBB8FF97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Shared", "..\..\src\SmartRetail360.Shared\SmartRetail360.Shared.csproj", "{87404107-5B12-479E-B5F7-B4A42A76859D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Shared", "SmartRetail360.Shared\SmartRetail360.Shared.csproj", "{87404107-5B12-479E-B5F7-B4A42A76859D}"
 EndProject
-Global
+Globalå
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
