@@ -12,12 +12,21 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="AWSSDK.Core" Version="4.0.0.5" />
     <PackageReference Include="AWSSDK.SQS" Version="4.0.0.4" />
+    <PackageReference Include="Sentry.AspNetCore" Version="5.7.0" />
+    <PackageReference Include="Sentry.Extensions.Logging" Version="5.7.0" />
+    <PackageReference Include="Sentry.Protocol" Version="2.1.8" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Grafana.Loki" Version="8.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../Server/SmartRetail360.Application/SmartRetail360.Application.csproj" />
-    <ProjectReference Include="../../Server/SmartRetail360.Infrastructure/SmartRetail360.Infrastructure.csproj" />
-    <ProjectReference Include="../../Server/SmartRetail360.Shared/SmartRetail360.Shared.csproj" />
+    <ProjectReference Include="..\..\..\src\SmartRetail360.Application\SmartRetail360.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+    <ProjectReference Include="..\..\..\src\SmartRetail360.WorkerBootstrap\SmartRetail360.WorkerBootstrap.csproj" />
   </ItemGroup>
 
 

@@ -7,7 +7,11 @@ using SmartRetail360.Infrastructure.DTOs.Messaging;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Shared.Enums;
 using System.Text.Json;
+using SmartRetail360.Application.Common.Execution;
+using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Localization;
+using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Common;
 
 public class EmailConsumerWorker : BackgroundService
 {
@@ -15,21 +19,28 @@ public class EmailConsumerWorker : BackgroundService
     private readonly IConfiguration _config;
     private readonly IAmazonSQS _sqs;
     private readonly EmailContext _emailContext;
+    private readonly ISafeExecutor _safeExecutor;
+    private readonly IUserContextService _userContext;
 
     public EmailConsumerWorker(
         ILogger<EmailConsumerWorker> logger,
         IConfiguration config,
         IAmazonSQS sqs,
-        EmailContext emailContext)
+        EmailContext emailContext,
+        ISafeExecutor safeExecutor,
+        IUserContextService userContext)
     {
         _logger = logger;
         _config = config;
         _sqs = sqs;
         _emailContext = emailContext;
+        _safeExecutor = safeExecutor;
+        _userContext = userContext;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var workerId = _config["Worker:Id"]; 
         var queueUrl = (await _sqs.GetQueueUrlAsync(_config["Sqs:QueueName"])).QueueUrl;
         _logger.LogInformation("启动 EmailConsumerWorker，绑定队列：{QueueUrl}", queueUrl);
 
@@ -70,6 +81,7 @@ public class EmailConsumerWorker : BackgroundService
                 }
 
                 ActivationEmailPayload? payload = null;
+                
 
                 try
                 {
@@ -79,6 +91,12 @@ public class EmailConsumerWorker : BackgroundService
                         _logger.LogError("反序列化失败，消息内容为：{Body}", message.Body);
                         continue;
                     }
+                    
+                    
+                    _userContext.TenantId = payload.TenantId;
+                    _userContext.TraceId = payload.TraceId;
+                    _userContext.Locale = payload.Locale;
+                    _userContext.ClientEmail = payload.Email;
                 }
                 catch (Exception ex)
                 {
@@ -101,16 +119,32 @@ public class EmailConsumerWorker : BackgroundService
                         ["timestamp"] = payload.Timestamp ?? DateTime.UtcNow.ToString("o")
                     };
                     
-                    await CultureScope.RunWithCultureAsync(payload.Locale, async () =>
-                    {
-                        await _emailContext.SendAsync(EmailTemplate.TenantAccountActivation, payload.Email, variables);
-                    });
+                    Console.WriteLine($"Tetant ID: {payload.TenantId}");
+                    
+                    await _safeExecutor.ExecuteAsync(
+                        async () =>
+                        {
+                            await CultureScope.RunWithCultureAsync(payload.Locale, async () =>
+                            {
+                                _logger.LogInformation("即将调用 EmailContext.SendAsync...");
+                                await _emailContext.SendAsync(EmailTemplate.TenantAccountActivation, payload.Email!, variables);
+                                _logger.LogInformation("EmailContext.SendAsync 调用完毕");
+                            });
+                        },
+                        LogEventType.EmailSendFailure,
+                        LogReasons.EmailSendFailed,
+                        ErrorCodes.EmailSendFailed,
+                        email: payload?.Email,
+                        tenantId: payload?.TenantId
+                    );
+                    
 
                     await _sqs.DeleteMessageAsync(queueUrl, message.ReceiptHandle);
                     _logger.LogInformation("邮件发送成功，消息已删除：{MessageId}", message.MessageId);
                 }
                 catch (Exception ex)
                 {
+                    
                     _logger.LogError(ex, "发送邮件失败，未删除消息：{Body}", message.Body);
                     // 不删，让 SQS 自动重试 & DLQ 接管
                 }
