@@ -2,11 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.DTOs.AccountRegistration.Requests;
 using SmartRetail360.Application.DTOs.AccountRegistration.Responses;
+using SmartRetail360.Application.Extensions;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Domain.Entities;
-using SmartRetail360.Infrastructure.DTOs.Messaging;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.DTOs.Messaging;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
@@ -33,12 +34,12 @@ public class TenantRegistrationService : ITenantRegistrationService
             traceId = TraceIdGenerator.Generate(TraceIdPrefix.Get(TraceModule.Auth), slug);
         }
         
-        _dep.UserContext.Inject(clientEmail: request.AdminEmail);
+        _dep.UserContext.Inject(clientEmail: request.AdminEmail, action:LogActions.TenantRegister);
 
         var lockKey = RedisKeys.RegisterAccountLock(request.AdminEmail.ToLower());
         var lockAcquired = await _dep.RedisLockService.AcquireLockAsync(lockKey, TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
         
-        var lockCheck = await new GuardChecker(_dep.LogDispatcher, _dep.UserContext, _dep.Localizer)
+        var lockCheck = await _dep.GuardChecker
             .Check(() => !lockAcquired, LogEventType.RegisterFailure, LogReasons.LockNotAcquired, ErrorCodes.DuplicateRegisterAttempt)
             .ValidateAsync();
 
@@ -64,7 +65,7 @@ public class TenantRegistrationService : ITenantRegistrationService
                 _dep.UserContext.Inject(tenantId: existingTenant.Id);
             }
             
-            var guardResult = await new GuardChecker(_dep.LogDispatcher, _dep.UserContext, _dep.Localizer)
+            var guardResult = await _dep.GuardChecker
                 .Check(() => existingTenant is { IsEmailVerified: true }, LogEventType.RegisterFailure, LogReasons.TenantAccountAlreadyExists, ErrorCodes.AccountAlreadyActivated)
                 .Check(() => existingTenant is { IsEmailVerified: false }, LogEventType.RegisterFailure, LogReasons.TenantAccountExistsButNotActivated, ErrorCodes.AccountExistsButNotActivated)
                 .ValidateAsync();
@@ -106,13 +107,11 @@ public class TenantRegistrationService : ITenantRegistrationService
                     {
                         Email = tenant.AdminEmail,
                         Token = tenant.EmailVerificationToken,
-                        TraceId = traceId,
-                        TenantId = tenant.Id,
-                        Locale = _dep.UserContext.Locale ?? "en",
-                        Timestamp = DateTime.UtcNow.ToString("o"),
-                        Module = _dep.UserContext.Module,
-                        AccountType = _dep.UserContext.AccountType
+                        Timestamp = DateTime.UtcNow.ToString("o")
+                        
                     };
+                    
+                    _dep.UserContext.ApplyTo(payload);
 
                     await _dep.EmailQueueProducer.SendAsync(payload);
                 },

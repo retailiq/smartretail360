@@ -4,6 +4,7 @@ using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Options;
 using SmartRetail360.Shared.Utils;
 using Microsoft.Extensions.Options;
+using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Shared.Extensions;
 

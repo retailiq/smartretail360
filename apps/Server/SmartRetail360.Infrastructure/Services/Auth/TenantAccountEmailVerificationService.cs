@@ -41,12 +41,12 @@ public class TenantAccountEmailVerificationService : IEmailVerificationService
 
         if (existingTenant != null)
             _dep.UserContext.Inject(tenantId: existingTenant.Id,
-                clientEmail: existingTenant.AdminEmail);
+                clientEmail: existingTenant.AdminEmail, action: LogActions.TenantAccountActivate);
 
         var redisKey = RedisKeys.VerifyEmailRateLimit(token);
         var isLimited = await _dep.RedisLimiterService.IsLimitedAsync(redisKey);
 
-        var guardResult = await new GuardChecker(_dep.LogDispatcher, _dep.UserContext, _dep.Localizer)
+        var guardResult = await _dep.GuardChecker
             .Check(() => existingTenant == null, LogEventType.AccountActivateFailure,
                 LogReasons.InvalidTokenOrAccountAlreadyActivated, ErrorCodes.InvalidTokenOrAccountAlreadyActivated)
             .Check(() => isLimited, LogEventType.AccountActivateFailure, LogReasons.TooFrequentActivationAttempt,

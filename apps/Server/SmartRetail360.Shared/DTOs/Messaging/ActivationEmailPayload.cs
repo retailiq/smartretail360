@@ -1,6 +1,6 @@
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Infrastructure.DTOs.Messaging;
+namespace SmartRetail360.Shared.DTOs.Messaging;
 
 public class ActivationEmailPayload
 {
@@ -14,4 +14,6 @@ public class ActivationEmailPayload
     public Guid? RoleId { get; set; }
     public string? Module { get; set; }
     public AccountType? AccountType { get; set; }
+    public string? IpAddress { get; set; }
+    public string? Action { get; set; }
 }

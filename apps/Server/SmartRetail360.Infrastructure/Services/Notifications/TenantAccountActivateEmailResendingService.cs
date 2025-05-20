@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Application.Common.Execution;
+using SmartRetail360.Application.Extensions;
 using SmartRetail360.Application.Interfaces.Notifications;
-using SmartRetail360.Infrastructure.DTOs.Messaging;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
+using SmartRetail360.Shared.DTOs.Messaging;
 using SmartRetail360.Shared.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications;
@@ -22,7 +23,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
 
     public async Task<ApiResponse<object>> ResendEmailAsync(string email)
     {
-        _dep.UserContext.Inject(clientEmail: email);
+        _dep.UserContext.Inject(clientEmail: email, action: LogActions.TenantAccountActivateEmailReSend);
         
         var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
             () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == email),
@@ -42,16 +43,14 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         var redisKey = RedisKeys.ResendAccountActivationEmail(email);
         var isLimited = await _dep.RedisLimiterService.IsLimitedAsync(redisKey);
 
-        var guard = new GuardChecker(_dep.LogDispatcher, _dep.UserContext, _dep.Localizer);
-
-        var failed = await guard
+        var guardResult = await _dep.GuardChecker
             .Check(() => tenant == null, LogEventType.EmailSendFailure, LogReasons.TenantNotFound, ErrorCodes.TenantNotFound)
             .Check(() => tenant!.IsEmailVerified, LogEventType.EmailSendFailure, LogReasons.TenantAccountAlreadyActivated, ErrorCodes.AccountAlreadyActivated)
             .CheckAsync(() => Task.FromResult(isLimited), LogEventType.EmailSendFailure, LogReasons.TooFrequentEmailRequest, ErrorCodes.TooFrequentEmailRequest)
             .ValidateAsync();
 
-        if (failed != null)
-            return failed;
+        if (guardResult != null)
+            return guardResult;
 
         tenant.EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
         tenant.LastEmailSentAt = DateTime.UtcNow;
@@ -70,11 +69,10 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         {
             Email = tenant.AdminEmail,
             Token = tenant.EmailVerificationToken,
-            TraceId = _dep.UserContext.TraceId ?? Guid.NewGuid().ToString("N"),
-            TenantId = tenant.Id,
-            Locale = _dep.UserContext.Locale ?? "en",
             Timestamp = DateTime.UtcNow.ToString("o")
         };
+        
+        _dep.UserContext.ApplyTo(payload);
 
         var sendResult = await _dep.SafeExecutor.ExecuteAsync(
             async () => { await _dep.EmailQueueProducer.SendAsync(payload); },

@@ -121,7 +121,7 @@ public class TenantRegistrationService : ITenantRegistrationService
             if (!emailResult.IsSuccess)
                 return emailResult.ToObjectResponse().To<TenantRegisterResponse>();
 
-            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess, email: request.AdminEmail, tenantId: tenant.Id);
+            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess);
 
             return ApiResponse<TenantRegisterResponse>.Ok(
                 new TenantRegisterResponse

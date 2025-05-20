@@ -1,3 +1,4 @@
+using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Logging.Context;

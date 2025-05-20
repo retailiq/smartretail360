@@ -1,6 +1,6 @@
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Application.Interfaces.Common;
+namespace SmartRetail360.Application.Interfaces.Logging;
 
 public interface ILogDispatcher
 {

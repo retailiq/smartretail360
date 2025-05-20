@@ -1,5 +1,7 @@
+using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Services;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Services.Messaging;
@@ -17,4 +19,5 @@ public class AuthDependencies
     public required IRedisLimiterService RedisLimiterService { get; init; }
     public required ILogDispatcher LogDispatcher { get; init; }
     public required ISafeExecutor SafeExecutor { get; init; }
+    public IGuardChecker GuardChecker { get; set; }
 }

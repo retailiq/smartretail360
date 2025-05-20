@@ -66,8 +66,9 @@ public class UserContextService : IUserContextService
     public string? Module { get; set; }
     public string? ClientEmail { get; set; }
     public AccountType? AccountType { get; set; }
-    public string IpAddress { get; } = GeneralConstants.Unknown;
+    public string IpAddress { get; set; } = GeneralConstants.Unknown;
     public string? ErrorStack { get; set; }
+    public string? Action { get; set; }
     
     public void Inject(
         Guid? userId = null,
@@ -78,7 +79,9 @@ public class UserContextService : IUserContextService
         string? module = null,
         string? clientEmail = null,
         AccountType? accountType = null,
-        string? errorStack = null)
+        string? errorStack = null,
+        string? ipAddress = null,
+        string? action = null)
     {
         if (userId != null) UserId = userId;
         if (tenantId != null) TenantId = tenantId;
@@ -89,5 +92,7 @@ public class UserContextService : IUserContextService
         if (!string.IsNullOrWhiteSpace(clientEmail)) ClientEmail = clientEmail;
         if (accountType != null) AccountType = accountType;
         if (!string.IsNullOrWhiteSpace(errorStack)) ErrorStack = errorStack;
+        if (!string.IsNullOrWhiteSpace(ipAddress)) IpAddress = ipAddress;
+        if (!string.IsNullOrWhiteSpace(action)) Action = action;
     }
 }

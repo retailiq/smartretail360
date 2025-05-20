@@ -22,13 +22,13 @@ using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
 using Scrutor;
+using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Common.Execution;
-using SmartRetail360.Infrastructure.AuditLogging;
+using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
 using SmartRetail360.Infrastructure.Common.Execution;
 using SmartRetail360.Infrastructure.Logging;
 using SmartRetail360.Infrastructure.Logging.Dispatcher;
-using SmartRetail360.Infrastructure.Logging.Handlers;
 using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
@@ -97,7 +97,8 @@ public static class DependencyInjection
             AuditLogger = sp.GetRequiredService<IAuditLogger>(),
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>()
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
+            GuardChecker = sp.GetRequiredService<IGuardChecker>()
         });
         
         // Register the Auth Dependencies
@@ -109,7 +110,8 @@ public static class DependencyInjection
             AppOptions = sp.GetRequiredService<AppOptions>(),
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>()
+            RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>(),
+            GuardChecker = sp.GetRequiredService<IGuardChecker>()
         });
 
         // Register the Notification Dependencies
@@ -122,18 +124,13 @@ public static class DependencyInjection
             RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>(),
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>()
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
+            GuardChecker = sp.GetRequiredService<IGuardChecker>()
         });
 
         services.AddScoped<ILogDispatcher, LogDispatcher>();
         services.AddScoped<IAuditLogger, AuditLogger>();
-
-        services.Scan(scan => scan
-            .FromAssemblyOf<RegisterSuccessLogHandler>()
-            .AddClasses(c => c.AssignableTo<ILogEventHandler>())
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-
+        
         services.AddSingleton<ILogWritePolicyProvider, DefaultLogWritePolicyProvider>();
         services.AddScoped<ILogWriter, DefaultLogWriter>();
 
@@ -151,6 +148,8 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ISafeExecutor, SafeExecutor>();
+        
+        services.AddTransient<IGuardChecker, GuardChecker>();
 
         return services;
     }

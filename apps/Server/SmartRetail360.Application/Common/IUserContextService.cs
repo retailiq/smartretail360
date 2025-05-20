@@ -1,6 +1,7 @@
+using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Application.Interfaces.Common;
+namespace SmartRetail360.Application.Common;
 
 public interface IUserContextService
 {
@@ -9,11 +10,12 @@ public interface IUserContextService
     Guid? RoleId { get; set; }
     string? TraceId { get; set; }
     string? Locale { get; set; }
-    string IpAddress { get; }
+    string IpAddress { get; set; }
     string? Module { get; set; }
     string? ClientEmail { get; set; }
     AccountType? AccountType { get; set; }
     string? ErrorStack { get; set; } 
+    string? Action { get; set; }
     
     void Inject(
         Guid? userId = null,
@@ -24,6 +26,8 @@ public interface IUserContextService
         string? module = null,
         string? clientEmail = null,
         AccountType? accountType = null,
-        string? errorStack = null
+        string? errorStack = null,
+        string? ipAddress = null,
+        string? action = null
     );
 }

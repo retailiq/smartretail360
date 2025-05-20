@@ -32,6 +32,11 @@ public class DefaultLogWriter : ILogWriter
         context.IsSuccess = rule.IsSuccess ?? context.IsSuccess;
         context.LogCategory ??= rule.LogCategory;
 
+    Console.WriteLine("📌 rule.WriteSystemLog: " + rule.WriteSystemLog);
+    Console.WriteLine("📌 context.LogCategory: " + context.LogCategory);
+    Console.WriteLine("📌 context.Action: " + context.Action);
+    Console.WriteLine("📌 context.IsSuccess: " + context.IsSuccess);
+
         var tasks = new List<Task>();
 
         if (rule.WriteAudit)
@@ -53,6 +58,8 @@ public class DefaultLogWriter : ILogWriter
 
         if (rule.WriteSystemLog)
         {
+			Console.WriteLine("✅ 正常触发了 writer");
+
             tasks.Add(Task.Run(() =>
             {
                 using var _ = LogContextEnricher.EnrichFromContext(_logContextAccessor);

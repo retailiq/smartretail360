@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Logging.Context;
@@ -65,12 +66,13 @@ public class DefaultLogWriter : ILogWriter
                             LogLevel.Warning => LogEventLevel.Warning,
                             _ => LogEventLevel.Information
                         },
-                        "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason}",
+                        "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason} | LogId: {LogId}",
                         rule.LogCategory,
-                        rule.LogAction ?? context.Action,
+                        rule.LogAction ?? context.Action ?? _userContext.Action ?? GeneralConstants.Unknown,
                         context.Email ?? _userContext.ClientEmail ?? GeneralConstants.Unknown,
                         context.IsSuccess,
-                        context.Reason ?? "-"
+                        context.Reason ?? "-",
+                        context.LogId 
                     );
                 }
             }));

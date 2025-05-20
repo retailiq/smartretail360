@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 

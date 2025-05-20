@@ -11,6 +11,7 @@ using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Responses;
 using Sentry;
 using Sentry.Protocol;
+using SmartRetail360.Application.Common;
 
 namespace SmartRetail360.API.Middlewares;
 

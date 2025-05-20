@@ -7,7 +7,7 @@ public static class LogActions
     public const string UpdateTenantInfo = "UPDATE_TENANT_INFO";
     public const string DeleteTenant = "DELETE_TENANT";
     public const string TenantAccountActivate = "TENANT_ACCOUNT_ACTIVATE";
-    public const string TenantAccountActivateEmailSend = "TENANT_ACCOUNT_ACTIVATE_EMAIL_SEND";
+    public const string TenantAccountActivateEmailReSend = "TENANT_ACCOUNT_ACTIVATE_EMAIL_RESEND";
 
     // ===== User operations =====
     public const string UserRegister = "USER_REGISTER";

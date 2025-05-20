@@ -7,6 +7,7 @@ using SmartRetail360.Infrastructure;
 using SmartRetail360.Shared;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Logging.Context;
+using SmartRetail360.Infrastructure.Logging.Dispatcher;
 
 namespace SmartRetail360.WorkerBootstrap.Hosting;
 
@@ -37,7 +38,7 @@ public static class WorkerHostFactory
                 services.AddApplicationLayer();
                 services.AddInfrastructureLayer(configuration);
                 services.AddScoped<ILogContextAccessor, LogContextAccessor>();
-
+                
                 services.AddHostedService<TWorker>();
             })
             .Build();
