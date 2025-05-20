@@ -17,27 +17,6 @@ stop-node:
 	  --region $(REGION)
 	@echo "✅ Node stop requested."
 
-# 强制释放生命周期 hook（必须手动传入 INSTANCE_ID）
-force-stop-latest-node:
-	@echo "🔍 Checking for instance stuck in 'Terminating:Wait'..."
-	@INSTANCE_ID=$$(aws autoscaling describe-auto-scaling-groups \
-		--auto-scaling-group-names $(ASG_NAME) \
-		--region $(REGION) \
-		--query "AutoScalingGroups[0].Instances[?LifecycleState=='Terminating:Wait'].InstanceId" \
-		--output text); \
-	if [ -n "$$INSTANCE_ID" ]; then \
-		echo "⚠️  Found stuck instance: $$INSTANCE_ID. Forcing termination..."; \
-		aws autoscaling complete-lifecycle-action \
-			--lifecycle-hook-name Terminate-LC-Hook \
-			--auto-scaling-group-name $(ASG_NAME) \
-			--lifecycle-action-result CONTINUE \
-			--instance-id $$INSTANCE_ID \
-			--region $(REGION); \
-		echo "✅ Lifecycle hook completed for $$INSTANCE_ID."; \
-	else \
-		echo "✅ No stuck instance found."; \
-	fi
-
 node-status:
 	@echo "📦 Fetching current node status..."
 	aws autoscaling describe-auto-scaling-groups \
