@@ -60,9 +60,11 @@ public class ExceptionHandlingMiddleware
             SecurityException secEx =>
                 (secEx.StatusCode, secEx.ErrorCode),
             
-            // MailKit.Net.Smtp.SmtpCommandException smtpEx 
-            //     when smtpEx.Message.Contains("unique recipients limit") =>
-            //     ((int)HttpStatusCode.TooManyRequests, ErrorCodes.TooFrequentEmailRequest),
+            MailKit.Net.Smtp.SmtpCommandException smtpEx => 
+                ((int)HttpStatusCode.ServiceUnavailable, ErrorCodes.EmailSendFailed),
+
+            MailKit.Net.Smtp.SmtpProtocolException protoEx => 
+                ((int)HttpStatusCode.ServiceUnavailable, ErrorCodes.EmailSendFailed),
             
             Npgsql.NpgsqlException or Npgsql.PostgresException =>
                 ((int)HttpStatusCode.ServiceUnavailable, ErrorCodes.DatabaseUnavailable),

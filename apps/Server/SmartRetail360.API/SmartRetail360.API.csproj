@@ -48,8 +48,4 @@
         <ProjectReference Include="..\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Controllers\V1\ABAC\"/>
-    </ItemGroup>
-
 </Project>

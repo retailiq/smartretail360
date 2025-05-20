@@ -12,18 +12,35 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
     </resheader>
-
-    <!-- File operations -->
-    <data name="UploadSuccess" xml:space="preserve"><value>上传成功</value></data>
-
-    <!-- Email Sending -->
-    <data name="EmailResent" xml:space="preserve"><value>激活邮件已重新发送</value></data>
-    <data name="EmailSendFailed" xml:space="preserve"><value>邮件发送失败</value></data>
     
-    <!-- Registration -->
+    <!-- General -->
+    <data name="InternalServerError" xml:space="preserve"><value>服务器内部错误</value></data>
+    <data name="DatabaseUnavailable" xml:space="preserve"><value>数据库暂时不可用</value></data>
+    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试</value></data>
+
+    <!-- Auth-->
+    <data name="InvalidPassword" xml:space="preserve"><value>密码错误</value></data>
+    <data name="InvalidToken" xml:space="preserve"><value>令牌无效</value></data>
+    <data name="TokenExpired" xml:space="preserve"><value>令牌已过期</value></data>
+    
+    <!-- Account-related -->
+    <data name="TenantNotFound" xml:space="preserve"><value>租户不存在</value></data>
+    <data name="AccountLocked" xml:space="preserve"><value>账户已锁定</value></data>
+    <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>
+    <data name="AccountExistsButNotActivated" xml:space="preserve"><value>该账户已存在但尚未激活。请检查您的邮箱或重新发送激活链接</value></data>
+    <data name="AccountAlreadyActivated" xml:space="preserve"><value>该账户已激活，请直接登录</value></data>
+    <data name="InvalidTokenOrAccountAlreadyActivated" xml:space="preserve"><value>激活链接无效或账户已激活</value></data>
+    <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>您激活账户的频率过高，请稍后再试</value></data>
     <data name="TenantRegistered" xml:space="preserve"><value>账户注册成功，请前往邮箱验证以激活账户</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>账户激活成功，您现在可以安全登录平台</value></data>
-
+    
+    <!-- Email-related -->
+    <data name="TooFrequentEmailRequest" xml:space="preserve"><value>邮件发送请求过于频繁，请稍后再试</value></data>
+    <data name="EmailExists" xml:space="preserve"><value>该邮箱已存在</value></data>
+    <data name="EmailResent" xml:space="preserve"><value>激活邮件已重新发送</value></data>
+    <data name="EmailSendFailed" xml:space="preserve"><value>邮件发送失败</value></data>
+    <data name="UnsupportedEmailTemplate" xml:space="preserve"><value>不支持的邮件模板类型</value></data>
+    
     <!-- Email Template -->
     <data name="AccountActivationTitle" xml:space="preserve"><value>尊敬的用户：</value></data>
     <data name="AccountActivationGreeting" xml:space="preserve"><value>您好，感谢您注册。</value></data>
@@ -31,36 +48,5 @@
     <data name="AccountActivationCtaText" xml:space="preserve"><value>立即激活</value></data>
     <data name="AccountActivationFooter" xml:space="preserve"><value>本邮件由系统自动发送，请勿直接回复</value></data>
     <data name="AccountActivationSubject" xml:space="preserve"><value>激活您的账户</value></data>
-    <data name="UnsupportedEmailTemplate" xml:space="preserve"><value>不支持的邮件模板类型。</value></data>
     
-    <!-- General errors -->
-    <data name="InternalServerError" xml:space="preserve"><value>服务器内部错误</value></data>
-    <data name="DatabaseUnavailable" xml:space="preserve"><value>数据库暂时不可用</value></data>
-    <data name="ValidationFailed" xml:space="preserve"><value>参数验证失败</value></data>
-    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试。</value></data>
-
-    <!-- Authorization / Access control -->
-    <data name="Unauthorized" xml:space="preserve"><value>未授权访问</value></data>
-    <data name="Forbidden" xml:space="preserve"><value>禁止访问</value></data>
-
-    <!-- Tenant / Account-related errors -->
-    <data name="EmailExists" xml:space="preserve"><value>该邮箱已存在</value></data>
-    <data name="TenantNotFound" xml:space="preserve"><value>租户不存在</value></data>
-    <data name="InvalidPassword" xml:space="preserve"><value>密码错误</value></data>
-    <data name="AccountLocked" xml:space="preserve"><value>账户已锁定</value></data>
-    <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>
-    <data name="InvalidToken" xml:space="preserve"><value>令牌无效</value></data>
-    <data name="TokenExpired" xml:space="preserve"><value>令牌已过期</value></data>
-    <data name="AccountExistsButNotActivated" xml:space="preserve"><value>该账户已存在但尚未激活。请检查您的邮箱或重新发送激活链接。</value></data>
-    <data name="AccountAlreadyActivated" xml:space="preserve"><value>该账户已激活，请直接登录。</value></data>
-    
-    <!-- Operation restrictions -->
-    <data name="RateLimitExceeded" xml:space="preserve"><value>请求过于频繁</value></data>
-    <data name="OperationNotAllowed" xml:space="preserve"><value>操作不被允许</value></data>
-    <data name="TooFrequentEmailRequest" xml:space="preserve"><value>邮件发送请求过于频繁，请稍后再试</value></data>
-    <data name="InvalidTokenOrAccountAlreadyActivated" xml:space="preserve"><value>激活链接无效或账户已激活</value></data>
-    <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>您激活账户的频率过高，请稍后再试。</value></data>
-    
-    <!-- External dependencies -->
-    <data name="ExternalServiceUnavailable" xml:space="preserve"><value>外部服务不可用</value></data>
 </root>

@@ -1,4 +1,4 @@
-namespace SmartRetail360.Application.DTOs.AccountRegistration.Responses;
+namespace SmartRetail360.Contracts.AccountRegistration.Responses;
 
 public class TenantRegisterResponse
 {

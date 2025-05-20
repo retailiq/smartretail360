@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Application.Common.Execution;
-using SmartRetail360.Application.DTOs.AccountRegistration.Responses;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Services;

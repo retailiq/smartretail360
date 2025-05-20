@@ -5,38 +5,25 @@ public static class ErrorCodes
     // General errors
     public const int InternalServerError = 10000;
     public const int DatabaseUnavailable = 10001;
-    public const int ValidationFailed = 10002;
-    public const int UnsupportedEmailTemplate = 10003;
-    public const int DuplicateRegisterAttempt = 10004;
+    public const int UnsupportedEmailTemplate = 10002;
+    public const int DuplicateRegisterAttempt = 10003;
 
-    // Authorization / Access control
-    public const int Unauthorized = 401;
-    public const int Forbidden = 403;
+    // Auth
+    public const int InvalidPassword = 5001;
+    public const int InvalidToken = 5002;
+    public const int TokenExpired = 5003;
 
-    // Tenant / Account-related errors
-    public const int EmailExists = 5001;
-    public const int TenantNotFound = 5002;
-    public const int InvalidPassword = 5003;
-    public const int AccountLocked = 5004;
-    public const int AccountNotFound = 5005;
-    public const int InvalidToken = 5006;
-    public const int TokenExpired = 5007;
-    public const int AccountAlreadyActivated = 5008;
-    public const int AccountExistsButNotActivated = 5009;
+    // Account
+    public const int TenantNotFound = 6001;
+    public const int AccountLocked = 6002;
+    public const int AccountNotFound = 6003;
+    public const int AccountAlreadyActivated = 6004;
+    public const int AccountExistsButNotActivated = 6005;
+    public const int InvalidTokenOrAccountAlreadyActivated = 6006;
+    public const int TooFrequentActivationAttempt = 6007;
 
-    // Operation restrictions
-    public const int RateLimitExceeded = 6001;
-    public const int OperationNotAllowed = 6002;
-    public const int TooFrequentEmailRequest = 6003;
-    public const int InvalidTokenOrAccountAlreadyActivated = 6004;
-    public const int TooFrequentActivationAttempt = 6005;
-    
-    // External dependencies
-    public const int ExternalServiceUnavailable = 7001;
-    
     // Email-related
-    public const int EmailSendFailed = 8001;
-    
-    //Others
-    public const int InvalidEmailFormat = 9001;
+    public const int EmailSendFailed = 7001;
+    public const int EmailExists = 7002;
+    public const int TooFrequentEmailRequest = 7003;
 }

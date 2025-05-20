@@ -44,6 +44,7 @@ dev-all:
 kill-dev:
 	tmux kill-session -t dev || echo "Session already closed."
 
+# just add-client "-D openapi-typescript"
 add-client dep:
     pnpm add {{dep}} -F client
 

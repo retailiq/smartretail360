@@ -1,5 +1,5 @@
 using FluentValidation;
-using SmartRetail360.Application.DTOs.Auth.Requests;
+using SmartRetail360.Contracts.Auth.Requests;
 
 namespace SmartRetail360.Application.Validators.Auth;
 

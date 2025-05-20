@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using SmartRetail360.Application.Common.Execution;
-using SmartRetail360.Application.DTOs.AccountRegistration.Requests;
-using SmartRetail360.Application.DTOs.AccountRegistration.Responses;
 using SmartRetail360.Application.Extensions;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
+using SmartRetail360.Contracts.AccountRegistration.Requests;
+using SmartRetail360.Contracts.AccountRegistration.Responses;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;

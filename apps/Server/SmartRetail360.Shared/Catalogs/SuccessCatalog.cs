@@ -6,20 +6,15 @@ public static class SuccessCatalog
 {
     private static readonly Dictionary<int, string> _keys = new()
     {
-        // File operations
-        { SuccessCodes.UploadSuccess, "UploadSuccess" },
-        { SuccessCodes.FileParsed, "FileParsed" },
-
-        // User & tenant management
-        { SuccessCodes.UserCreated, "UserCreated" },
-        { SuccessCodes.TenantRegistered, "TenantRegistered" },
+        // Auth
         { SuccessCodes.PasswordChanged, "PasswordChanged" },
-        { SuccessCodes.EmailResent, "EmailResent" },
+        
+        // Account
+        { SuccessCodes.TenantRegistered, "TenantRegistered" },
         { SuccessCodes.AccountActivatedSuccessfully, "AccountActivatedSuccessfully"},
 
-        // Reporting & AI processing
-        { SuccessCodes.ReportGenerated, "ReportGenerated" },
-        { SuccessCodes.PredictionCompleted, "PredictionCompleted" }
+        // Email-related
+        { SuccessCodes.EmailResent, "EmailResent" },
     };
 
     public static string GetKey(int code)

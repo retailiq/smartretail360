@@ -10,6 +10,7 @@ namespace SmartRetail360.API.Controllers.V1.Auth;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
+[ApiExplorerSettings(GroupName = "v1")]
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _dbContext;

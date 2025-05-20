@@ -9,36 +9,26 @@ public static class ErrorCatalog
         // General errors
         { ErrorCodes.InternalServerError, "InternalServerError" },
         { ErrorCodes.DatabaseUnavailable, "DatabaseUnavailable" },
-        { ErrorCodes.ValidationFailed, "ValidationFailed" },
         { ErrorCodes.UnsupportedEmailTemplate, "UnsupportedEmailTemplate"},
         { ErrorCodes.DuplicateRegisterAttempt, "DuplicateRegisterAttempt" },
-
-        // Authorization / Access control
-        { ErrorCodes.Unauthorized, "Unauthorized" },
-        { ErrorCodes.Forbidden, "Forbidden" },
-
-        // Tenant / Account-related errors
-        { ErrorCodes.EmailExists, "EmailExists" },
-        { ErrorCodes.TenantNotFound, "TenantNotFound" },
+        
+        // Auth
         { ErrorCodes.InvalidPassword, "InvalidPassword" },
-        { ErrorCodes.AccountLocked, "AccountLocked" },
-        { ErrorCodes.AccountNotFound, "AccountNotFound" },
         { ErrorCodes.InvalidToken, "InvalidToken" },
         { ErrorCodes.TokenExpired, "TokenExpired" },
+
+        // Account
+        { ErrorCodes.TenantNotFound, "TenantNotFound" },
+        { ErrorCodes.AccountLocked, "AccountLocked" },
+        { ErrorCodes.AccountNotFound, "AccountNotFound" },
         { ErrorCodes.AccountAlreadyActivated, "AccountAlreadyActivated" },
         { ErrorCodes.AccountExistsButNotActivated, "AccountExistsButNotActivated" },
-
-        // Operation restrictions
-        { ErrorCodes.RateLimitExceeded, "RateLimitExceeded" },
-        { ErrorCodes.OperationNotAllowed, "OperationNotAllowed" },
-        { ErrorCodes.TooFrequentEmailRequest, "TooFrequentEmailRequest" },
         { ErrorCodes.InvalidTokenOrAccountAlreadyActivated, "InvalidTokenOrAccountAlreadyActivated" },
         { ErrorCodes.TooFrequentActivationAttempt, "TooFrequentActivationAttempt" },
-
-        // External dependencies
-        { ErrorCodes.ExternalServiceUnavailable, "ExternalServiceUnavailable" },
         
         // Email-related
+        { ErrorCodes.EmailExists, "EmailExists" },
+        { ErrorCodes.TooFrequentEmailRequest, "TooFrequentEmailRequest" },
         { ErrorCodes.EmailSendFailed, "EmailSendFailed" }
     };
 

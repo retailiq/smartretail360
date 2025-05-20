@@ -53,44 +53,4 @@ public static class LogReasons
     // Database operations
     public const string DatabaseSaveFailed = "DATABASE_SAVE_FAILED";
     public const string DatabaseRetrievalFailed = "DATABASE_RETRIEVAL_FAILED";
-    
-    // Optional: Map to description
-    // public static readonly Dictionary<string, string> Descriptions = new()
-    // {
-    //     { LockNotAcquired, "Lock not acquired" },
-    //     { EmailAlreadyExists, "AdminEmail already exists" },
-    //     { InvalidEmailFormat, "Invalid email format" },
-    //     { PasswordTooWeak, "Password does not meet complexity rules" },
-    //     { MissingRequiredFields, "One or more required fields are missing" },
-    //     { UnexpectedError, "Unexpected internal error occurred" },
-    //     { InvalidRequest, "The request payload is invalid" },
-    //
-    //     { InvalidToken, "Provided token is invalid" },
-    //     { TokenExpired, "Token has expired" },
-    //     { TokenGenerationError, "Failed to generate token" },
-    //
-    //     { TenantAccountAlreadyExists, "Tenant with same slug or email already exists" },
-    //     { TenantNotFound, "Target tenant was not found" },
-    //
-    //     { ActivationEmailFailed, "Failed to send activation email" },
-    //     { EmailTokenGenerationError, "Email verification token generation failed" },
-    //
-    //     { RedisUnavailable, "Redis is unavailable or misconfigured" },
-    //     { PasswordHashingError, "Password hashing failed" },
-    //     { ExternalServiceUnavailable, "External service is unavailable" },
-    //
-    //     { Unauthorized, "User is not authorized to perform this action" },
-    //     { Forbidden, "User does not have permission" },
-    //
-    //     { RateLimited, "Too many requests in short time" },
-    //     { TooFrequentEmailRequest, "Email requests are too frequent" },
-    //     { TooFrequentActivationAttempt, "Activation attempts are too frequent" },
-    //     
-    //     { EmailSendFailed, "Failed to send email" },
-    //     
-    //     { DatabaseSaveFailed, "Database save operation failed" },
-    //     { DatabaseRetrievalFailed, "Database retrieval operation failed" },
-    //
-    //     { InvalidTokenOrAccountAlreadyActivated , "Token is invalid or account is already activated" },
-    // };
 }

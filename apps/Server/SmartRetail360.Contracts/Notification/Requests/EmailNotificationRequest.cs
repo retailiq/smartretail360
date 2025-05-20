@@ -1,6 +1,6 @@
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Application.DTOs.Notification;
+namespace SmartRetail360.Contracts.Notification.Requests;
 
 public class EmailNotificationRequest
 {

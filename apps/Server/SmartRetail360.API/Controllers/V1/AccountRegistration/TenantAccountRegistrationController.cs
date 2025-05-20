@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using SmartRetail360.Application.DTOs.AccountRegistration.Requests;
-using SmartRetail360.Application.DTOs.AccountRegistration.Responses;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
+using SmartRetail360.Contracts.AccountRegistration.Requests;
+using SmartRetail360.Contracts.AccountRegistration.Responses;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.API.Controllers.V1.AccountRegistration;
 
 [ApiController]
 [ApiVersion("1.0")]
+[ApiExplorerSettings(GroupName = "v1")]
 [Route("api/v{version:apiVersion}/tenants")]
 public class TenantAccountRegistrationController : ControllerBase
 {

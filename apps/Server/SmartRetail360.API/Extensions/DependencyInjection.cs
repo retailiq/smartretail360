@@ -1,19 +1,14 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using SmartRetail360.API.Configuration.Swagger;
-using SmartRetail360.API.Middlewares;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 using System.Globalization;
-using Grafana.OpenTelemetry;
-using OpenTelemetry;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using SmartRetail360.Application.Interfaces.Logging;
-using SmartRetail360.Infrastructure.Logging.Context;
 
 namespace SmartRetail360.API.Extensions;
 
@@ -30,14 +25,14 @@ public static class DependencyInjection
 
         services.AddEndpointsApiExplorer();
 
-        // App 配置
+        // Application Options
         services.Configure<AppOptions>(config.GetSection("App"));
         services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AppOptions>>().Value);
 
         // Register MultiLanguage Resources
         services.AddLocalization(options => { options.ResourcesPath = "Localization"; });
 
-        // 国际化
+        // Internationalization
         var appOptions = config.GetSection("App").Get<AppOptions>();
         var supportedCultures = appOptions.SupportedCultures?.Any() == true
             ? appOptions.SupportedCultures
@@ -50,8 +45,25 @@ public static class DependencyInjection
             options.SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
         });
 
-        services.AddScoped<
-            MessageLocalizer>();
+        services.AddScoped<MessageLocalizer>();
+        
+        // API Versioning
+        services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ReportApiVersions = true;
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new UrlSegmentApiVersionReader()
+            );
+        });
+        
+        // Swagger API 
+        services.AddVersionedApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
 
         // Swagger
         services.AddSwaggerGen(options =>
@@ -85,7 +97,7 @@ public static class DependencyInjection
         services.ConfigureOptions<ConfigureSwaggerOptions>();
         
         
-        // otlp url
+        // otlp configuration
         var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint")
                            ?? "http://localhost:4317";
         services.AddOpenTelemetry()
