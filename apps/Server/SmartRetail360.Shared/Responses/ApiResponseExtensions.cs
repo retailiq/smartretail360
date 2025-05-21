@@ -1,3 +1,5 @@
+using SmartRetail360.Shared.Constants;
+
 namespace SmartRetail360.Shared.Responses;
 
 public static class ApiResponseExtensions
@@ -6,6 +8,6 @@ public static class ApiResponseExtensions
     {
         return response.Success
             ? ApiResponse<T>.Ok(default!, response.Message, response.TraceId)
-            : ApiResponse<T>.Fail(response.Error!.Code, response.Error.Details, response.TraceId);
+            : ApiResponse<T>.Fail(response.Error!.Code, response.Error.Details ?? GeneralConstants.Unknown, response.TraceId);
     }
 }

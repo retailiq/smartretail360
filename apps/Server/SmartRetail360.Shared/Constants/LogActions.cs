@@ -24,7 +24,8 @@ public static class LogActions
     public const string GenerateAccountLockFailed = "GENERATE_ACCOUNT_LOCK_FAILED";
     
     // ===== Email & Notification =====
-    public const string SendEmailFailed = "SEND_EMAIL_FAILED";
+    public const string MatchEmailStrategy = "MATCH_EMAIL_STRATEGY";
+    public const string MatchEmailTemplate = "MATCH_EMAIL_TEMPLATE";
     
     // ===== Log =====
     public const string WriteAuditLog = "WRITE_AUDIT_LOG";

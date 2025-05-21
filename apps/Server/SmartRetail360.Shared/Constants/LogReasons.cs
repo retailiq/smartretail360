@@ -19,6 +19,8 @@ public static class LogReasons
     // Email & Notification
     public const string TooFrequentEmailRequest = "TOO_FREQUENT_EMAIL_REQUEST";
     public const string EmailSendFailed = "EMAIL_SEND_FAILED";
+    public const string EmailStrategyNotFound = "EMAIL_STRATEGY_NOT_FOUND";
+    public const string EmailTemplateNotFound = "EMAIL_TEMPLATE_NOT_FOUND";
     
     // AWS SQS
     public const string SendSqsMessageFailed = "SEND_SQS_MESSAGE_FAILED";

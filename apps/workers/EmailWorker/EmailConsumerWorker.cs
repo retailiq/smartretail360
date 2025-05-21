@@ -6,13 +6,14 @@ using Microsoft.Extensions.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Shared.Enums;
 using System.Text.Json;
-using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Shared.DTOs.Messaging;
+
+namespace EmailWorker;
 
 public class EmailConsumerWorker : BackgroundService
 {

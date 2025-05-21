@@ -1,4 +1,5 @@
-﻿using SmartRetail360.WorkerBootstrap.Hosting;
+﻿using EmailWorker;
+using SmartRetail360.WorkerBootstrap.Hosting;
 using Microsoft.Extensions.Hosting;
 
 var host = await WorkerHostFactory.CreateAsync<EmailConsumerWorker>(args);

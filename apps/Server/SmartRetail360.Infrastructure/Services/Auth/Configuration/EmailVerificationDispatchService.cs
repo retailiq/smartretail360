@@ -23,7 +23,7 @@ public class EmailVerificationDispatchService : IEmailVerificationDispatchServic
         return type switch
         {
             AccountType.TenantAccount => await _tenantAccountEmailVerificationService.VerifyEmailAsync(token),
-            _ => throw new CommonException(ErrorCodes.UnsupportedEmailTemplate)
+            _ => throw new CommonException(ErrorCodes.EmailTemplateNotFound)
         };
     }
 }

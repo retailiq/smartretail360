@@ -282,6 +282,32 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
+            (LogEventType.EmailSendFailure, LogReasons.EmailTemplateNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogAction = LogActions.MatchEmailTemplate,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.EmailSendFailure, LogReasons.EmailStrategyNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogAction = LogActions.MatchEmailStrategy,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
             (LogEventType.EmailSendSuccess, null),
             new LogWriteRule
             {

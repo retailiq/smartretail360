@@ -2,7 +2,6 @@ using Amazon.SQS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Auth.Configuration;
@@ -73,14 +72,10 @@ public static class DependencyInjection
         services.AddScoped<IEmailVerificationService, TenantAccountEmailVerificationService>();
 
         // Redis Service
-        // Redis Configuration
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
-        // Redis Limiter
         services.AddScoped<IRedisLimiterService, RedisRedisLimiterService>();
-        // Redis Lock
         services.AddScoped<IRedisLockService, RedisRedisLockService>();
-        // Redis Log Sampling
         services.AddScoped<IRedisLogSamplingService, RedisLogSamplingService>();
 
         // Register the Tenant Registration Dependencies
@@ -125,33 +120,15 @@ public static class DependencyInjection
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
             GuardChecker = sp.GetRequiredService<IGuardChecker>()
         });
-
-        services.AddScoped<AppExecutionContext>(sp => new AppExecutionContext
-        {
-            Db = sp.GetRequiredService<AppDbContext>(),
-            AppOptions = sp.GetRequiredService<IOptions<AppOptions>>().Value,
-            UserContext = sp.GetRequiredService<IUserContextService>(),
-            Localizer = sp.GetRequiredService<MessageLocalizer>(),
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-
-            // optional
-            AuditLogger = sp.GetService<IAuditLogger>(),
-            RedisLimiterService = sp.GetService<IRedisLimiterService>(),
-            RedisLockService = sp.GetService<IRedisLockService>(),
-            EmailContext = sp.GetService<EmailContext>(),
-            EmailQueueProducer = sp.GetService<SqsEmailProducer>()
-        });
-
+        
+        // Logs
         services.AddScoped<ILogDispatcher, LogDispatcher>();
         services.AddScoped<IAuditLogger, AuditLogger>();
-
         services.AddSingleton<ILogWritePolicyProvider, DefaultLogWritePolicyProvider>();
         services.AddScoped<ILogWriter, DefaultLogWriter>();
-
+        
+        // Register the SQS Email Producer
         services.AddSingleton<SqsEmailProducer>();
-
         services.AddSingleton<IAmazonSQS>(
             new AmazonSQSClient(
                 config["AWS:AccessKey"],
@@ -162,7 +139,6 @@ public static class DependencyInjection
                 }));
 
         services.AddScoped<ISafeExecutor, SafeExecutor>();
-
         services.AddTransient<IGuardChecker, GuardChecker>();
 
         return services;

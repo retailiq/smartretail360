@@ -5,6 +5,7 @@ using SmartRetail360.Shared.Utils;
 using Microsoft.Extensions.Options;
 using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Shared.Extensions;
+// ReSharper disable All
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 
@@ -31,16 +32,16 @@ public class UserAccountActivationEmailStrategy : IEmailStrategy
             path: _appOptions.EmailVerificationUrl,
             queryParams: new()
             {
-                ["token"] = data?["token"],
+                ["token"] = data["token"],
                 ["locale"] = data.GetOrDefault("locale", "en"),
-                ["traceId"] = data?["traceId"],
-                ["tenantId"] = data?["tenantId"],
-                ["userId"] = data?["userId"],
-                ["timestamp"] = data?["timestamp"]
+                ["traceId"] = data["traceId"],
+                ["tenantId"] = data["tenantId"],
+                ["userId"] = data["userId"],
+                ["timestamp"] = data["timestamp"]
             });
 
 
-        var variables = new Dictionary<string, string> { ["activation_link"] = link! };
+        var variables = new Dictionary<string, string> { ["activation_link"] = link};
 
         await _emailSender.SendAsync(toEmail, EmailTemplate.UserAccountActivation, variables);
     }

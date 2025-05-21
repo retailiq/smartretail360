@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Options;
@@ -14,7 +15,8 @@ public class TenantAccountActivationEmailStrategy : IEmailStrategy
     private readonly AppOptions _appOptions;
     
     public EmailTemplate StrategyKey => EmailTemplate.TenantAccountActivation;
-
+    
+    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public TenantAccountActivationEmailStrategy(
         IEmailSender emailSender, 
         IOptions<AppOptions> options)
@@ -31,14 +33,14 @@ public class TenantAccountActivationEmailStrategy : IEmailStrategy
             path: _appOptions.EmailVerificationUrl,
             queryParams: new()
             {
-                ["token"] = data?["token"],
+                ["token"] = data["token"],
                 ["locale"] = data.GetOrDefault("locale", "en"),
-                ["traceId"] = data?["traceId"],
-                ["tenantId"] = data?["tenantId"],
-                ["timestamp"] = data?["timestamp"]
+                ["traceId"] = data["traceId"],
+                ["tenantId"] = data["tenantId"],
+                ["timestamp"] = data["timestamp"]
             });
 
-        var variables = new Dictionary<string, string> { ["activation_link"] = link! };
+        var variables = new Dictionary<string, string> { ["activation_link"] = link };
 
         await _emailSender.SendAsync(toEmail, EmailTemplate.TenantAccountActivation, variables);
     }

@@ -4,7 +4,7 @@ namespace SmartRetail360.Shared.Utils;
 
 public static class TraceIdPrefix
 {
-    private static readonly Dictionary<TraceModule, string> _prefixMap = new()
+    private static readonly Dictionary<TraceModule, string> PrefixMap = new()
     {
         { TraceModule.Auth, "auth" },
         { TraceModule.Tenant, "tenant" },
@@ -13,5 +13,5 @@ public static class TraceIdPrefix
         { TraceModule.Product, "product" },
     };
 
-    public static string Get(TraceModule module) => _prefixMap[module];
+    public static string Get(TraceModule module) => PrefixMap[module];
 }

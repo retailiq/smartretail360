@@ -9,7 +9,6 @@ public static class ErrorCatalog
         // General errors
         { ErrorCodes.InternalServerError, "InternalServerError" },
         { ErrorCodes.DatabaseUnavailable, "DatabaseUnavailable" },
-        { ErrorCodes.UnsupportedEmailTemplate, "UnsupportedEmailTemplate"},
         { ErrorCodes.DuplicateRegisterAttempt, "DuplicateRegisterAttempt" },
         
         // Auth
@@ -29,7 +28,9 @@ public static class ErrorCatalog
         // Email & Notification
         { ErrorCodes.EmailExists, "EmailExists" },
         { ErrorCodes.TooFrequentEmailRequest, "TooFrequentEmailRequest" },
-        { ErrorCodes.EmailSendFailed, "EmailSendFailed" }
+        { ErrorCodes.EmailSendFailed, "EmailSendFailed" },
+        { ErrorCodes.EmailTemplateNotFound, "UnsupportedEmailTemplate"},
+        { ErrorCodes.EmailStrategyNotFound, "EmailStrategyNotFound" },
     };
 
     public static string GetKey(int code)
