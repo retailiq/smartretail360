@@ -2,10 +2,10 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using SmartRetail360.Application.Common;
-using SmartRetail360.Application.Interfaces.Common;
-using SmartRetail360.Application.Validators;
-using SmartRetail360.Application.Validators.Auth;
+using SmartRetail360.Application.Common.UserContext;
+using SmartRetail360.Application.Models;
+using SmartRetail360.Application.Validators.AccountRegistration;
+using SmartRetail360.Shared.Localization;
 
 namespace SmartRetail360.Application;
 
@@ -21,6 +21,11 @@ public static class DependencyInjection
         services.AddValidatorsFromAssemblyContaining<TenantRegisterRequestValidator>();
         services.AddFluentValidationAutoValidation();
         services.AddFluentValidationClientsideAdapters();
+        
+        services.AddScoped<ApplicationDependencies>(sp => new ApplicationDependencies
+        {
+            Localizer = sp.GetRequiredService<MessageLocalizer>(),
+        });
 
         return services;
     }

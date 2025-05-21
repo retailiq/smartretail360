@@ -1,5 +1,4 @@
-using SmartRetail360.Application.Common;
-using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Logging.Context;
 using SmartRetail360.Shared.Logging;
@@ -21,7 +20,7 @@ public class LoggingContextMiddleware
         var path = context.Request.Path.Value;
         userContext.Module = ModuleResolver.ResolveModule(path);
 
-        // Inject the userContext into the Serilog'LogContext
+        // Inject the userContext into the Serilog.Context.LogContext
         using (LogContextEnricher.EnrichFromContext(accessor))
         {
             await _next(context);

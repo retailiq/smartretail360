@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartRetail360.Infrastructure.Data;
@@ -12,11 +11,9 @@ using SmartRetail360.Infrastructure.Data;
 namespace SmartRetail360.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250516130223_Init")]
-    partial class Init
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,6 +30,9 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
 
                     b.Property<string>("Action")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
                         .HasColumnType("text");
 
                     b.Property<string>("DetailsJson")

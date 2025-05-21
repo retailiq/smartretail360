@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
@@ -8,7 +8,7 @@ namespace SmartRetail360.Infrastructure.Logging.Policies;
 
 public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
 {
-    private static readonly Dictionary<(LogEventType, string?), LogWriteRule> _rules = new()
+    private static readonly Dictionary<(LogEventType, string?), LogWriteRule> Rules = new()
     {
         #region Register - Success & Failures
 
@@ -125,15 +125,6 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 LogAction = LogActions.UserLogin,
                 IsSuccess = true,
                 LogCategory = LogCategory.Security
-            }
-        },
-        {
-            (LogEventType.CopilotQuery, null),
-            new LogWriteRule
-            {
-                WriteAudit = false,
-                WriteSystemLog = true,
-                LogLevel = LogLevel.Information
             }
         },
 
@@ -326,7 +317,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
 
     public LogWriteRule GetPolicy(LogEventType eventType, string? reason = null)
     {
-        return _rules.TryGetValue((eventType, reason), out var rule)
+        return Rules.TryGetValue((eventType, reason), out var rule)
             ? rule
             : new LogWriteRule { WriteAudit = true };
     }

@@ -29,5 +29,4 @@
     <ProjectReference Include="..\..\Server\SmartRetail360.WorkerBootstrap\SmartRetail360.WorkerBootstrap.csproj" />
   </ItemGroup>
 
-
 </Project>

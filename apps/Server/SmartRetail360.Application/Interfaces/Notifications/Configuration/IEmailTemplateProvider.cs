@@ -1,6 +1,6 @@
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Application.Interfaces.Notifications;
+namespace SmartRetail360.Application.Interfaces.Notifications.Configuration;
 
 public interface IEmailTemplateProvider
 {

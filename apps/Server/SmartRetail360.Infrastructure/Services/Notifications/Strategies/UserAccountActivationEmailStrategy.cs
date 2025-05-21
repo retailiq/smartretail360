@@ -1,11 +1,9 @@
-using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Options;
 using SmartRetail360.Shared.Utils;
 using Microsoft.Extensions.Options;
-using SmartRetail360.Application.Common;
-using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Shared.Extensions;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Strategies;
@@ -14,18 +12,15 @@ public class UserAccountActivationEmailStrategy : IEmailStrategy
 {
     private readonly IEmailSender _emailSender;
     private readonly AppOptions _appOptions;
-    private readonly IUserContextService _userContext;
     
     public EmailTemplate StrategyKey => EmailTemplate.UserAccountActivation;
 
     public UserAccountActivationEmailStrategy(
         IEmailSender emailSender, 
-        IOptions<AppOptions> options,
-        IUserContextService userContext)
+        IOptions<AppOptions> options)
     {
         _emailSender = emailSender;
         _appOptions = options.Value;
-        _userContext = userContext;
     }
 
     public async Task ExecuteAsync(string toEmail, IDictionary<string, string> data)

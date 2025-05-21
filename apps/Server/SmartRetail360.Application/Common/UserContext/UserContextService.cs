@@ -1,20 +1,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Application.Common;
+namespace SmartRetail360.Application.Common.UserContext;
 
 public class UserContextService : IUserContextService
 {
     private readonly IHttpContextAccessor _http;
-    private readonly ILogger<UserContextService> _logger;
 
-    public UserContextService(IHttpContextAccessor httpContextAccessor, ILogger<UserContextService> logger)
+    public UserContextService(IHttpContextAccessor httpContextAccessor)
     {
         _http = httpContextAccessor;
-        _logger = logger;
 
         // Initialize properties from HttpContext
         if (_http.HttpContext != null)
@@ -69,7 +66,7 @@ public class UserContextService : IUserContextService
     public string IpAddress { get; set; } = GeneralConstants.Unknown;
     public string? ErrorStack { get; set; }
     public string? Action { get; set; }
-    
+
     public void Inject(
         Guid? userId = null,
         Guid? tenantId = null,

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using SmartRetail360.Shared.Enums;
 using MailKit.Net.Smtp;
 using MimeKit;
-using SmartRetail360.Application.Interfaces.Notifications;
+using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 
@@ -29,7 +29,7 @@ public class MailKitEmailSender : IEmailSender
         message.Body = new TextPart("html") { Text = bodyHtml };
 
         using var client = new SmtpClient();
-        await client.ConnectAsync(_config["Mail:Smtp:Host"], int.Parse(_config["Mail:Smtp:Port"]), MailKit.Security.SecureSocketOptions.StartTls);
+        await client.ConnectAsync(_config["Mail:Smtp:Host"], int.Parse(_config["Mail:Smtp:Port"]!), MailKit.Security.SecureSocketOptions.StartTls);
         await client.AuthenticateAsync(_config["Mail:Smtp:User"], _config["Mail:Smtp:Password"]);
         await client.SendAsync(message);
         await client.DisconnectAsync(true);

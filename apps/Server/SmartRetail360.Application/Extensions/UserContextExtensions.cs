@@ -1,4 +1,4 @@
-using SmartRetail360.Application.Common;
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Shared.DTOs.Messaging;
 
 namespace SmartRetail360.Application.Extensions;

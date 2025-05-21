@@ -19,12 +19,6 @@ public class MessageLocalizer
         var key = ErrorCatalog.GetKey(code);
         return _localizer[key];
     }
-
-    public string GetSuccessMessage(int code)
-    {
-        var key = SuccessCatalog.GetKey(code);
-        return _localizer[key];
-    }
     
     public string GetLocalizedText(LocalizedTextKey key)
     {

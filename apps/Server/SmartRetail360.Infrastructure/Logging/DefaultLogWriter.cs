@@ -1,12 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
-using SmartRetail360.Application.Common;
-using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Logging.Context;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.Infrastructure.Logging;
@@ -14,25 +11,18 @@ namespace SmartRetail360.Infrastructure.Logging;
 public class DefaultLogWriter : ILogWriter
 {
     private readonly IAuditLogger _auditLogger;
-    private readonly IUserContextService _userContext;
     private readonly ILogContextAccessor _logContextAccessor;
 
     public DefaultLogWriter(
         IAuditLogger auditLogger,
-        IUserContextService userContext,
         ILogContextAccessor logContextAccessor)
     {
         _auditLogger = auditLogger;
-        _userContext = userContext;
         _logContextAccessor = logContextAccessor;
     }
 
     public async Task WriteAsync(LogContext context, LogWriteRule rule)
     {
-        context.Action ??= rule.LogAction;
-        context.IsSuccess = rule.IsSuccess ?? context.IsSuccess;
-        context.LogCategory ??= rule.LogCategory;
-
         var tasks = new List<Task>();
 
         if (rule.WriteAudit)
@@ -40,15 +30,16 @@ public class DefaultLogWriter : ILogWriter
             tasks.Add(_auditLogger.LogAsync(new AuditContext
             {
                 LogId = context.LogId,
-                Action = context.Action ?? LogActions.UnknownError,
-                IsSuccess = context.IsSuccess,
-                Email = context.Email ?? _userContext.ClientEmail ?? GeneralConstants.Unknown,
                 Reason = context.Reason,
-                ErrorStack = context.ErrorStack,
+                Action = rule.LogAction ?? _logContextAccessor.Action ?? GeneralConstants.Unknown,
+                IsSuccess = rule.IsSuccess ?? true,
+                Email = _logContextAccessor.ClientEmail ?? GeneralConstants.Unknown,
+                ErrorStack = _logContextAccessor.ErrorStack,
                 Level = rule.LogLevel,
-                SourceModule = _userContext.Module ?? LogSourceModules.Unknown,
-                UserId = context.UserId,
-                TenantId = context.TenantId
+                SourceModule = _logContextAccessor.Module ?? GeneralConstants.Unknown,
+                UserId = _logContextAccessor.UserId,
+                TenantId = _logContextAccessor.TenantId,
+                Category = rule.LogCategory ?? LogCategory.Application
             }));
         }
 
@@ -68,11 +59,11 @@ public class DefaultLogWriter : ILogWriter
                         },
                         "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason} | LogId: {LogId}",
                         rule.LogCategory,
-                        rule.LogAction ?? context.Action ?? _userContext.Action ?? GeneralConstants.Unknown,
-                        context.Email ?? _userContext.ClientEmail ?? GeneralConstants.Unknown,
-                        context.IsSuccess,
+                        rule.LogAction ?? _logContextAccessor.Action ?? GeneralConstants.Unknown,
+                        _logContextAccessor.ClientEmail ?? GeneralConstants.Unknown,
+                        rule.IsSuccess ?? true,
                         context.Reason ?? "-",
-                        context.LogId 
+                        context.LogId ?? Guid.NewGuid().ToString()
                     );
                 }
             }));
@@ -80,11 +71,11 @@ public class DefaultLogWriter : ILogWriter
 
         if (rule.SendToSentry)
         {
-            if (!string.IsNullOrWhiteSpace(context.ErrorStack))
+            if (!string.IsNullOrWhiteSpace(_logContextAccessor.ErrorStack))
             {
                 tasks.Add(Task.Run(() =>
                 {
-                    var ex = new Exception(context.ErrorStack);
+                    var ex = new Exception(_logContextAccessor.ErrorStack);
                     SentrySdk.CaptureException(ex);
                 }));
             }

@@ -1,13 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Common.Execution;
-using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Logging;
-using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
-using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.Infrastructure.Common.Execution;
 

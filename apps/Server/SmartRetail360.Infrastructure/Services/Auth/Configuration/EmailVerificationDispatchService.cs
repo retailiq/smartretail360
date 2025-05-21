@@ -1,6 +1,5 @@
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Auth.Configuration;
-using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Exceptions;

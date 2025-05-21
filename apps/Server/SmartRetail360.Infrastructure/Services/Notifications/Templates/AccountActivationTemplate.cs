@@ -1,5 +1,6 @@
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
+// ReSharper disable All
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Templates;
 

@@ -23,8 +23,4 @@
         <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Interfaces\Common\" />
-    </ItemGroup>
-
 </Project>

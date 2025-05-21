@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.Extensions.Logging;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.Domain.Entities;
 
@@ -17,6 +18,7 @@ public class AuditLog
     public DateTime EvaluatedAt { get; set; } = DateTime.UtcNow;
     public LogLevel Level { get; set; } = LogLevel.Information;
     public string? SourceModule { get; set; }
+    public string? Category { get; set; }
     
     [NotMapped]
     public Dictionary<string, string>? UnserializedDetails { get; set; }

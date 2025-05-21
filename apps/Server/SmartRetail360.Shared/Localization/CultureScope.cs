@@ -8,7 +8,7 @@ public static class CultureScope
     {
         var culture = new CultureInfo(locale ?? "en");
         var originalCulture = CultureInfo.CurrentCulture;
-        var originalUICulture = CultureInfo.CurrentUICulture;
+        var originalUiCulture = CultureInfo.CurrentUICulture;
 
         try
         {
@@ -20,7 +20,7 @@ public static class CultureScope
         finally
         {
             CultureInfo.CurrentCulture = originalCulture;
-            CultureInfo.CurrentUICulture = originalUICulture;
+            CultureInfo.CurrentUICulture = originalUiCulture;
         }
     }
 }

@@ -1,17 +1,19 @@
 using FluentValidation;
+using SmartRetail360.Application.Models;
 using SmartRetail360.Contracts.Auth.Requests;
+using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Application.Validators.Auth;
 
 public class EmailVerificationRequestValidator : AbstractValidator<EmailVerificationRequest>
 {
-    public EmailVerificationRequestValidator()
+    public EmailVerificationRequestValidator(ApplicationDependencies dep)
     {
         RuleFor(x => x.Token)
-            .NotEmpty().WithMessage("Token is required")
-            .Matches(@"^[a-zA-Z0-9\-]+$").WithMessage("Invalid token format");
+            .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.TokenIsRequired))
+            .Matches(@"^[a-zA-Z0-9\-]+$").WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.InvalidTokenFormat));
 
         RuleFor(x => x.Type)
-            .IsInEnum().WithMessage("Invalid account type");
+            .IsInEnum().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.InvalidAccountType));
     }
 }

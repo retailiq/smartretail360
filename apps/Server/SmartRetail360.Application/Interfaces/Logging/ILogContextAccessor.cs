@@ -12,4 +12,5 @@ public interface ILogContextAccessor
     string? IpAddress { get; }
     string? AccountType { get; }
     string? ErrorStack { get; }
+    string? Action { get; }
 }

@@ -7,5 +7,25 @@ public enum LocalizedTextKey
     AccountActivationInstruction,  
     AccountActivationCtaText,  
     AccountActivationFooter,
-    AccountActivationSubject
+    AccountActivationSubject,
+    PasswordChanged,
+    TenantRegistered,
+    AccountActivatedSuccessfully,
+    EmailResent,
+    
+    // Field validation messages
+    TokenIsRequired,
+    InvalidTokenFormat,
+    InvalidAccountType,
+    EmailIsRequired,
+    InvalidEmailFormat,
+    PasswordIsRequired,
+    PasswordConfirmationIsRequired,
+    PasswordMustBeAtLeast8Characters,
+    PasswordMustContainUppercase,
+    PasswordMustContainLowercase,
+    PasswordMustContainDigit,
+    PasswordMustContainSpecialCharacter,
+    PasswordsDoNotMatch,
+    InvalidEmailTemplate
 }

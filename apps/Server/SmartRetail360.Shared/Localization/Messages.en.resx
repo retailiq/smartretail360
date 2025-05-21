@@ -34,7 +34,7 @@
     <data name="TenantRegistered" xml:space="preserve"><value>Tenant registered successfully. An activation link has been sent to your email, please verify to complete registration</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>Your account has been successfully activated. You may now log in securely</value></data>
     
-    <!-- Email-related -->
+    <!-- Email & Notification -->
     <data name="EmailExists" xml:space="preserve"><value>Email already exists</value></data>
     <data name="EmailResent" xml:space="preserve"><value>Activation email has been resent</value></data>
     <data name="EmailSendFailed" xml:space="preserve"><value>Failed to send email</value></data>
@@ -48,5 +48,22 @@
     <data name="AccountActivationCtaText" xml:space="preserve"><value>Activate Now</value></data>
     <data name="AccountActivationFooter" xml:space="preserve"><value>This email was sent automatically. Please do not reply.</value></data>
     <data name="AccountActivationSubject" xml:space="preserve"><value>Activate Your Account</value></data>
+    
+    <!-- Field Validation -->
+    <data name="TokenIsRequired" xml:space="preserve"><value>Token is required</value></data>
+    <data name="InvalidTokenFormat" xml:space="preserve"><value>Invalid token format</value></data>
+    <data name="InvalidAccountType" xml:space="preserve"><value>Invalid account type</value></data>
+    <data name="EmailIsRequired" xml:space="preserve"><value>Email is required</value></data>
+    <data name="InvalidEmailFormat" xml:space="preserve"><value>Invalid email format</value></data>
+    <data name="PasswordIsRequired" xml:space="preserve"><value>Password is required</value></data>
+    <data name="PasswordMustBeAtLeast8Characters" xml:space="preserve"><value>Password must be at least 8 characters</value></data>
+    <data name="PasswordMustContainUppercase" xml:space="preserve"><value>Password must contain an uppercase letter</value></data>
+    <data name="PasswordMustContainLowercase" xml:space="preserve"><value>Password must contain a lowercase letter</value></data>
+    <data name="PasswordMustContainDigit" xml:space="preserve"><value>Password must contain a digit</value></data>
+    <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>Password must contain a special character</value></data>
+    <data name="InvalidEmailTemplate" xml:space="preserve"><value>Invalid email template</value></data>
+    <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>Password must contain a special character</value></data>
+    <data name="PasswordConfirmationIsRequired" xml:space="preserve"><value>Password confirmation is required</value></data>
+    <data name="PasswordsDoNotMatch" xml:space="preserve"><value>Passwords do not match</value></data>
     
 </root>

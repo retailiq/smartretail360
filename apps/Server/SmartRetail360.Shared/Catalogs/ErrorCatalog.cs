@@ -4,7 +4,7 @@ namespace SmartRetail360.Shared.Catalogs;
 
 public static class ErrorCatalog
 {
-    private static readonly Dictionary<int, string> _keys = new()
+    private static readonly Dictionary<int, string> Keys = new()
     {
         // General errors
         { ErrorCodes.InternalServerError, "InternalServerError" },
@@ -26,7 +26,7 @@ public static class ErrorCatalog
         { ErrorCodes.InvalidTokenOrAccountAlreadyActivated, "InvalidTokenOrAccountAlreadyActivated" },
         { ErrorCodes.TooFrequentActivationAttempt, "TooFrequentActivationAttempt" },
         
-        // Email-related
+        // Email & Notification
         { ErrorCodes.EmailExists, "EmailExists" },
         { ErrorCodes.TooFrequentEmailRequest, "TooFrequentEmailRequest" },
         { ErrorCodes.EmailSendFailed, "EmailSendFailed" }
@@ -34,6 +34,6 @@ public static class ErrorCatalog
 
     public static string GetKey(int code)
     {
-        return _keys.TryGetValue(code, out var key) ? key : "UnknownError";
+        return Keys.GetValueOrDefault(code, GeneralConstants.Unknown);
     }
 }

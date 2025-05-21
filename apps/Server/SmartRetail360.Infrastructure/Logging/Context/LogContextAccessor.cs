@@ -1,18 +1,14 @@
-using Microsoft.AspNetCore.Http;
-using SmartRetail360.Application.Common;
-using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Logging;
 
 namespace SmartRetail360.Infrastructure.Logging.Context;
 
 public class LogContextAccessor : ILogContextAccessor
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserContextService _userContext;
 
-    public LogContextAccessor(IHttpContextAccessor httpContextAccessor, IUserContextService userContext)
+    public LogContextAccessor(IUserContextService userContext)
     {
-        _httpContextAccessor = httpContextAccessor;
         _userContext = userContext;
     }
 
@@ -26,4 +22,5 @@ public class LogContextAccessor : ILogContextAccessor
     public string? IpAddress => _userContext.IpAddress;
     public string? AccountType => _userContext.AccountType?.ToString();
     public string? ErrorStack => _userContext.ErrorStack;
+    public string? Action => _userContext.Action;
 }

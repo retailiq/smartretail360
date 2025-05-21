@@ -34,7 +34,7 @@
     <data name="TenantRegistered" xml:space="preserve"><value>账户注册成功，请前往邮箱验证以激活账户</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>账户激活成功，您现在可以安全登录平台</value></data>
     
-    <!-- Email-related -->
+    <!-- Email & Notification -->
     <data name="TooFrequentEmailRequest" xml:space="preserve"><value>邮件发送请求过于频繁，请稍后再试</value></data>
     <data name="EmailExists" xml:space="preserve"><value>该邮箱已存在</value></data>
     <data name="EmailResent" xml:space="preserve"><value>激活邮件已重新发送</value></data>
@@ -48,5 +48,22 @@
     <data name="AccountActivationCtaText" xml:space="preserve"><value>立即激活</value></data>
     <data name="AccountActivationFooter" xml:space="preserve"><value>本邮件由系统自动发送，请勿直接回复</value></data>
     <data name="AccountActivationSubject" xml:space="preserve"><value>激活您的账户</value></data>
+    
+    <!-- Field Validation -->
+    <data name="TokenIsRequired" xml:space="preserve"><value>Token不能为空</value></data>
+    <data name="InvalidTokenFormat" xml:space="preserve"><value>Token格式无效</value></data>
+    <data name="InvalidAccountType" xml:space="preserve"><value>账号类型无效</value></data>
+    <data name="EmailIsRequired" xml:space="preserve"><value>邮箱不能为空</value></data>
+    <data name="InvalidEmailFormat" xml:space="preserve"><value>邮箱格式无效</value></data>
+    <data name="PasswordIsRequired" xml:space="preserve"><value>密码不能为空</value></data>
+    <data name="PasswordMustBeAtLeast8Characters" xml:space="preserve"><value>密码长度至少为8位</value></data>
+    <data name="PasswordMustContainUppercase" xml:space="preserve"><value>密码必须包含大写字母</value></data>
+    <data name="PasswordMustContainLowercase" xml:space="preserve"><value>密码必须包含小写字母</value></data>
+    <data name="PasswordMustContainDigit" xml:space="preserve"><value>密码必须包含数字</value></data>
+    <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>密码必须包含特殊字符</value></data>
+    <data name="InvalidEmailTemplate" xml:space="preserve"><value>邮件模板无效</value></data>
+    <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>密码必须包含特殊字符</value></data>
+    <data name="PasswordConfirmationIsRequired" xml:space="preserve"><value>确认密码不能为空</value></data>
+    <data name="PasswordsDoNotMatch" xml:space="preserve"><value>两次输入的密码不一致</value></data>
     
 </root>

@@ -1,7 +1,6 @@
-using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Application.Common;
+namespace SmartRetail360.Application.Common.UserContext;
 
 public interface IUserContextService
 {

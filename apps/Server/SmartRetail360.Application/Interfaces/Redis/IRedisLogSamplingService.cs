@@ -1,4 +1,4 @@
-namespace SmartRetail360.Application.Interfaces.Common;
+namespace SmartRetail360.Application.Interfaces.Redis;
 
 public interface IRedisLogSamplingService
 {

@@ -8,9 +8,9 @@ using SmartRetail360.Shared.Enums;
 using System.Text.Json;
 using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Common.Execution;
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Localization;
-using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Shared.DTOs.Messaging;
 
@@ -117,7 +117,7 @@ public class EmailConsumerWorker : BackgroundService
                 clientEmail: payload.Email,
                 userId: payload.UserId,
                 roleId: payload.RoleId,
-                module: GeneralConstants.EmailWorker,
+                module: LogSourceModules.EmailWorker,
                 accountType: payload.AccountType,
                 ipAddress: payload.IpAddress,
                 action: payload.Action

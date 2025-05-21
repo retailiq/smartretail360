@@ -1,4 +1,4 @@
-namespace SmartRetail360.Application.Interfaces.Services;
+namespace SmartRetail360.Application.Interfaces.Redis;
 
 
 public interface IRedisLimiterService

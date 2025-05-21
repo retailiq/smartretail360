@@ -22,8 +22,11 @@ public static class ErrorCodes
     public const int InvalidTokenOrAccountAlreadyActivated = 6006;
     public const int TooFrequentActivationAttempt = 6007;
 
-    // Email-related
+    // Email & Notification
     public const int EmailSendFailed = 7001;
     public const int EmailExists = 7002;
     public const int TooFrequentEmailRequest = 7003;
+    
+    // Unknown
+    public const int UnknownError = 9999;
 }

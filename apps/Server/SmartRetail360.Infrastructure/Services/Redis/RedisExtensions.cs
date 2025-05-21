@@ -1,4 +1,4 @@
-using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Redis;
 

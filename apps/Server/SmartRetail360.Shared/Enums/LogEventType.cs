@@ -10,9 +10,5 @@ public enum LogEventType
     AccountActivateFailure,
     EmailSendSuccess,
     EmailSendFailure,
-    WriteLogFailure,
-    DataUpload,
-    CopilotQuery,
-    ExportReport,
-    InternalError
+    WriteLogFailure
 }

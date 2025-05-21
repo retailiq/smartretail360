@@ -2,29 +2,27 @@ using Amazon.SQS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Auth.Configuration;
-using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
-using SmartRetail360.Application.Interfaces.Services;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Interceptors;
 using SmartRetail360.Infrastructure.Services.AccountRegistration;
 using SmartRetail360.Infrastructure.Services.Auth;
 using SmartRetail360.Infrastructure.Services.Auth.Configuration;
-using SmartRetail360.Infrastructure.Services.Common;
 using SmartRetail360.Infrastructure.Services.Notifications;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
-using Scrutor;
-using SmartRetail360.Application.Common;
 using SmartRetail360.Application.Common.Execution;
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Logging;
+using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
 using SmartRetail360.Infrastructure.Common.Execution;
 using SmartRetail360.Infrastructure.Logging;
@@ -46,7 +44,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructureLayer(this IServiceCollection services, IConfiguration config)
     {
         services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>));
-        
+
         // Inject the Interceptors
         services.AddSingleton<EntityTimestampsInterceptor>();
         services.AddDbContext<AppDbContext>((provider, options) =>
@@ -76,14 +74,14 @@ public static class DependencyInjection
 
         // Redis Service
         // Redis Configuration
-        var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]);
+        var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
         // Redis Limiter
         services.AddScoped<IRedisLimiterService, RedisRedisLimiterService>();
         // Redis Lock
         services.AddScoped<IRedisLockService, RedisRedisLockService>();
         // Redis Log Sampling
-        services.AddScoped<IRedisLogSamplingService, RedisLogSamplingLogSamplingService>();
+        services.AddScoped<IRedisLogSamplingService, RedisLogSamplingService>();
 
         // Register the Tenant Registration Dependencies
         services.AddScoped<TenantRegistrationDependencies>(sp => new TenantRegistrationDependencies
@@ -100,7 +98,7 @@ public static class DependencyInjection
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
             GuardChecker = sp.GetRequiredService<IGuardChecker>()
         });
-        
+
         // Register the Auth Dependencies
         services.AddScoped<AuthDependencies>(sp => new AuthDependencies
         {
@@ -128,27 +126,43 @@ public static class DependencyInjection
             GuardChecker = sp.GetRequiredService<IGuardChecker>()
         });
 
+        services.AddScoped<AppExecutionContext>(sp => new AppExecutionContext
+        {
+            Db = sp.GetRequiredService<AppDbContext>(),
+            AppOptions = sp.GetRequiredService<IOptions<AppOptions>>().Value,
+            UserContext = sp.GetRequiredService<IUserContextService>(),
+            Localizer = sp.GetRequiredService<MessageLocalizer>(),
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
+            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
+
+            // optional
+            AuditLogger = sp.GetService<IAuditLogger>(),
+            RedisLimiterService = sp.GetService<IRedisLimiterService>(),
+            RedisLockService = sp.GetService<IRedisLockService>(),
+            EmailContext = sp.GetService<EmailContext>(),
+            EmailQueueProducer = sp.GetService<SqsEmailProducer>()
+        });
+
         services.AddScoped<ILogDispatcher, LogDispatcher>();
         services.AddScoped<IAuditLogger, AuditLogger>();
-        
+
         services.AddSingleton<ILogWritePolicyProvider, DefaultLogWritePolicyProvider>();
         services.AddScoped<ILogWriter, DefaultLogWriter>();
 
         services.AddSingleton<SqsEmailProducer>();
 
-        services.AddSingleton<IAmazonSQS>(sp =>
-        {
-            return new AmazonSQSClient(
+        services.AddSingleton<IAmazonSQS>(
+            new AmazonSQSClient(
                 config["AWS:AccessKey"],
                 config["AWS:SecretKey"],
                 new AmazonSQSConfig
                 {
                     RegionEndpoint = Amazon.RegionEndpoint.APSoutheast2
-                });
-        });
+                }));
 
         services.AddScoped<ISafeExecutor, SafeExecutor>();
-        
+
         services.AddTransient<IGuardChecker, GuardChecker>();
 
         return services;

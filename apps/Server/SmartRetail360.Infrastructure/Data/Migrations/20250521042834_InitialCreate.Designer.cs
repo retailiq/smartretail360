@@ -12,8 +12,8 @@ using SmartRetail360.Infrastructure.Data;
 namespace SmartRetail360.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250518120415_AddAuditLogTrigger")]
-    partial class AddAuditLogTrigger
+    [Migration("20250521042834_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,9 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
 
                     b.Property<string>("Action")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
                         .HasColumnType("text");
 
                     b.Property<string>("DetailsJson")

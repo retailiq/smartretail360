@@ -1,4 +1,4 @@
-using SmartRetail360.Application.Interfaces.Notifications;
+using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;

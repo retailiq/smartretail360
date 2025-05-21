@@ -1,7 +1,7 @@
-using SmartRetail360.Application.Interfaces.Services;
+using SmartRetail360.Application.Interfaces.Redis;
 using StackExchange.Redis;
 
-namespace SmartRetail360.Infrastructure.Services.Common;
+namespace SmartRetail360.Infrastructure.Services.Redis;
 
 public class RedisRedisLockService : IRedisLockService
 {

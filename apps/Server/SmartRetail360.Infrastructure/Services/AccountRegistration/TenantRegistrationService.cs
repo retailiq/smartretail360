@@ -131,7 +131,7 @@ public class TenantRegistrationService : ITenantRegistrationService
                     Email = tenant.AdminEmail,
                     Status = tenant.Status,
                 },
-                _dep.Localizer.GetSuccessMessage(SuccessCodes.TenantRegistered),
+                _dep.Localizer.GetLocalizedText(LocalizedTextKey.TenantRegistered),
                 traceId
             );
         }

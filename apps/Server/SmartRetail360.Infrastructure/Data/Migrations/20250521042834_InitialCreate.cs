@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SmartRetail360.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,7 +25,8 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     Details = table.Column<string>(type: "jsonb", nullable: true),
                     EvaluatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Level = table.Column<string>(type: "text", nullable: false),
-                    SourceModule = table.Column<string>(type: "text", nullable: true)
+                    SourceModule = table.Column<string>(type: "text", nullable: true),
+                    Category = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

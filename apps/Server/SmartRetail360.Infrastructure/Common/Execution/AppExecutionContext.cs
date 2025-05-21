@@ -8,19 +8,22 @@ using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 
-namespace SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+namespace SmartRetail360.Infrastructure.Common.Execution;
 
-public class TenantRegistrationDependencies
+public class AppExecutionContext
 {
     public required AppDbContext Db { get; init; }
+    public required AppOptions AppOptions { get; init; }
     public required IUserContextService UserContext { get; init; }
     public required MessageLocalizer Localizer { get; init; }
-    public required EmailContext EmailContext { get; init; }
-    public required IRedisLockService RedisLockService { get; init; }
-    public required AppOptions AppOptions { get; init; }
-    public required IAuditLogger AuditLogger { get; init; } 
     public required ILogDispatcher LogDispatcher { get; init; }
-    public required SqsEmailProducer EmailQueueProducer { get; init; }
     public required ISafeExecutor SafeExecutor { get; init; }
     public required IGuardChecker GuardChecker { get; init; }
+
+    // Optional dependencies
+    public IAuditLogger? AuditLogger { get; init; }
+    public IRedisLimiterService? RedisLimiterService { get; init; }
+    public IRedisLockService? RedisLockService { get; init; }
+    public EmailContext? EmailContext { get; init; }
+    public SqsEmailProducer? EmailQueueProducer { get; init; }
 }

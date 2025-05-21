@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Domain.Entities;
-using SmartRetail360.Infrastructure.Data.Configurations;
 
 namespace SmartRetail360.Infrastructure.Data;
 
@@ -18,9 +17,7 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // modelBuilder.ApplyConfiguration(new TenantConfiguration());
-
-        // 如果有多个配置类，可启用自动扫描：
+        // Apply configurations from the assembly automatically
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

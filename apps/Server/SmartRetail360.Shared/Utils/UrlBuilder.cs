@@ -4,7 +4,7 @@ public static class UrlBuilder
 {
     public static string BuildApiUrl(string baseUrl, int version, string path, Dictionary<string, string>? queryParams = null)
     {
-        if (!baseUrl.EndsWith("/"))
+        if (!baseUrl.EndsWith('/'))
             baseUrl += "/";
 
         var versionedPath = $"api/v{version}/{path.TrimStart('/')}";

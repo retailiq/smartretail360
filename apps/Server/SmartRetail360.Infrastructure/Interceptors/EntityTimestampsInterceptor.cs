@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SmartRetail360.Domain.Entities;
 
 namespace SmartRetail360.Infrastructure.Interceptors;
@@ -22,13 +21,12 @@ public class EntityTimestampsInterceptor : SaveChangesInterceptor
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private void UpdateTimestamps(DbContext? context)
+    private static void UpdateTimestamps(DbContext? context)
     {
         if (context == null) return;
 
         var entries = context.ChangeTracker.Entries()
-            .Where(e => e.Entity is Tenant && 
-                        (e.State == EntityState.Added || e.State == EntityState.Modified));
+            .Where(e => e is { Entity: Tenant, State: EntityState.Added or EntityState.Modified });
 
         foreach (var entry in entries)
         {

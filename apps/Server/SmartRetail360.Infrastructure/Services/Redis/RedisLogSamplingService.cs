@@ -1,13 +1,13 @@
 using StackExchange.Redis;
-using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Redis;
 
-public class RedisLogSamplingLogSamplingService : IRedisLogSamplingService
+public class RedisLogSamplingService : IRedisLogSamplingService
 {
     private readonly IDatabase _db;
 
-    public RedisLogSamplingLogSamplingService(IConnectionMultiplexer connection)
+    public RedisLogSamplingService(IConnectionMultiplexer connection)
     {
         _db = connection.GetDatabase();
     }

@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Extensions;
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Shared.Constants;
@@ -52,7 +51,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         if (guardResult != null)
             return guardResult;
 
-        tenant.EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
+        tenant!.EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
         tenant.LastEmailSentAt = DateTime.UtcNow;
 
         var saveResult = await _dep.SafeExecutor.ExecuteAsync(
@@ -89,7 +88,7 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
 
         return ApiResponse<object>.Ok(
             null,
-            _dep.Localizer.GetSuccessMessage(SuccessCodes.EmailResent),
+            _dep.Localizer.GetLocalizedText(LocalizedTextKey.EmailResent),
             traceId: _dep.UserContext.TraceId
         );
     }

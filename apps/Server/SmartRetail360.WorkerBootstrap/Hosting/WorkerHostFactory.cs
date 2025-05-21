@@ -7,22 +7,21 @@ using SmartRetail360.Infrastructure;
 using SmartRetail360.Shared;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Logging.Context;
-using SmartRetail360.Infrastructure.Logging.Dispatcher;
 
 namespace SmartRetail360.WorkerBootstrap.Hosting;
 
 public static class WorkerHostFactory
 {
-    public static async Task<IHost> CreateAsync<TWorker>(string[] args) where TWorker : class, IHostedService
+    public static Task<IHost> CreateAsync<TWorker>(string[] args) where TWorker : class, IHostedService
     {
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, config) =>
+            .ConfigureAppConfiguration((config) =>
             {
                 config.SetBasePath(Directory.GetCurrentDirectory());
                 config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 config.AddEnvironmentVariables();
             })
-            .UseSerilog((context, services, loggerConfig) =>
+            .UseSerilog((context, loggerConfig) =>
             {
                 loggerConfig
                     .MinimumLevel.Debug()
@@ -32,7 +31,6 @@ public static class WorkerHostFactory
             .ConfigureServices((context, services) =>
             {
                 var configuration = context.Configuration;
-				
 				services.AddLocalization(options => options.ResourcesPath = "Localization");
                 services.AddSharedLayer(configuration);
                 services.AddApplicationLayer();
@@ -43,6 +41,6 @@ public static class WorkerHostFactory
             })
             .Build();
 
-        return host;
+        return Task.FromResult(host);
     }
 }
