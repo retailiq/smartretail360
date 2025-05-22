@@ -62,7 +62,6 @@
     <data name="PasswordMustContainDigit" xml:space="preserve"><value>密码必须包含数字</value></data>
     <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>密码必须包含特殊字符</value></data>
     <data name="InvalidEmailTemplate" xml:space="preserve"><value>邮件模板无效</value></data>
-    <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>密码必须包含特殊字符</value></data>
     <data name="PasswordConfirmationIsRequired" xml:space="preserve"><value>确认密码不能为空</value></data>
     <data name="PasswordsDoNotMatch" xml:space="preserve"><value>两次输入的密码不一致</value></data>
     

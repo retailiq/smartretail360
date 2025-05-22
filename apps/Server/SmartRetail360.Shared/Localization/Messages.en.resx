@@ -62,7 +62,6 @@
     <data name="PasswordMustContainDigit" xml:space="preserve"><value>Password must contain a digit</value></data>
     <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>Password must contain a special character</value></data>
     <data name="InvalidEmailTemplate" xml:space="preserve"><value>Invalid email template</value></data>
-    <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>Password must contain a special character</value></data>
     <data name="PasswordConfirmationIsRequired" xml:space="preserve"><value>Password confirmation is required</value></data>
     <data name="PasswordsDoNotMatch" xml:space="preserve"><value>Passwords do not match</value></data>
     

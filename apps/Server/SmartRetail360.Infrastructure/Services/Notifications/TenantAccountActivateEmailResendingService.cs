@@ -6,7 +6,7 @@ using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
-using SmartRetail360.Shared.DTOs.Messaging;
+using SmartRetail360.Shared.Messaging.Payloads;
 using SmartRetail360.Shared.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications;

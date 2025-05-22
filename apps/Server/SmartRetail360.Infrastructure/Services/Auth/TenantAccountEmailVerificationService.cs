@@ -20,6 +20,8 @@ public class TenantAccountEmailVerificationService : IEmailVerificationService
 
     public async Task<ApiResponse<object>> VerifyEmailAsync(string token)
     {
+        _dep.UserContext.Inject(action: LogActions.TenantAccountActivate);
+        
         var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
             () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.EmailVerificationToken == token),
             LogEventType.AccountActivateFailure,
@@ -34,7 +36,7 @@ public class TenantAccountEmailVerificationService : IEmailVerificationService
 
         if (existingTenant != null)
             _dep.UserContext.Inject(tenantId: existingTenant.Id,
-                clientEmail: existingTenant.AdminEmail, action: LogActions.TenantAccountActivate);
+                clientEmail: existingTenant.AdminEmail);
 
         var redisKey = RedisKeys.VerifyEmailRateLimit(token);
         var isLimited = await _dep.RedisLimiterService.IsLimitedAsync(redisKey);

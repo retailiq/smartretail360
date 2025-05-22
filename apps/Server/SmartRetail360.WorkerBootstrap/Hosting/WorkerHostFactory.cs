@@ -15,10 +15,13 @@ public static class WorkerHostFactory
     public static Task<IHost> CreateAsync<TWorker>(string[] args) where TWorker : class, IHostedService
     {
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((config) =>
+            .UseEnvironment(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production")
+            .ConfigureAppConfiguration((context, config) =>
             {
+                var env = context.HostingEnvironment.EnvironmentName;
                 config.SetBasePath(Directory.GetCurrentDirectory());
                 config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                config.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
                 config.AddEnvironmentVariables();
             })
             .UseSerilog((context, loggerConfig) =>

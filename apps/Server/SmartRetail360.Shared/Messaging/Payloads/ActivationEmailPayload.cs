@@ -1,6 +1,6 @@
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Shared.DTOs.Messaging;
+namespace SmartRetail360.Shared.Messaging.Payloads;
 
 public class ActivationEmailPayload
 {

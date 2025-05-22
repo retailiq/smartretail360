@@ -1,5 +1,5 @@
 using SmartRetail360.Application.Common.UserContext;
-using SmartRetail360.Shared.DTOs.Messaging;
+using SmartRetail360.Shared.Messaging.Payloads;
 
 namespace SmartRetail360.Application.Extensions;
 

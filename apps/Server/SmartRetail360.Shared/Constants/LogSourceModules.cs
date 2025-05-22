@@ -7,6 +7,5 @@ public static class LogSourceModules
     public const string NotificationService = "NOTIFICATION_SERVICE";
     public const string RegisterUserService = "REGISTER_USER_SERVICE";
     public const string EmailWorker = "EMAIL_WORKER";
-    public const string Unknown = "UNKNOWN";
     public const string CommonApi = "CommonApi";
 }
