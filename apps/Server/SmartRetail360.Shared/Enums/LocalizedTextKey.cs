@@ -9,14 +9,20 @@ public enum LocalizedTextKey
     AccountActivationFooter,
     AccountActivationSubject,
     PasswordChanged,
-    TenantRegistered,
+    AccountRegistered,
     AccountActivatedSuccessfully,
     EmailResent,
+    
+    // Role descriptions
+    RoleOwnerDescription,
+    RoleAdminDescription,
+    RoleAnalystDescription,
+    RoleMemberDescription,
+    RoleGuestDescription,
     
     // Field validation messages
     TokenIsRequired,
     InvalidTokenFormat,
-    InvalidAccountType,
     EmailIsRequired,
     InvalidEmailFormat,
     PasswordIsRequired,
@@ -27,5 +33,8 @@ public enum LocalizedTextKey
     PasswordMustContainDigit,
     PasswordMustContainSpecialCharacter,
     PasswordsDoNotMatch,
-    InvalidEmailTemplate
+    InvalidEmailTemplate,
+    NameIsRequired,
+    NameMustBeAtLeast1Characters,
+    NameMustNotExceed50Characters
 }

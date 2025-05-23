@@ -12,27 +12,68 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
     {
         entity.ToTable("tenants");
 
+        // Primary key
         entity.HasKey(e => e.Id);
-        entity.HasIndex(t => t.DeletedAt);
-        entity.HasIndex(t => t.Slug).IsUnique();
-        entity.HasIndex(a => a.AdminEmail).IsUnique();
 
-        entity.Property(e => e.Name).HasMaxLength(128);
-        entity.Property(e => e.Slug).HasMaxLength(64).IsRequired();
-        entity.Property(e => e.AdminEmail).HasMaxLength(128).IsRequired();
-        entity.Property(e => e.PasswordHash).HasMaxLength(255).IsRequired();
-        entity.Property(e => e.Industry).HasMaxLength(64);
-        entity.Property(e => e.PhoneNumber).HasMaxLength(32);
+        // Indexes
+        entity.HasIndex(e => e.DeletedAt);
+        entity.HasIndex(e => e.Slug).IsUnique();
+        entity.HasIndex(e => e.TraceId);
+        entity.HasIndex(e => e.CreatedAt);
+        entity.HasIndex(e => e.IsActive);
+        entity.HasIndex(e => e.DeactivatedAt);
+
+        // Properties
+        entity.Property(e => e.Name)
+            .HasMaxLength(128);
+
+        entity.Property(e => e.Slug)
+            .HasMaxLength(64);
+
+        entity.Property(e => e.Industry)
+            .HasMaxLength(64);
+
+        entity.Property(e => e.Size);
+
+        entity.Property(e => e.LogoUrl)
+            .HasMaxLength(512);
+
         entity.Property(e => e.Status)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(TenantStatus.PendingVerification)));
+            .HasMaxLength(64)
+            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountStatus.PendingVerification)))
+            .IsRequired();
+
         entity.Property(e => e.Plan)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountPlan.Free)));
-        entity.Property(e => e.IsEmailVerified).IsRequired().HasDefaultValue(false);
-        entity.Property(e => e.IsFirstLogin).IsRequired().HasDefaultValue(true);
-        entity.Property(e => e.CreatedAt).IsRequired();
-        entity.Property(e => e.UpdatedAt).IsRequired();
-        entity.Property(e => e.LastEmailSentAt)
-            .HasColumnType("timestamp with time zone")
-            .IsRequired(false);
+            .HasMaxLength(64)
+            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountPlan.Free)))
+            .IsRequired();
+
+        entity.Property(e => e.TraceId)
+            .HasMaxLength(128)
+            .IsRequired();
+
+        entity.Property(e => e.CreatedBy)
+            .IsRequired();
+
+        entity.Property(e => e.CreatedAt)
+            .IsRequired();
+
+        entity.Property(e => e.UpdatedAt)
+            .IsRequired();
+
+        entity.Property(e => e.DeletedAt)
+            .HasColumnType("timestamp with time zone");
+
+        entity.Property(e => e.IsActive)
+            .HasDefaultValue(true)
+            .IsRequired();
+
+        entity.Property(e => e.DeactivatedAt)
+            .HasColumnType("timestamp with time zone");
+
+        entity.Property(e => e.DeactivationReason)
+            .HasMaxLength(64)
+            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountBanReason.None)))
+            .IsRequired();
     }
 }

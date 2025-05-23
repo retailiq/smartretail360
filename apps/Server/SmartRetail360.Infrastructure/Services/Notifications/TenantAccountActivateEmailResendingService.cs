@@ -22,37 +22,37 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
 
     public async Task<ApiResponse<object>> ResendEmailAsync(string email)
     {
-        _dep.UserContext.Inject(clientEmail: email, action: LogActions.TenantAccountActivateEmailReSend);
+        _dep.UserContext.Inject(email: email, action: LogActions.AccountRegistrationActivateEmailReSend);
         
-        var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
-            () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == email),
-            LogEventType.EmailSendFailure,
-            LogReasons.DatabaseRetrievalFailed,
-            ErrorCodes.DatabaseUnavailable
-        );
+        // var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
+        //     () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == email),
+        //     LogEventType.EmailSendFailure,
+        //     LogReasons.DatabaseRetrievalFailed,
+        //     ErrorCodes.DatabaseUnavailable
+        // );
 
-        if (!tenantResult.IsSuccess)
-            return tenantResult.ToObjectResponse();
-
-        var tenant = tenantResult.Response.Data;
+        // if (!tenantResult.IsSuccess)
+        //     return tenantResult.ToObjectResponse();
+        //
+        // var tenant = tenantResult.Response.Data;
         
-        if(tenant != null)
-            _dep.UserContext.Inject(tenantId: tenant.Id);
+        // if(tenant != null)
+        //     _dep.UserContext.Inject(tenantId: tenant.Id);
         
         var redisKey = RedisKeys.ResendAccountActivationEmail(email);
         var isLimited = await _dep.RedisLimiterService.IsLimitedAsync(redisKey);
 
-        var guardResult = await _dep.GuardChecker
-            .Check(() => tenant == null, LogEventType.EmailSendFailure, LogReasons.TenantNotFound, ErrorCodes.TenantNotFound)
-            .Check(() => tenant!.IsEmailVerified, LogEventType.EmailSendFailure, LogReasons.TenantAccountAlreadyActivated, ErrorCodes.AccountAlreadyActivated)
-            .CheckAsync(() => Task.FromResult(isLimited), LogEventType.EmailSendFailure, LogReasons.TooFrequentEmailRequest, ErrorCodes.TooFrequentEmailRequest)
-            .ValidateAsync();
-
-        if (guardResult != null)
-            return guardResult;
-
-        tenant!.EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
-        tenant.LastEmailSentAt = DateTime.UtcNow;
+        // var guardResult = await _dep.GuardChecker
+        //     .Check(() => tenant == null, LogEventType.EmailSendFailure, LogReasons.TenantNotFound, ErrorCodes.TenantNotFound)
+        //     .Check(() => tenant!.IsEmailVerified, LogEventType.EmailSendFailure, LogReasons.TenantAccountAlreadyActivated, ErrorCodes.AccountAlreadyActivated)
+        //     .CheckAsync(() => Task.FromResult(isLimited), LogEventType.EmailSendFailure, LogReasons.TooFrequentEmailRequest, ErrorCodes.TooFrequentEmailRequest)
+        //     .ValidateAsync();
+        //
+        // if (guardResult != null)
+        //     return guardResult;
+        //
+        // tenant!.EmailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
+        // tenant.LastEmailSentAt = DateTime.UtcNow;
 
         var saveResult = await _dep.SafeExecutor.ExecuteAsync(
             async () => { await _dep.Db.SaveChangesAsync(); },
@@ -64,24 +64,24 @@ public class TenantAccountActivateEmailResendingService : IAccountActivateEmailR
         if (!saveResult.IsSuccess)
             return saveResult.ToObjectResponse();
 
-        var payload = new ActivationEmailPayload
-        {
-            Email = tenant.AdminEmail,
-            Token = tenant.EmailVerificationToken,
-            Timestamp = DateTime.UtcNow.ToString("o")
-        };
+        // var payload = new ActivationEmailPayload
+        // {
+        //     Email = tenant.AdminEmail,
+        //     Token = tenant.EmailVerificationToken,
+        //     Timestamp = DateTime.UtcNow.ToString("o")
+        // };
         
-        _dep.UserContext.ApplyTo(payload);
+        // _dep.UserContext.ApplyTo(payload);
+        //
+        // var sendResult = await _dep.SafeExecutor.ExecuteAsync(
+        //     async () => { await _dep.EmailQueueProducer.SendAsync(payload); },
+        //     LogEventType.EmailSendFailure,
+        //     LogReasons.SendSqsMessageFailed,
+        //     ErrorCodes.EmailSendFailed
+        // );
 
-        var sendResult = await _dep.SafeExecutor.ExecuteAsync(
-            async () => { await _dep.EmailQueueProducer.SendAsync(payload); },
-            LogEventType.EmailSendFailure,
-            LogReasons.SendSqsMessageFailed,
-            ErrorCodes.EmailSendFailed
-        );
-
-        if (!sendResult.IsSuccess)
-            return sendResult.ToObjectResponse();
+        // if (!sendResult.IsSuccess)
+        //     return sendResult.ToObjectResponse();
 
         await _dep.RedisLimiterService.SetLimitAsync(redisKey, TimeSpan.FromMinutes(_dep.AppOptions.EmailSendLimitMinutes));
         await _dep.LogDispatcher.Dispatch(LogEventType.EmailSendSuccess);

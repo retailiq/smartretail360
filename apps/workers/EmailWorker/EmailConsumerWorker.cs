@@ -117,30 +117,31 @@ public class EmailConsumerWorker : BackgroundService
             tenantId: payload.TenantId,
             traceId: payload.TraceId,
             locale: payload.Locale,
-            clientEmail: payload.Email,
+            email: payload.Email,
             userId: payload.UserId,
             roleId: payload.RoleId,
             module: LogSourceModules.EmailWorker,
-            accountType: payload.AccountType,
             ipAddress: payload.IpAddress,
-            action: payload.Action
+            action: payload.Action,
+            roleName: payload.RoleName,
+            logId: payload.LogId
         );
 
         var variables = new Dictionary<string, string>
         {
             ["traceId"] = payload.TraceId,
-            ["tenantId"] = payload.TenantId.ToString(),
             ["locale"] = payload.Locale,
             ["token"] = payload.Token,
-            ["timestamp"] = payload.Timestamp
+            ["timestamp"] = payload.Timestamp,
+            ["userName"] = payload.UserName
         };
-
+        
         var result = await safeExecutor.ExecuteAsync(
             async () =>
             {
                 await CultureScope.RunWithCultureAsync(payload.Locale, async () =>
                 {
-                    await emailContext.SendAsync(EmailTemplate.TenantAccountActivation, payload.Email, variables);
+                    await emailContext.SendAsync(payload.EmailTemplate, payload.Email, variables);
                 });
             },
             LogEventType.EmailSendFailure,

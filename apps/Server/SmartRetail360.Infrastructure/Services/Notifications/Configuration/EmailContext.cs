@@ -28,7 +28,7 @@ public class EmailContext
             _dispatcher.Dispatch(LogEventType.EmailSendFailure, LogReasons.EmailStrategyNotFound);
             throw new CommonException(ErrorCodes.EmailStrategyNotFound, HttpStatusCode.ServiceUnavailable);
         }
-
+        
         return strategy.ExecuteAsync(toEmail, variables);
     }
 }

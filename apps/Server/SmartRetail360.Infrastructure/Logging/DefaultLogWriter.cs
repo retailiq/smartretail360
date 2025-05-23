@@ -29,11 +29,11 @@ public class DefaultLogWriter : ILogWriter
         {
             tasks.Add(_auditLogger.LogAsync(new AuditContext
             {
-                LogId = context.LogId,
+                LogId = _logContextAccessor.LogId ?? Guid.NewGuid().ToString(),
                 Reason = context.Reason,
                 Action = rule.LogAction ?? _logContextAccessor.Action ?? GeneralConstants.Unknown,
                 IsSuccess = rule.IsSuccess ?? true,
-                Email = _logContextAccessor.ClientEmail ?? GeneralConstants.Unknown,
+                Email = _logContextAccessor.Email ?? GeneralConstants.Unknown,
                 ErrorStack = _logContextAccessor.ErrorStack,
                 Level = rule.LogLevel,
                 SourceModule = _logContextAccessor.Module ?? GeneralConstants.Unknown,
@@ -57,13 +57,13 @@ public class DefaultLogWriter : ILogWriter
                             LogLevel.Warning => LogEventLevel.Warning,
                             _ => LogEventLevel.Information
                         },
-                        "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason} | LogId: {LogId}",
+                        "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason} | RoleName: {RoleName}",
                         rule.LogCategory,
                         rule.LogAction ?? _logContextAccessor.Action ?? GeneralConstants.Unknown,
-                        _logContextAccessor.ClientEmail ?? GeneralConstants.Unknown,
+                        _logContextAccessor.Email ?? GeneralConstants.Unknown,
                         rule.IsSuccess ?? true,
                         context.Reason ?? "-",
-                        context.LogId ?? Guid.NewGuid().ToString()
+                        _logContextAccessor.RoleName ?? GeneralConstants.Unknown
                     );
                 }
             }));

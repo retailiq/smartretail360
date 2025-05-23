@@ -5,14 +5,19 @@ using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Application.Validators.AccountRegistration;
 
-public class TenantRegisterRequestValidator : AbstractValidator<TenantRegisterRequest>
+public class AccountRegisterRequestValidator : AbstractValidator<AccountRegisterRequest>
 {
-    public TenantRegisterRequestValidator(ApplicationDependencies dep)
+    public AccountRegisterRequestValidator(ApplicationDependencies dep)
     {
-        RuleFor(x => x.AdminEmail)
+        RuleFor(x => x.Email)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.EmailIsRequired))
             .EmailAddress().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.InvalidEmailFormat));
 
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.NameIsRequired))
+            .MinimumLength(1).WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.NameMustBeAtLeast1Characters))
+            .MaximumLength(50).WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.NameMustNotExceed50Characters));
+        
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.PasswordIsRequired))
             .MinimumLength(8).WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.PasswordMustBeAtLeast8Characters))

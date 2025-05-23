@@ -26,8 +26,9 @@ public class ContextHeaderMiddleware
         Set("RoleId", "X-Role-Id");
         Set("TraceId", "X-Trace-Id");
         Set("Locale", "X-Locale");
-        Set("ClientEmail", "X-Client-Email");
+        Set("Email", "X-Email");
         Set("AccountType", "X-Account-Type");
+        Set("UserName", "X-User-Name");
         
         // Add TraceId to response headers
         context.Response.OnStarting(() =>

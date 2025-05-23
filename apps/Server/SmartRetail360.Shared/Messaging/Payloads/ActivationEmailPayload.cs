@@ -13,7 +13,10 @@ public class ActivationEmailPayload
     public Guid? UserId { get; set; }
     public Guid? RoleId { get; set; }
     public string? Module { get; set; }
-    public AccountType? AccountType { get; set; }
     public string? IpAddress { get; set; }
-    public string? Action { get; set; }
+    public required string Action { get; set; }
+    public string? RoleName { get; set; }
+    public string? LogId { get; set; }
+    public required EmailTemplate EmailTemplate { get; set; }
+    public required string UserName { get; set; }
 }

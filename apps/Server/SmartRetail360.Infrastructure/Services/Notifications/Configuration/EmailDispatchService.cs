@@ -31,11 +31,9 @@ public class EmailDispatchService : IEmailDispatchService
 
     public async Task<ApiResponse<object>> DispatchAsync(EmailTemplate template, string email)
     {
-        _userContext.Inject(clientEmail: email);
-
         switch (template)
         {
-            case EmailTemplate.TenantAccountActivation:
+            case EmailTemplate.AccountRegistrationActivation:
                 return await _resendingTenantAccountActivateEmailService.ResendEmailAsync(email);
 
             default:

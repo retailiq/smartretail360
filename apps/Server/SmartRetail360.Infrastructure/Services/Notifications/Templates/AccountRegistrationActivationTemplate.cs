@@ -1,21 +1,28 @@
+using Microsoft.Extensions.Logging;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
+
 // ReSharper disable All
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Templates;
 
-public class AccountActivationTemplate
+public class AccountRegistrationActivationTemplate
 {
     private readonly MessageLocalizer _localizer;
+    private readonly ILogger<AccountRegistrationActivationTemplate> _logger;
 
-    public AccountActivationTemplate(MessageLocalizer localizer)
+    public AccountRegistrationActivationTemplate(MessageLocalizer localizer,
+        ILogger<AccountRegistrationActivationTemplate> logger)
     {
         _localizer = localizer;
+        _logger = logger;
     }
 
     public string GetHtml(Dictionary<string, string> variables)
     {
-        var title = _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationTitle);
+        var title = string.Format(
+            _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationTitle),
+            variables.GetValueOrDefault("userName") ?? "User");
         var greeting = _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationGreeting);
         var instruction = _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationInstruction);
         var ctaText = _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationCtaText);

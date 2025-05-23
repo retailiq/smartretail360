@@ -20,40 +20,40 @@ public class TenantAccountEmailVerificationService : IEmailVerificationService
 
     public async Task<ApiResponse<object>> VerifyEmailAsync(string token)
     {
-        _dep.UserContext.Inject(action: LogActions.TenantAccountActivate);
+        _dep.UserContext.Inject(action: LogActions.AccountActivate);
         
-        var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
-            () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.EmailVerificationToken == token),
-            LogEventType.AccountActivateFailure,
-            LogReasons.DatabaseRetrievalFailed,
-            ErrorCodes.DatabaseUnavailable
-        );
+        // var tenantResult = await _dep.SafeExecutor.ExecuteAsync(
+        //     () => _dep.Db.Tenants.FirstOrDefaultAsync(t => t.EmailVerificationToken == token),
+        //     LogEventType.AccountActivateFailure,
+        //     LogReasons.DatabaseRetrievalFailed,
+        //     ErrorCodes.DatabaseUnavailable
+        // );
 
-        if (!tenantResult.IsSuccess)
-            return tenantResult.ToObjectResponse();
+        // if (!tenantResult.IsSuccess)
+        //     return tenantResult.ToObjectResponse();
 
-        var existingTenant = tenantResult.Response.Data;
+        // var existingTenant = tenantResult.Response.Data;
 
-        if (existingTenant != null)
-            _dep.UserContext.Inject(tenantId: existingTenant.Id,
-                clientEmail: existingTenant.AdminEmail);
+        // if (existingTenant != null)
+        //     _dep.UserContext.Inject(tenantId: existingTenant.Id,
+        //         clientEmail: existingTenant.AdminEmail);
 
         var redisKey = RedisKeys.VerifyEmailRateLimit(token);
         var isLimited = await _dep.RedisLimiterService.IsLimitedAsync(redisKey);
 
-        var guardResult = await _dep.GuardChecker
-            .Check(() => existingTenant == null, LogEventType.AccountActivateFailure,
-                LogReasons.InvalidTokenOrAccountAlreadyActivated, ErrorCodes.InvalidTokenOrAccountAlreadyActivated)
-            .Check(() => isLimited, LogEventType.AccountActivateFailure, LogReasons.TooFrequentActivationAttempt,
-                ErrorCodes.TooFrequentActivationAttempt)
-            .ValidateAsync();
+        // var guardResult = await _dep.GuardChecker
+        //     .Check(() => existingTenant == null, LogEventType.AccountActivateFailure,
+        //         LogReasons.InvalidTokenOrAccountAlreadyActivated, ErrorCodes.InvalidTokenOrAccountAlreadyActivated)
+        //     .Check(() => isLimited, LogEventType.AccountActivateFailure, LogReasons.TooFrequentActivationAttempt,
+        //         ErrorCodes.TooFrequentActivationAttempt)
+        //     .ValidateAsync();
 
-        if (guardResult != null)
-            return guardResult;
-
-        existingTenant!.IsEmailVerified = true;
-        existingTenant.EmailVerificationToken = null;
-        existingTenant.StatusEnum = TenantStatus.Active;
+        // if (guardResult != null)
+        //     return guardResult;
+        //
+        // existingTenant!.IsEmailVerified = true;
+        // existingTenant.EmailVerificationToken = null;
+        // existingTenant.StatusEnum = AccountStatus.Active;
 
         var saveResult = await _dep.SafeExecutor.ExecuteAsync(
             async () => { await _dep.Db.SaveChangesAsync(); },

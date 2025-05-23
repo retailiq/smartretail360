@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Application.Common.UserContext;
 
@@ -21,14 +19,12 @@ public class UserContextService : IUserContextService
             RoleId = TryParseGuid("RoleId");
             TraceId = Get("TraceId");
             Locale = Get("Locale");
-            ClientEmail = Get("ClientEmail");
-
-            var accType = Get("AccountType");
-            if (Enum.TryParse<AccountType>(accType, out var parsed))
-                AccountType = parsed;
-
+            Email = Get("Email");
+            UserName = Get("UserName");
             IpAddress = ResolveIpAddress();
         }
+        
+        LogId = Guid.NewGuid().ToString();
     }
 
     private string? Get(string key)
@@ -46,12 +42,12 @@ public class UserContextService : IUserContextService
     {
         var context = _http.HttpContext;
         if (context == null)
-            return "unknown";
+            return GeneralConstants.Unknown;
 
         if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var forwarded))
             return forwarded.ToString().Split(',')[0].Trim();
 
-        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return context.Connection.RemoteIpAddress?.ToString() ?? GeneralConstants.Unknown;
     }
 
     // Change the properties to public setters to allow setting them from the constructor
@@ -61,11 +57,13 @@ public class UserContextService : IUserContextService
     public string? TraceId { get; set; }
     public string? Locale { get; set; }
     public string? Module { get; set; }
-    public string? ClientEmail { get; set; }
-    public AccountType? AccountType { get; set; }
+    public string? Email { get; set; }
     public string IpAddress { get; set; } = GeneralConstants.Unknown;
     public string? ErrorStack { get; set; }
     public string? Action { get; set; }
+    public string? RoleName { get; set; }
+    public string? LogId { get; set; }
+    public string? UserName { get; set; }
 
     public void Inject(
         Guid? userId = null,
@@ -74,11 +72,13 @@ public class UserContextService : IUserContextService
         string? traceId = null,
         string? locale = null,
         string? module = null,
-        string? clientEmail = null,
-        AccountType? accountType = null,
+        string? email = null,
         string? errorStack = null,
         string? ipAddress = null,
-        string? action = null)
+        string? action = null,
+        string? roleName = null,
+        string? logId = null,
+        string? userName = null)
     {
         if (userId != null) UserId = userId;
         if (tenantId != null) TenantId = tenantId;
@@ -86,10 +86,12 @@ public class UserContextService : IUserContextService
         if (!string.IsNullOrWhiteSpace(traceId)) TraceId = traceId;
         if (!string.IsNullOrWhiteSpace(locale)) Locale = locale;
         if (!string.IsNullOrWhiteSpace(module)) Module = module;
-        if (!string.IsNullOrWhiteSpace(clientEmail)) ClientEmail = clientEmail;
-        if (accountType != null) AccountType = accountType;
+        if (!string.IsNullOrWhiteSpace(email)) Email = email;
         if (!string.IsNullOrWhiteSpace(errorStack)) ErrorStack = errorStack;
         if (!string.IsNullOrWhiteSpace(ipAddress)) IpAddress = ipAddress;
         if (!string.IsNullOrWhiteSpace(action)) Action = action;
+        if (!string.IsNullOrWhiteSpace(roleName)) RoleName = roleName;
+        if (!string.IsNullOrWhiteSpace(logId)) LogId = logId;
+        if (!string.IsNullOrWhiteSpace(userName)) UserName = userName;
     }
 }

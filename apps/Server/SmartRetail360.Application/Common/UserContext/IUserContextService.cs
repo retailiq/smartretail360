@@ -11,10 +11,12 @@ public interface IUserContextService
     string? Locale { get; set; }
     string IpAddress { get; set; }
     string? Module { get; set; }
-    string? ClientEmail { get; set; }
-    AccountType? AccountType { get; set; }
+    string? Email { get; set; }
     string? ErrorStack { get; set; } 
     string? Action { get; set; }
+    string? RoleName { get; set; }
+    string? LogId { get; set; }
+    string? UserName { get; set; }
     
     void Inject(
         Guid? userId = null,
@@ -23,10 +25,12 @@ public interface IUserContextService
         string? traceId = null,
         string? locale = null,
         string? module = null,
-        string? clientEmail = null,
-        AccountType? accountType = null,
+        string? email = null,
         string? errorStack = null,
         string? ipAddress = null,
-        string? action = null
+        string? action = null,
+        string? roleName = null,
+        string? logId = null,
+        string? userName = null
     );
 }

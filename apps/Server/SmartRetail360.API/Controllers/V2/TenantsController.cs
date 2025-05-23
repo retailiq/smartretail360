@@ -18,7 +18,7 @@ public class TenantRegistration1Controller : ControllerBase
     // }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<object>>> RegisterTenant1(TenantRegisterRequest request)
+    public async Task<ActionResult<ApiResponse<object>>> RegisterTenant1(AccountRegisterRequest request)
     {
         return StatusCode(201, "Tenant registered successfully");
     }

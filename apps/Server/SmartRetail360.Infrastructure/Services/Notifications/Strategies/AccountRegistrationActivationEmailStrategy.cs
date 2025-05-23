@@ -9,15 +9,14 @@ using SmartRetail360.Shared.Extensions;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 
-public class TenantAccountActivationEmailStrategy : IEmailStrategy
+public class AccountRegistrationActivationEmailStrategy : IEmailStrategy
 {
     private readonly IEmailSender _emailSender;
     private readonly AppOptions _appOptions;
     
-    public EmailTemplate StrategyKey => EmailTemplate.TenantAccountActivation;
+    public EmailTemplate StrategyKey => EmailTemplate.AccountRegistrationActivation;
     
-    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
-    public TenantAccountActivationEmailStrategy(
+    public AccountRegistrationActivationEmailStrategy(
         IEmailSender emailSender, 
         IOptions<AppOptions> options)
     {
@@ -36,12 +35,11 @@ public class TenantAccountActivationEmailStrategy : IEmailStrategy
                 ["token"] = data["token"],
                 ["locale"] = data.GetOrDefault("locale", "en"),
                 ["traceId"] = data["traceId"],
-                ["tenantId"] = data["tenantId"],
                 ["timestamp"] = data["timestamp"]
             });
 
-        var variables = new Dictionary<string, string> { ["activation_link"] = link };
+        var variables = new Dictionary<string, string>(data) { ["activation_link"] = link };
 
-        await _emailSender.SendAsync(toEmail, EmailTemplate.TenantAccountActivation, variables);
+        await _emailSender.SendAsync(toEmail, EmailTemplate.AccountRegistrationActivation, variables);
     }
 }

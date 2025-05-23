@@ -13,13 +13,12 @@ public static class ErrorCodes
     public const int TokenExpired = 5003;
 
     // Account
-    public const int TenantNotFound = 6001;
-    public const int AccountLocked = 6002;
-    public const int AccountNotFound = 6003;
-    public const int AccountAlreadyActivated = 6004;
-    public const int AccountExistsButNotActivated = 6005;
-    public const int InvalidTokenOrAccountAlreadyActivated = 6006;
-    public const int TooFrequentActivationAttempt = 6007;
+    public const int AccountLocked = 6001;
+    public const int AccountNotFound = 6002;
+    public const int AccountAlreadyActivated = 6003;
+    public const int AccountExistsButNotActivated = 6004;
+    public const int InvalidTokenOrAccountAlreadyActivated = 6005;
+    public const int TooFrequentActivationAttempt = 6006;
 
     // Email & Notification
     public const int EmailSendFailed = 7001;

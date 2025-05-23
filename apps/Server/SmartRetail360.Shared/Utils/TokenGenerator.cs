@@ -4,6 +4,6 @@ public static class TokenGenerator
 {
     public static string GenerateActivateAccountToken()
     {
-        return Guid.NewGuid().ToString();
+        return Guid.NewGuid().ToString("N");
     }
 }

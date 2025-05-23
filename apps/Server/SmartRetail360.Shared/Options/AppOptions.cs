@@ -18,6 +18,7 @@ public class AppOptions
     public bool EnableSensitiveFieldMasking { get; set; } = true;
     public List<string> SensitiveFields { get; set; } = new() { "password", "token", "apiKey" };
     public double AccountActivationLimitMinutes { get; set; } = 1;
+    public int ActivationTokenLimitMinutes { get; set; } = 15;
 }
 
 // Always use { get; set; } in options classes — binding requires a public setter, even for read-only values.

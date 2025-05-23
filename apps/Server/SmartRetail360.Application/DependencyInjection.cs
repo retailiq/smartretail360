@@ -18,7 +18,7 @@ public static class DependencyInjection
         services.AddScoped<IUserContextService, UserContextService>();
 
         // FluentValidation 注册
-        services.AddValidatorsFromAssemblyContaining<TenantRegisterRequestValidator>();
+        services.AddValidatorsFromAssemblyContaining<AccountRegisterRequestValidator>();
         services.AddFluentValidationAutoValidation();
         services.AddFluentValidationClientsideAdapters();
         

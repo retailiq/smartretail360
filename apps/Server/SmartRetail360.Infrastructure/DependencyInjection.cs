@@ -12,7 +12,6 @@ using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Interceptors;
 using SmartRetail360.Infrastructure.Services.AccountRegistration;
 using SmartRetail360.Infrastructure.Services.Auth;
-using SmartRetail360.Infrastructure.Services.Auth.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
@@ -20,6 +19,7 @@ using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
+using SmartRetail360.Application.Interfaces.Caching;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
@@ -58,17 +58,17 @@ public static class DependencyInjection
         services.AddScoped<IAccountActivateEmailResendingService, TenantAccountActivateEmailResendingService>();
         services.AddScoped<IEmailSender, MailKitEmailSender>();
         services.AddScoped<IEmailTemplateProvider, DefaultEmailTemplateProvider>();
-        services.AddScoped<AccountActivationTemplate>();
+        services.AddScoped<AccountRegistrationActivationTemplate>();
         services.AddScoped<IEmailDispatchService, EmailDispatchService>();
         services.AddScoped<EmailContext>();
-        services.AddScoped<TenantAccountActivationEmailStrategy>();
-        services.AddScoped<IEmailStrategy, TenantAccountActivationEmailStrategy>();
+        services.AddScoped<AccountRegistrationActivationEmailStrategy>();
+        services.AddScoped<IEmailStrategy, AccountRegistrationActivationEmailStrategy>();
 
         // Register the Tenant Registration Service
-        services.AddScoped<ITenantRegistrationService, TenantRegistrationService>();
+        services.AddScoped<IAccountRegistrationService, AccountRegistrationService>();
 
         // Register Email Verification
-        services.AddScoped<IEmailVerificationDispatchService, EmailVerificationDispatchService>();
+        // services.AddScoped<IEmailVerificationDispatchService, EmailVerificationDispatchService>();
         services.AddScoped<IEmailVerificationService, TenantAccountEmailVerificationService>();
 
         // Redis Service
@@ -77,9 +77,11 @@ public static class DependencyInjection
         services.AddScoped<IRedisLimiterService, RedisRedisLimiterService>();
         services.AddScoped<IRedisLockService, RedisRedisLockService>();
         services.AddScoped<IRedisLogSamplingService, RedisLogSamplingService>();
+        services.AddScoped<IRoleCacheService, RoleCacheService>();
+        services.AddScoped<IActivationTokenCacheService, ActivationTokenCacheService>();
 
         // Register the Tenant Registration Dependencies
-        services.AddScoped<TenantRegistrationDependencies>(sp => new TenantRegistrationDependencies
+        services.AddScoped<AccountRegistrationDependencies>(sp => new AccountRegistrationDependencies
         {
             Db = sp.GetRequiredService<AppDbContext>(),
             UserContext = sp.GetRequiredService<IUserContextService>(),
@@ -91,7 +93,9 @@ public static class DependencyInjection
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>()
+            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
+            RoleCache = sp.GetRequiredService<IRoleCacheService>(),
+            ActivationTokenCache = sp.GetRequiredService<IActivationTokenCacheService>()
         });
 
         // Register the Auth Dependencies

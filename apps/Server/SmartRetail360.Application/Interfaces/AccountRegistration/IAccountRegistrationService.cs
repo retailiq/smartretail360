@@ -4,7 +4,7 @@ using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Application.Interfaces.AccountRegistration;
 
-public interface ITenantRegistrationService
+public interface IAccountRegistrationService
 {
-    Task<ApiResponse<TenantRegisterResponse>> RegisterTenantAsync(TenantRegisterRequest request);
+    Task<ApiResponse<AccountRegisterResponse>> RegisterAccountAsync(AccountRegisterRequest request);
 }

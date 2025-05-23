@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using SmartRetail360.Domain.Entities;
+using SmartRetail360.Domain.Interfaces;
 
 namespace SmartRetail360.Infrastructure.Interceptors;
 
@@ -25,17 +25,20 @@ public class EntityTimestampsInterceptor : SaveChangesInterceptor
     {
         if (context == null) return;
 
-        var entries = context.ChangeTracker.Entries()
-            .Where(e => e is { Entity: Tenant, State: EntityState.Added or EntityState.Modified });
+        var now = DateTime.UtcNow;
 
-        foreach (var entry in entries)
+        foreach (var entry in context.ChangeTracker.Entries())
         {
-            if (entry.State == EntityState.Added)
+            if (entry.State == EntityState.Added && entry.Entity is IHasCreatedAt createdAt)
             {
-                entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+                createdAt.CreatedAt = now;
             }
 
-            entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+            if ((entry.State == EntityState.Added || entry.State == EntityState.Modified) &&
+                entry.Entity is IHasUpdatedAt updatedAt)
+            {
+                updatedAt.UpdatedAt = now;
+            }
         }
     }
 }

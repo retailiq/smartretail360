@@ -1,5 +1,6 @@
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
+using SmartRetail360.Application.Interfaces.Caching;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Data;
@@ -10,7 +11,7 @@ using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 
-public class TenantRegistrationDependencies
+public class AccountRegistrationDependencies
 {
     public required AppDbContext Db { get; init; }
     public required IUserContextService UserContext { get; init; }
@@ -23,4 +24,6 @@ public class TenantRegistrationDependencies
     public required SqsEmailProducer EmailQueueProducer { get; init; }
     public required ISafeExecutor SafeExecutor { get; init; }
     public required IGuardChecker GuardChecker { get; init; }
+    public required IRoleCacheService RoleCache { get; init; }
+    public required IActivationTokenCacheService ActivationTokenCache { get; init; }
 }

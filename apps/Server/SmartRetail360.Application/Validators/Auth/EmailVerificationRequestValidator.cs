@@ -12,8 +12,5 @@ public class EmailVerificationRequestValidator : AbstractValidator<EmailVerifica
         RuleFor(x => x.Token)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.TokenIsRequired))
             .Matches(@"^[a-zA-Z0-9\-]+$").WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.InvalidTokenFormat));
-
-        RuleFor(x => x.Type)
-            .IsInEnum().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.InvalidAccountType));
     }
 }

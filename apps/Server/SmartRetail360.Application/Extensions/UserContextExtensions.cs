@@ -1,4 +1,5 @@
 using SmartRetail360.Application.Common.UserContext;
+using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Messaging.Payloads;
 
 namespace SmartRetail360.Application.Extensions;
@@ -11,8 +12,10 @@ public static class UserContextExtensions
         payload.TraceId = context.TraceId ?? Guid.NewGuid().ToString("N");
         payload.Module = context.Module;
         payload.Locale = context.Locale ?? "en";
-        payload.AccountType = context.AccountType;
         payload.IpAddress = context.IpAddress;
-        payload.Action = context.Action;
+        payload.UserId = context.UserId ?? Guid.Empty;
+        payload.RoleId = context.RoleId ?? Guid.Empty;
+        payload.RoleName = context.RoleName ?? GeneralConstants.Unknown;
+        payload.LogId = context.LogId ?? GeneralConstants.Unknown;;
     }
 }

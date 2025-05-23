@@ -61,7 +61,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.TenantAccountAlreadyExists),
+            (LogEventType.RegisterFailure, LogReasons.AccountAlreadyExists),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -73,7 +73,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.TenantAccountExistsButNotActivated),
+            (LogEventType.RegisterFailure, LogReasons.AccountExistsButNotActivated),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -181,6 +181,30 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
+            (LogEventType.AccountActivateFailure, LogReasons.TokenDeserializationFailed),
+            new LogWriteRule
+            {
+                WriteAudit = false,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.RoleDeserializationFailed),
+            new LogWriteRule
+            {
+                WriteAudit = false,
+                WriteSystemLog = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogCategory = LogCategory.System
+            }
+        },
+        {
             (LogEventType.AccountActivateSuccess, null),
             new LogWriteRule
             {
@@ -258,7 +282,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.EmailSendFailure, LogReasons.TenantAccountAlreadyActivated),
+            (LogEventType.EmailSendFailure, LogReasons.AccountAlreadyActivated),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -270,7 +294,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.EmailSendFailure, LogReasons.TenantNotFound),
+            (LogEventType.EmailSendFailure, LogReasons.AccountNotFound),
             new LogWriteRule
             {
                 WriteAudit = true,

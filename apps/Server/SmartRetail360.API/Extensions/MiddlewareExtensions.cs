@@ -11,7 +11,7 @@ public static class MiddlewareExtensions
             .UseMiddleware<ContextHeaderMiddleware>()
             .UseMiddleware<LoggingContextMiddleware>()
             .UseMiddleware<SentryContextMiddleware>()
-            .UseMiddleware<RequestLoggingMiddleware>() // 直接写中间件本体即可
+            .UseMiddleware<RequestLoggingMiddleware>()
             .UseMiddleware<ExceptionHandlingMiddleware>();
     }
 }

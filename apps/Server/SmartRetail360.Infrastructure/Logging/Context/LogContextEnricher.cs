@@ -17,15 +17,14 @@ public static class LogContextEnricher
         var disposables = new List<IDisposable>
         {
             SerilogContext.PushProperty("TraceId", traceId ?? accessor.TraceId ?? GeneralConstants.Unknown),
-            SerilogContext.PushProperty("ClientEmail", email ?? accessor.ClientEmail ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("UserId", (userId ?? accessor.UserId)?.ToString() ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("TenantId", (tenantId ?? accessor.TenantId)?.ToString() ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("RoleId", (roleId ?? accessor.RoleId)?.ToString() ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("Module", accessor.Module ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("Locale", accessor.Locale ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("IpAddress", accessor.IpAddress ?? GeneralConstants.Unknown),
-            SerilogContext.PushProperty("AccountType", accessor.AccountType ?? GeneralConstants.Unknown),
-            SerilogContext.PushProperty("ErrorStack", accessor.ErrorStack ?? GeneralConstants.Unknown)
+            SerilogContext.PushProperty("ErrorStack", accessor.ErrorStack ?? GeneralConstants.Unknown),
+            SerilogContext.PushProperty("LogId", accessor.LogId ?? GeneralConstants.Unknown),
         };
 
         return new CompositeDisposable(disposables);

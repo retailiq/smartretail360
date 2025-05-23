@@ -17,7 +17,6 @@ public static class ErrorCatalog
         { ErrorCodes.TokenExpired, "TokenExpired" },
 
         // Account
-        { ErrorCodes.TenantNotFound, "TenantNotFound" },
         { ErrorCodes.AccountLocked, "AccountLocked" },
         { ErrorCodes.AccountNotFound, "AccountNotFound" },
         { ErrorCodes.AccountAlreadyActivated, "AccountAlreadyActivated" },

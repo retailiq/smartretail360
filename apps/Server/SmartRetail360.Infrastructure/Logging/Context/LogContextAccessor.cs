@@ -13,14 +13,15 @@ public class LogContextAccessor : ILogContextAccessor
     }
 
     public string? TraceId => _userContext.TraceId;
-    public string? ClientEmail => _userContext.ClientEmail;
+    public string? Email => _userContext.Email;
     public string? Locale => _userContext.Locale;
     public Guid? UserId => _userContext.UserId;
     public Guid? TenantId => _userContext.TenantId;
     public Guid? RoleId => _userContext.RoleId;
     public string? Module => _userContext.Module;
     public string? IpAddress => _userContext.IpAddress;
-    public string? AccountType => _userContext.AccountType?.ToString();
     public string? ErrorStack => _userContext.ErrorStack;
     public string? Action => _userContext.Action;
+    public string? RoleName => _userContext.RoleName;
+    public string? LogId => _userContext.LogId;
 }

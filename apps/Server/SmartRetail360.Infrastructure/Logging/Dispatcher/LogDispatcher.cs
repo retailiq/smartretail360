@@ -41,7 +41,6 @@ public class LogDispatcher : ILogDispatcher
 
             var context = new LogContext
             {
-                LogId = Guid.NewGuid().ToString(),
                 Reason = reason
             };
 

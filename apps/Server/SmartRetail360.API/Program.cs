@@ -1,6 +1,10 @@
+using System.Diagnostics;
 using Serilog;
 using Serilog.Enrichers.Span;
 using SmartRetail360.API;
+using SmartRetail360.Infrastructure.Data;
+using SmartRetail360.Infrastructure.Data.Seed;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,5 +37,41 @@ var app = builder.Build();
 
 // Configure middleware
 startup.Configure(app, builder.Environment);
+
+if (app.Environment.IsProduction())
+{
+    // prod: Sync Initialization
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var redis = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+    
+    await SystemRoleDbRunner.RunAsync(db);
+    await SystemRoleCacheRunner.RunAsync(db, redis);
+    Console.WriteLine("[Startup] System role seeding completed.");
+}
+else
+{
+    // dev: Async Initialization 
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        Task.Run(async () =>
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var redis = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+
+            try
+            {
+                await SystemRoleDbRunner.RunAsync(db);
+                await SystemRoleCacheRunner.RunAsync(db, redis);
+                Console.WriteLine("[Startup] System role seeding completed.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Startup] System role seeding failed: {ex.Message}");
+            }
+        });
+    });
+}
 
 await app.RunAsync();

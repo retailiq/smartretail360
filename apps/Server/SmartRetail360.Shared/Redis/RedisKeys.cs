@@ -15,4 +15,10 @@ public static class RedisKeys
     
     public static string RegisterAccountLock(string email)
         => $"lock:register:{email}";
+    
+    public static string SystemRole(string roleName)
+        => $"role:{roleName}";
+    
+    public static string ActivationToken(string token)
+        => $"token_activation:{token}";
 }

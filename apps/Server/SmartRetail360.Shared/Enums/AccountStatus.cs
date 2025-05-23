@@ -1,6 +1,6 @@
 namespace SmartRetail360.Shared.Enums;
 
-public enum TenantStatus
+public enum AccountStatus
 {
     PendingVerification,
     Active,

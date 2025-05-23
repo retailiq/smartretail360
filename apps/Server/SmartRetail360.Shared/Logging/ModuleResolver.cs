@@ -13,10 +13,10 @@ public static class ModuleResolver
 
         return path switch
         {
-            var p when p.Contains("/api/v1/tenants") => LogSourceModules.RegisterTenantService,
+            var p when p.Contains("/api/v1/users/register") => LogSourceModules.RegisterAccountService,
+            var p when p.Contains("/api/v1/users/add") => LogSourceModules.AddAccountService,
             var p when p.Contains("/api/v1/notifications") => LogSourceModules.NotificationService,
             var p when p.Contains("/api/v1/auth") => LogSourceModules.AuthService,
-            var p when p.Contains("/api/v1/users") => LogSourceModules.RegisterUserService,
             _ => LogSourceModules.CommonApi
         };
     }

@@ -26,7 +26,7 @@ public class EmailVerificationController : ControllerBase
     [HttpPost("verify")]
     public async Task<ActionResult<ApiResponse<object>>> VerifyEmail([FromBody] EmailVerificationRequest request)
     {
-        var result = await _emailVerificationDispatchService.DispatchAsync(request.Type, request.Token);
+        var result = await _emailVerificationDispatchService.DispatchAsync(request.Token);
         return StatusCode(200, result);
     }
 }
