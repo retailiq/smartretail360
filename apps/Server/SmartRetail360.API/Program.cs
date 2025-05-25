@@ -1,54 +1,77 @@
-// namespace SmartRetail360.API;
-//
-// public class Program
-// {
-//     public static void Main(string[] args)
-//     {   
-//         // Initialize the Builder
-//         var builder = WebApplication.CreateBuilder(args);
-//
-//         // Register the services
-//         builder.Services.AddAuthorization();
-//         builder.Services.AddEndpointsApiExplorer();
-//         builder.Services.AddSwaggerGen();
-//         
-//         // Build the application
-//         var app = builder.Build();
-//
-//         // Configure the HTTP request pipeline
-//         if (app.Environment.IsDevelopment())
-//         {
-//             app.UseSwagger();
-//             app.UseSwaggerUI();
-//         }
-//         
-//         // Register middleware and route mappings
-//         app.UseHttpsRedirection();
-//         app.UseAuthorization();
-//         app.MapControllers(); 
-//         
-//         // Start the application
-//         app.Run();
-//     }
-// }
+using System.Diagnostics;
+using Serilog;
+using Serilog.Enrichers.Span;
+using SmartRetail360.API;
+using SmartRetail360.Infrastructure.Data;
+using SmartRetail360.Infrastructure.Data.Seed;
+using StackExchange.Redis;
 
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+var builder = WebApplication.CreateBuilder(args);
 
-namespace SmartRetail360.API;
+// Configure Logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
-public class Program
+// Initialize Serilog
+builder.Host.UseSerilog((context, services, loggerConfig) =>
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
+    loggerConfig
+        .MinimumLevel.Debug() // Set minimum log level
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .Enrich.WithSpan();
+});
 
-    // Create and configure host builder
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+// Configure Sentry
+builder.WebHost.UseSentry((WebHostBuilderContext context, Sentry.AspNetCore.SentryAspNetCoreOptions options) =>
+{
+    context.Configuration.GetSection("Sentry").Bind(options);
+});
+
+// Register services from Startup
+var startup = new Startup(builder.Configuration);
+startup.ConfigureServices(builder.Services);
+
+var app = builder.Build();
+
+// Configure middleware
+startup.Configure(app, builder.Environment);
+
+if (app.Environment.IsProduction())
+{
+    // prod: Sync Initialization
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var redis = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+    
+    await SystemRoleDbRunner.RunAsync(db);
+    await SystemRoleCacheRunner.RunAsync(db, redis);
+    Console.WriteLine("[Startup] System role seeding completed.");
 }
+else
+{
+    // dev: Async Initialization 
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        Task.Run(async () =>
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var redis = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+
+            try
+            {
+                await SystemRoleDbRunner.RunAsync(db);
+                await SystemRoleCacheRunner.RunAsync(db, redis);
+                Console.WriteLine("[Startup] System role seeding completed.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Startup] System role seeding failed: {ex.Message}");
+            }
+        });
+    });
+}
+
+await app.RunAsync();
