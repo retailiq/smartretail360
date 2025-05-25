@@ -1,0 +1,64 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - smartretail360-net
+
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    env_file:
+      - .env.dev
+    volumes:
+      - ./alloy-config.alloy:/etc/alloy/config.alloy
+      - /Users/jinyuanzhang/IdeaProjects/smartretail360/data/logs:/var/log/smartretail360
+    ports:
+      - "4317:4317"  # gRPC
+      - "4318:4318"  # HTTP
+    networks:
+      - smartretail360-net
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-local
+    environment:
+      POSTGRES_USER: danieltate
+      POSTGRES_PASSWORD: danieltate123
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - smartretail360-net
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566:4566"  # All AWS services port
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+    volumes:
+      - localstack_data:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - smartretail360-net
+
+volumes:
+  redis-data:
+  postgres_data:
+  localstack_data:
+
+networks:
+  smartretail360-net:
+    name: smartretail360-net
+    driver: bridge
