@@ -10,9 +10,8 @@ using System.Text.Json;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Logging;
-using SmartRetail360.Contracts.AccountRegistration.Responses;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Responses;
+using SmartRetail360.Shared.Context;
 
 namespace SmartRetail360.Infrastructure.Services.Redis;
 
@@ -53,11 +52,9 @@ public class RoleCacheService : IRoleCacheService
             }
             catch (Exception ex)
             {
-                _userContext.Inject(
-                    errorStack: ex.ToString()
-                );
+                _userContext.Inject(new UserExecutionContext { ErrorStack = ex.ToString() });
                 await _logDispatcher.Dispatch(
-                    LogEventType.RegisterFailure,
+                    LogEventType.RegisterUserFailure,
                     LogReasons.RoleDeserializationFailed
                 );
 
@@ -68,7 +65,7 @@ public class RoleCacheService : IRoleCacheService
         // If not found in cache, fetch from the database
         var roleResult = await _safeExecutor.ExecuteAsync(
             () => _db.Roles.AsNoTracking().FirstOrDefaultAsync(r => r.Name == roleName),
-            LogEventType.RegisterFailure,
+            LogEventType.RegisterUserFailure,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );

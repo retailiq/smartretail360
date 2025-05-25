@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Options;
@@ -14,7 +13,7 @@ public class AccountRegistrationActivationEmailStrategy : IEmailStrategy
     private readonly IEmailSender _emailSender;
     private readonly AppOptions _appOptions;
     
-    public EmailTemplate StrategyKey => EmailTemplate.AccountRegistrationActivation;
+    public EmailTemplate StrategyKey => EmailTemplate.UserRegistrationActivation;
     
     public AccountRegistrationActivationEmailStrategy(
         IEmailSender emailSender, 
@@ -40,6 +39,6 @@ public class AccountRegistrationActivationEmailStrategy : IEmailStrategy
 
         var variables = new Dictionary<string, string>(data) { ["activation_link"] = link };
 
-        await _emailSender.SendAsync(toEmail, EmailTemplate.AccountRegistrationActivation, variables);
+        await _emailSender.SendAsync(toEmail, EmailTemplate.UserRegistrationActivation, variables);
     }
 }

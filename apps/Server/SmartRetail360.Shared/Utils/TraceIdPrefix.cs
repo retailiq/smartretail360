@@ -6,6 +6,7 @@ public static class TraceIdPrefix
 {
     private static readonly Dictionary<TraceModule, string> PrefixMap = new()
     {
+        { TraceModule.General, "general" },
         { TraceModule.Auth, "auth" },
         { TraceModule.Tenant, "tenant" },
         { TraceModule.Ai, "ai" },

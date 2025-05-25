@@ -8,6 +8,7 @@ using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Redis;
 
@@ -52,14 +53,12 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
         {
             try
             {
-                return JsonSerializer.Deserialize<AccountActivationToken>(json);
+                return JsonSerializer.Deserialize<AccountActivationToken>(json!);
             }
             catch (Exception ex)
             {
                 // Log the error and remove the invalid token from Redis
-                _userContext.Inject(
-                    errorStack: ex.ToString()
-                );
+                _userContext.Inject(new UserExecutionContext { ErrorStack = ex.ToString() });
                 await _logDispatcher.Dispatch(LogEventType.AccountActivateFailure,
                     LogReasons.TokenDeserializationFailed);
                 await _redis.KeyDeleteAsync(key);
@@ -69,7 +68,7 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
         // If not found in Redis, check the database
         var roleResult = await _safeExecutor.ExecuteAsync(
             () => _db.AccountActivationTokens.AsNoTracking().FirstOrDefaultAsync(x => x.Token == token),
-            LogEventType.RegisterFailure,
+            LogEventType.RegisterUserFailure,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -86,6 +85,9 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
 
         var serializedToken = JsonSerializer.Serialize(tokenEntity);
         await _redis.StringSetAsync(key, serializedToken, remainingTtl);
+        
+        // Attach the token entity to the DbContext to update its status
+        _db.Attach(tokenEntity);
         
         return tokenEntity;
     }

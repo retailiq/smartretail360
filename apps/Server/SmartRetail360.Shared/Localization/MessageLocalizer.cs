@@ -19,9 +19,18 @@ public class MessageLocalizer
         var key = ErrorCatalog.GetKey(code);
         return _localizer[key];
     }
-    
-    public string GetLocalizedText(LocalizedTextKey key)
+
+    public string GetLocalizedText(LocalizedTextKey key, params object[]? args)
     {
-        return _localizer[key.ToString()];
+        try
+        {
+            return args == null || args.Length == 0
+                ? _localizer[key.ToString()]
+                : _localizer[key.ToString(), args];
+        }
+        catch
+        {
+            return _localizer[key.ToString()]; // fallback
+        }
     }
 }

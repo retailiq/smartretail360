@@ -19,6 +19,7 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
         entity.HasIndex(e => e.Status);
         entity.HasIndex(e => e.ExpiresAt);
         entity.HasIndex(e => e.CreatedAt);
+        entity.HasIndex(e => e.Source);
         entity.HasIndex(e => new { e.UserId, e.Status, e.ExpiresAt });
         
         entity.Property(e => e.UserId)
@@ -42,6 +43,9 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
 
         entity.Property(e => e.TraceId)
             .HasMaxLength(128)
+            .IsRequired();
+
+        entity.Property(e => e.Source)
             .IsRequired();
     }
 }

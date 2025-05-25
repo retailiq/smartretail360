@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Application.Common.UserContext;
 
@@ -22,6 +25,11 @@ public class UserContextService : IUserContextService
             Email = Get("Email");
             UserName = Get("UserName");
             IpAddress = ResolveIpAddress();
+        }
+        
+        if (string.IsNullOrWhiteSpace(TraceId))
+        {
+            TraceId = TraceIdGenerator.Generate(TraceIdPrefix.Get(TraceModule.General), GeneralConstants.Autogen);
         }
         
         LogId = Guid.NewGuid().ToString();
@@ -65,33 +73,20 @@ public class UserContextService : IUserContextService
     public string? LogId { get; set; }
     public string? UserName { get; set; }
 
-    public void Inject(
-        Guid? userId = null,
-        Guid? tenantId = null,
-        Guid? roleId = null,
-        string? traceId = null,
-        string? locale = null,
-        string? module = null,
-        string? email = null,
-        string? errorStack = null,
-        string? ipAddress = null,
-        string? action = null,
-        string? roleName = null,
-        string? logId = null,
-        string? userName = null)
+    public void Inject(UserExecutionContext context)
     {
-        if (userId != null) UserId = userId;
-        if (tenantId != null) TenantId = tenantId;
-        if (roleId != null) RoleId = roleId;
-        if (!string.IsNullOrWhiteSpace(traceId)) TraceId = traceId;
-        if (!string.IsNullOrWhiteSpace(locale)) Locale = locale;
-        if (!string.IsNullOrWhiteSpace(module)) Module = module;
-        if (!string.IsNullOrWhiteSpace(email)) Email = email;
-        if (!string.IsNullOrWhiteSpace(errorStack)) ErrorStack = errorStack;
-        if (!string.IsNullOrWhiteSpace(ipAddress)) IpAddress = ipAddress;
-        if (!string.IsNullOrWhiteSpace(action)) Action = action;
-        if (!string.IsNullOrWhiteSpace(roleName)) RoleName = roleName;
-        if (!string.IsNullOrWhiteSpace(logId)) LogId = logId;
-        if (!string.IsNullOrWhiteSpace(userName)) UserName = userName;
+        if (context.UserId != null) UserId = context.UserId;
+        if (context.TenantId != null) TenantId = context.TenantId;
+        if (context.RoleId != null) RoleId = context.RoleId;
+        if (!string.IsNullOrWhiteSpace(context.TraceId)) TraceId = context.TraceId;
+        if (!string.IsNullOrWhiteSpace(context.Locale)) Locale = context.Locale;
+        if (!string.IsNullOrWhiteSpace(context.Module)) Module = context.Module;
+        if (!string.IsNullOrWhiteSpace(context.Email)) Email = context.Email;
+        if (!string.IsNullOrWhiteSpace(context.ErrorStack)) ErrorStack = context.ErrorStack;
+        if (!string.IsNullOrWhiteSpace(context.IpAddress)) IpAddress = context.IpAddress;
+        if (!string.IsNullOrWhiteSpace(context.Action)) Action = context.Action;
+        if (!string.IsNullOrWhiteSpace(context.RoleName)) RoleName = context.RoleName;
+        if (!string.IsNullOrWhiteSpace(context.LogId)) LogId = context.LogId;
+        if (!string.IsNullOrWhiteSpace(context.UserName)) UserName = context.UserName;
     }
 }

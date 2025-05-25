@@ -13,6 +13,7 @@ using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Messaging.Payloads;
 using System.Text.Json;
+using SmartRetail360.Shared.Context;
 
 namespace EmailWorker;
 
@@ -113,19 +114,20 @@ public class EmailConsumerWorker : BackgroundService
         var safeExecutor = scope.ServiceProvider.GetRequiredService<ISafeExecutor>();
         var dispatcher = scope.ServiceProvider.GetRequiredService<ILogDispatcher>();
 
-        userContext.Inject(
-            tenantId: payload.TenantId,
-            traceId: payload.TraceId,
-            locale: payload.Locale,
-            email: payload.Email,
-            userId: payload.UserId,
-            roleId: payload.RoleId,
-            module: LogSourceModules.EmailWorker,
-            ipAddress: payload.IpAddress,
-            action: payload.Action,
-            roleName: payload.RoleName,
-            logId: payload.LogId
-        );
+        userContext.Inject(new UserExecutionContext
+        {
+            TenantId = payload.TenantId,
+            TraceId = payload.TraceId,
+            Locale = payload.Locale,
+            Email = payload.Email,
+            UserId = payload.UserId,
+            RoleId = payload.RoleId,
+            Module = LogSourceModules.EmailWorker,
+            IpAddress = payload.IpAddress,
+            Action = payload.Action,
+            RoleName = payload.RoleName,
+            LogId = payload.LogId
+        });
 
         var variables = new Dictionary<string, string>
         {
@@ -133,7 +135,8 @@ public class EmailConsumerWorker : BackgroundService
             ["locale"] = payload.Locale,
             ["token"] = payload.Token,
             ["timestamp"] = payload.Timestamp,
-            ["userName"] = payload.UserName
+            ["userName"] = payload.UserName,
+            ["emailValidationMinutes"] = payload.EmailValidationMinutes,
         };
         
         var result = await safeExecutor.ExecuteAsync(

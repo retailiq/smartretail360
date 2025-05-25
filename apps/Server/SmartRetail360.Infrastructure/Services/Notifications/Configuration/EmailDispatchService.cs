@@ -11,19 +11,19 @@ namespace SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 
 public class EmailDispatchService : IEmailDispatchService
 {
-    private readonly IAccountActivateEmailResendingService _resendingTenantAccountActivateEmailService;
+    private readonly IAccountActivationEmailResendingService _resendingAccountActivationEmail;
     private readonly ILogDispatcher _dispatcher;
     private readonly IUserContextService _userContext;
     private readonly MessageLocalizer _localizer;
 
     public EmailDispatchService(
-        IAccountActivateEmailResendingService resendingTenantAccountActivateEmailService,
+        IAccountActivationEmailResendingService resendingAccountActivationEmail,
         ILogDispatcher dispatcher,
         IUserContextService userContext,
         MessageLocalizer localizer
     )
     {
-        _resendingTenantAccountActivateEmailService = resendingTenantAccountActivateEmailService;
+        _resendingAccountActivationEmail = resendingAccountActivationEmail;
         _dispatcher = dispatcher;
         _userContext = userContext;
         _localizer = localizer;
@@ -33,12 +33,13 @@ public class EmailDispatchService : IEmailDispatchService
     {
         switch (template)
         {
-            case EmailTemplate.AccountRegistrationActivation:
-                return await _resendingTenantAccountActivateEmailService.ResendEmailAsync(email);
+            case EmailTemplate.UserRegistrationActivation:
+                return await _resendingAccountActivationEmail.ResendEmailAsync(email);
 
             default:
                 await _dispatcher.Dispatch(LogEventType.EmailSendFailure, LogReasons.EmailTemplateNotFound);
-                return ApiResponse<object>.Fail(ErrorCodes.EmailTemplateNotFound, _localizer.GetErrorMessage(ErrorCodes.EmailTemplateNotFound), _userContext.TraceId);
+                return ApiResponse<object>.Fail(ErrorCodes.EmailTemplateNotFound,
+                    _localizer.GetErrorMessage(ErrorCodes.EmailTemplateNotFound), _userContext.TraceId);
         }
     }
 }

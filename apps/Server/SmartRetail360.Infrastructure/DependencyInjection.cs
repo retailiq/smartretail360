@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Application.Interfaces.Auth;
-using SmartRetail360.Application.Interfaces.Auth.Configuration;
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Application.Interfaces.Notifications.Strategies;
@@ -20,6 +19,7 @@ using StackExchange.Redis;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Caching;
+using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
@@ -30,6 +30,7 @@ using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
+using SmartRetail360.Infrastructure.Services.Common;
 using SmartRetail360.Infrastructure.Services.Messaging;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Infrastructure.Services.Redis;
@@ -54,8 +55,8 @@ public static class DependencyInjection
         });
 
         // Email Related Services
-        services.AddScoped<IEmailVerificationService, TenantAccountEmailVerificationService>();
-        services.AddScoped<IAccountActivateEmailResendingService, TenantAccountActivateEmailResendingService>();
+        services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
+        services.AddScoped<IAccountActivationEmailResendingService, AccountActivationResendingService>();
         services.AddScoped<IEmailSender, MailKitEmailSender>();
         services.AddScoped<IEmailTemplateProvider, DefaultEmailTemplateProvider>();
         services.AddScoped<AccountRegistrationActivationTemplate>();
@@ -68,8 +69,7 @@ public static class DependencyInjection
         services.AddScoped<IAccountRegistrationService, AccountRegistrationService>();
 
         // Register Email Verification
-        // services.AddScoped<IEmailVerificationDispatchService, EmailVerificationDispatchService>();
-        services.AddScoped<IEmailVerificationService, TenantAccountEmailVerificationService>();
+        services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
 
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
@@ -79,6 +79,7 @@ public static class DependencyInjection
         services.AddScoped<IRedisLogSamplingService, RedisLogSamplingService>();
         services.AddScoped<IRoleCacheService, RoleCacheService>();
         services.AddScoped<IActivationTokenCacheService, ActivationTokenCacheService>();
+        services.AddScoped<IRedisOperationService, RedisOperationService>();
 
         // Register the Tenant Registration Dependencies
         services.AddScoped<AccountRegistrationDependencies>(sp => new AccountRegistrationDependencies
@@ -87,15 +88,14 @@ public static class DependencyInjection
             UserContext = sp.GetRequiredService<IUserContextService>(),
             Localizer = sp.GetRequiredService<MessageLocalizer>(),
             EmailContext = sp.GetRequiredService<EmailContext>(),
-            RedisLockService = sp.GetRequiredService<IRedisLockService>(),
             AppOptions = sp.GetRequiredService<AppOptions>(),
             AuditLogger = sp.GetRequiredService<IAuditLogger>(),
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
             GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-            RoleCache = sp.GetRequiredService<IRoleCacheService>(),
-            ActivationTokenCache = sp.GetRequiredService<IActivationTokenCacheService>()
+            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>()
         });
 
         // Register the Auth Dependencies
@@ -107,8 +107,9 @@ public static class DependencyInjection
             AppOptions = sp.GetRequiredService<AppOptions>(),
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>()
+            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
+            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>()
         });
 
         // Register the Notification Dependencies
@@ -122,15 +123,17 @@ public static class DependencyInjection
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>()
+            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
+            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>()
         });
-        
+
         // Logs
         services.AddScoped<ILogDispatcher, LogDispatcher>();
         services.AddScoped<IAuditLogger, AuditLogger>();
         services.AddSingleton<ILogWritePolicyProvider, DefaultLogWritePolicyProvider>();
         services.AddScoped<ILogWriter, DefaultLogWriter>();
-        
+
         // Register the SQS Email Producer
         services.AddSingleton<SqsEmailProducer>();
         services.AddSingleton<IAmazonSQS>(
@@ -144,6 +147,7 @@ public static class DependencyInjection
 
         services.AddScoped<ISafeExecutor, SafeExecutor>();
         services.AddTransient<IGuardChecker, GuardChecker>();
+        services.AddScoped<IPlatformContextService, PlatformContextService>();
 
         return services;
     }

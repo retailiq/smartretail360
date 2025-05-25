@@ -11,14 +11,16 @@ public static class ErrorCodes
     public const int InvalidPassword = 5001;
     public const int InvalidToken = 5002;
     public const int TokenExpired = 5003;
+    public const int TokenAlreadyUsed = 5004;
+    public const int TokenRevoked = 5005;
+    public const int HasPendingActivationEmail = 5006;
 
     // Account
     public const int AccountLocked = 6001;
     public const int AccountNotFound = 6002;
     public const int AccountAlreadyActivated = 6003;
     public const int AccountExistsButNotActivated = 6004;
-    public const int InvalidTokenOrAccountAlreadyActivated = 6005;
-    public const int TooFrequentActivationAttempt = 6006;
+    public const int TooFrequentActivationAttempt = 6005;
 
     // Email & Notification
     public const int EmailSendFailed = 7001;

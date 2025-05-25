@@ -20,4 +20,11 @@ public class AccountActivationToken : IHasCreatedAt
     public DateTime ExpiresAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string TraceId { get; set; } = string.Empty;
+    public string Source { get; set; } = StringCaseConverter.ToSnakeCase(nameof(ActivationSource.Registration));
+    [NotMapped]
+    public ActivationSource SourceEnum
+    {
+        get => Enum.Parse<ActivationSource>(StringCaseConverter.ToPascalCase(Source));
+        set => Source = StringCaseConverter.ToSnakeCase(value.ToString());
+    }
 }

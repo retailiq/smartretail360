@@ -25,6 +25,7 @@ public static class LogContextEnricher
             SerilogContext.PushProperty("IpAddress", accessor.IpAddress ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("ErrorStack", accessor.ErrorStack ?? GeneralConstants.Unknown),
             SerilogContext.PushProperty("LogId", accessor.LogId ?? GeneralConstants.Unknown),
+            SerilogContext.PushProperty("Action", accessor.Action ?? GeneralConstants.Unknown),
         };
 
         return new CompositeDisposable(disposables);

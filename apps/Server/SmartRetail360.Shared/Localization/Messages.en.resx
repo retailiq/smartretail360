@@ -22,20 +22,22 @@
     <data name="InvalidToken" xml:space="preserve"><value>Invalid token</value></data>
     <data name="TokenExpired" xml:space="preserve"><value>Token has expired</value></data>
     <data name="InvalidPassword" xml:space="preserve"><value>Invalid password</value></data>
+    <data name="TokenAlreadyUsed" xml:space="preserve"><value>The token has already been used</value></data>
+    <data name="TokenRevoked" xml:space="preserve"><value>The token has been revoked</value></data>
+    <data name="HasPendingActivationEmail" xml:space="preserve"><value>An activation email is already pending. Please check your inbox</value></data>
     
     <!-- Account-related -->
     <data name="AccountLocked" xml:space="preserve"><value>Account is locked</value></data>
     <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>
     <data name="AccountExistsButNotActivated" xml:space="preserve"><value>This account already exists but has not been activated yet. Please check your email or resend the activation link</value></data>
     <data name="AccountAlreadyActivated" xml:space="preserve"><value>This account has already been activated. Please log in directly</value></data>
-    <data name="InvalidTokenOrAccountAlreadyActivated" xml:space="preserve"><value>The activation link is invalid or the account has already been activated</value></data>
     <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>You are trying to activate your account too frequently. Please try again later</value></data>
-    <data name="AccountRegistered" xml:space="preserve"><value>Tenant registered successfully, an activation link has been sent to your email, please verify to complete registration, the link is valid for 15 minutes</value></data>
+    <data name="AccountRegistered" xml:space="preserve"><value>Tenant registered successfully, an activation link has been sent to your email, please verify to complete registration, the link is valid for {0} minutes</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>Your account has been successfully activated. You may now log in securely</value></data>
     
     <!-- Email & Notification -->
     <data name="EmailExists" xml:space="preserve"><value>Email already exists</value></data>
-    <data name="EmailResent" xml:space="preserve"><value>Activation email has been resent</value></data>
+    <data name="EmailResent" xml:space="preserve"><value>Activation email has been resent. The link is valid for {0} minutes</value></data>
     <data name="EmailSendFailed" xml:space="preserve"><value>Failed to send email</value></data>
     <data name="TooFrequentEmailRequest" xml:space="preserve"><value>Too many email requests. Please try again later</value></data>
     <data name="UnsupportedEmailTemplate" xml:space="preserve"><value>Unsupported email template</value></data>
@@ -47,6 +49,7 @@
     <data name="AccountActivationCtaText" xml:space="preserve"><value>Activate Now</value></data>
     <data name="AccountActivationFooter" xml:space="preserve"><value>This email was sent automatically. Please do not reply.</value></data>
     <data name="AccountActivationSubject" xml:space="preserve"><value>Activate Your Account</value></data>
+    <data name="AccountActivationValidityNotice" xml:space="preserve"><value>This link is valid for {0} minutes.</value></data>
     
     <!-- Field Validation -->
     <data name="TokenIsRequired" xml:space="preserve"><value>Token is required</value></data>

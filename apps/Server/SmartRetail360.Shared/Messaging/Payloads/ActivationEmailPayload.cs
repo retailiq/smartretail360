@@ -19,4 +19,5 @@ public class ActivationEmailPayload
     public string? LogId { get; set; }
     public required EmailTemplate EmailTemplate { get; set; }
     public required string UserName { get; set; }
+    public string EmailValidationMinutes { get; set; } = string.Empty;
 }

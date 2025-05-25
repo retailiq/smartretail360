@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartRetail360.Infrastructure.Data;
@@ -11,9 +12,11 @@ using SmartRetail360.Infrastructure.Data;
 namespace SmartRetail360.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250523075833_AddSourceFieldIntoActivationToken")]
+    partial class AddSourceFieldIntoActivationToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,6 +138,13 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasDefaultValue("");
 
                     b.Property<bool>("IsSystemRole")
                         .ValueGeneratedOnAdd()

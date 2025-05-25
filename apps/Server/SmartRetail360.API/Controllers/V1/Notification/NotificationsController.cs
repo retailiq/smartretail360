@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartRetail360.Application.Interfaces.Notifications.Configuration;
 using SmartRetail360.Contracts.Notification.Requests;
-using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 
 namespace SmartRetail360.API.Controllers.V1.Notification;
 
@@ -11,17 +10,17 @@ namespace SmartRetail360.API.Controllers.V1.Notification;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class NotificationsController : ControllerBase
 {
-    private readonly IEmailDispatchService _dispatchService;
+    private readonly IEmailDispatchService _dispatcher;
 
-    public NotificationsController(IEmailDispatchService dispatchService)
+    public NotificationsController(IEmailDispatchService dispatcher)
     {
-        _dispatchService = dispatchService;
+        _dispatcher = dispatcher;
     }
 
     [HttpPost("send-email")]
     public async Task<IActionResult> SendEmail([FromBody] EmailNotificationRequest notificationRequest)
     {
-        var result = await _dispatchService.DispatchAsync(notificationRequest.Template, notificationRequest.Email);
+        var result = await _dispatcher.DispatchAsync(notificationRequest.Template, notificationRequest.Email);
         return Ok(result);
     }
 }

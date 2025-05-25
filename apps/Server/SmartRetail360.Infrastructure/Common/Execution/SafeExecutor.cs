@@ -3,6 +3,7 @@ using Npgsql;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Logging;
+using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
 
@@ -37,17 +38,19 @@ public class SafeExecutor : ISafeExecutor
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
         {
-            _userContext.Inject(
-                errorStack: pgEx.ToString()
-            );
+            _userContext.Inject(new UserExecutionContext
+            {
+                ErrorStack = pgEx.ToString()
+            });
             await _logDispatcher.Value.Dispatch(logEvent, reason: reasonOnFailure);
             return SafeExecutionResult.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }
         catch (Exception ex)
         {
-            _userContext.Inject(
-                errorStack: ex.ToString()
-            );
+            _userContext.Inject(new UserExecutionContext
+            {
+                ErrorStack = ex.ToString()
+            });
             await _logDispatcher.Value.Dispatch(logEvent, reason: reasonOnFailure);
             return SafeExecutionResult.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }
@@ -66,17 +69,16 @@ public class SafeExecutor : ISafeExecutor
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
         {
-            _userContext.Inject(
-                errorStack: pgEx.ToString()
-            );
+            _userContext.Inject(new UserExecutionContext
+            {
+                ErrorStack = pgEx.ToString()
+            });
             await _logDispatcher.Value.Dispatch(logEvent, reason: reasonOnFailure);
             return SafeExecutionResult<T>.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }
         catch (Exception ex)
         {
-            _userContext.Inject(
-                errorStack: ex.ToString()
-            );
+            _userContext.Inject(new UserExecutionContext { ErrorStack = ex.ToString() });
             await _logDispatcher.Value.Dispatch(logEvent, reason: reasonOnFailure);
             return SafeExecutionResult<T>.Fail(errorCode, _localizer.GetErrorMessage(errorCode), _userContext.TraceId);
         }

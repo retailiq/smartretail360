@@ -25,12 +25,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             .HasMaxLength(64)
             .IsRequired()
             .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(SystemRoleType.Member)));
-
-        entity.Property(e => e.Description)
-            .HasMaxLength(256)
-            .IsRequired()
-            .HasDefaultValue(string.Empty);
-
+        
         entity.Property(e => e.IsSystemRole)
             .IsRequired()
             .HasDefaultValue(true);

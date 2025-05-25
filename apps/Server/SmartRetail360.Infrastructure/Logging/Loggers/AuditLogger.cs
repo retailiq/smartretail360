@@ -3,6 +3,7 @@ using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Shared.Constants;
@@ -11,24 +12,26 @@ namespace SmartRetail360.Infrastructure.Logging.Loggers;
 
 public class AuditLogger : IAuditLogger
 {
-    private readonly AppDbContext _db;
     private readonly ILogContextAccessor _context;
     private readonly ISafeExecutor _executor;
+    private readonly IServiceProvider _serviceProvider;
 
     public AuditLogger(
-        AppDbContext db,
         ILogContextAccessor context,
-        ISafeExecutor executor)
+        ISafeExecutor executor,
+        IServiceProvider serviceProvider)
     {
-        _db = db;
         _context = context;
         _executor = executor;
+        _serviceProvider = serviceProvider;
 
     }
 
     public async Task LogAsync(AuditContext ctx)
     {
         var details = new Dictionary<string, string>();
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         if (!string.IsNullOrWhiteSpace(ctx.Email)) details["Email"] = ctx.Email;
         if (!string.IsNullOrWhiteSpace(ctx.ErrorStack)) details["ErrorStack"] = ctx.ErrorStack;
@@ -54,8 +57,8 @@ public class AuditLogger : IAuditLogger
 
         await _executor.ExecuteAsync(async () =>
             {
-                _db.AuditLogs.Add(log);
-                await _db.SaveChangesAsync();
+                db.AuditLogs.Add(log);
+                await db.SaveChangesAsync();
             },
             LogEventType.WriteLogFailure,
             LogReasons.DatabaseSaveFailed,

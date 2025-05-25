@@ -9,9 +9,13 @@ public static class LogReasons
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
     public const string TokenDeserializationFailed = "TOKEN_DESERIALIZATION_FAILED";
     public const string RoleDeserializationFailed = "ROLE_DESERIALIZATION_FAILED";
-
+    public const string TokenAlreadyUsed = "TOKEN_ALREADY_USED";
+    public const string InvalidToken = "INVALID_TOKEN";
+    public const string TokenExpired = "TOKEN_EXPIRED";
+    public const string TokenRevoked = "TOKEN_REVOKED";
+    public const string HasPendingActivationEmail = "HAS_PENDING_ACTIVATION_EMAIL";
+    
     // Account
-    public const string InvalidTokenOrAccountAlreadyActivated = "INVALID_TOKEN_OR_ACCOUNT_ALREADY_ACTIVATED";
     public const string AccountAlreadyExists = "ACCOUNT_ALREADY_EXISTS";
     public const string AccountAlreadyActivated = "ACCOUNT_ALREADY_ACTIVATED";
     public const string AccountExistsButNotActivated = "ACCOUNT_EXISTS_BUT_NOT_ACTIVATED";

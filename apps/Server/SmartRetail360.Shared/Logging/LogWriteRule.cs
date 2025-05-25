@@ -10,5 +10,5 @@ public class LogWriteRule
     public LogLevel LogLevel { get; set; } = LogLevel.Information;
     public string? LogAction { get; set; }      
     public bool? IsSuccess { get; set; }      
-    public string? LogCategory { get; set; }  
+    public List<string> LogCategories { get; set; } = new() { LogCategory.Application };
 }

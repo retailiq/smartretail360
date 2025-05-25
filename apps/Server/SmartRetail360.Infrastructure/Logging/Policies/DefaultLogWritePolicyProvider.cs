@@ -13,87 +13,80 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
         #region Register - Success & Failures
 
         {
-            (LogEventType.RegisterFailure, LogReasons.SendSqsMessageFailed),
+            (LogEventType.RegisterUserFailure, LogReasons.SendSqsMessageFailed),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System]
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.LockNotAcquired),
+            (LogEventType.RegisterUserFailure, LogReasons.LockNotAcquired),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Application]
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.DatabaseSaveFailed),
+            (LogEventType.RegisterUserFailure, LogReasons.DatabaseSaveFailed),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Application]
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.DatabaseRetrievalFailed),
+            (LogEventType.RegisterUserFailure, LogReasons.DatabaseRetrievalFailed),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Application]
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.AccountAlreadyExists),
+            (LogEventType.RegisterUserFailure, LogReasons.AccountAlreadyExists),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
-            (LogEventType.RegisterFailure, LogReasons.AccountExistsButNotActivated),
+            (LogEventType.RegisterUserFailure, LogReasons.AccountExistsButNotActivated),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
-            (LogEventType.RegisterSuccess, null),
+            (LogEventType.RegisterUserSuccess, null),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = true,
                 LogLevel = LogLevel.Information,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
 
@@ -106,12 +99,11 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
-                SendToSentry = true,
+                SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
                 LogAction = LogActions.UserLogin,
-                LogCategory = LogCategory.Security
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
             }
         },
         {
@@ -119,12 +111,11 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
-                LogLevel = LogLevel.Warning,
+                LogLevel = LogLevel.Information,
                 LogAction = LogActions.UserLogin,
                 IsSuccess = true,
-                LogCategory = LogCategory.Security
+                LogCategories = [LogCategory.Security, LogCategory.Application, LogCategory.Behavior]
             }
         },
 
@@ -133,15 +124,58 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
         #region Account Activate - Success & Failures
 
         {
-            (LogEventType.AccountActivateFailure, LogReasons.InvalidTokenOrAccountAlreadyActivated),
+            (LogEventType.AccountActivateFailure, LogReasons.InvalidToken),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogCategory = LogCategory.Security
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.TokenAlreadyUsed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.TokenExpired),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.TokenRevoked),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.HasPendingActivationEmail),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Security, LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -149,11 +183,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -161,11 +194,21 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Application, LogCategory.Behavior]
+            }
+        },
+        {
+            (LogEventType.AccountActivateFailure, LogReasons.AccountAlreadyActivated),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -173,11 +216,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
-                LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.System, LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -185,11 +227,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = false,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Security, LogCategory.Behavior]
             }
         },
         {
@@ -197,11 +238,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = false,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Security, LogCategory.Behavior]
             }
         },
         {
@@ -209,11 +249,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = true,
                 LogLevel = LogLevel.Information,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
 
@@ -226,11 +265,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.System, LogCategory.Behavior]
             }
         },
         {
@@ -238,11 +276,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Behavior]
             }
         },
         {
@@ -250,11 +287,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Behavior]
             }
         },
         {
@@ -262,11 +298,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Behavior]
             }
         },
         {
@@ -274,11 +309,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Behavior]
             }
         },
         {
@@ -286,11 +320,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -298,11 +331,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = false,
                 LogLevel = LogLevel.Warning,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -310,12 +342,11 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
                 LogAction = LogActions.MatchEmailTemplate,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -323,12 +354,11 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
                 LogAction = LogActions.MatchEmailStrategy,
-                LogCategory = LogCategory.System
+                LogCategories = [LogCategory.System, LogCategory.Application, LogCategory.Behavior]
             }
         },
         {
@@ -336,28 +366,26 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = false,
                 IsSuccess = true,
                 LogLevel = LogLevel.Information,
-                LogCategory = LogCategory.Application
+                LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
 
         #endregion
 
         #region Logs - Failures
-        
+
         {
             (LogEventType.WriteLogFailure, LogReasons.DatabaseSaveFailed),
             new LogWriteRule
             {
                 WriteAudit = true,
-                WriteSystemLog = true,
                 SendToSentry = true,
                 IsSuccess = false,
                 LogLevel = LogLevel.Error,
-                LogCategory = LogCategory.System,
+                LogCategories = [LogCategory.System, LogCategory.Application],
                 LogAction = LogActions.WriteAuditLog
             }
         }
@@ -369,7 +397,6 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
     {
         return Rules.TryGetValue((eventType, reason), out var rule)
             ? rule
-            : new LogWriteRule { WriteAudit = true };
+            : new LogWriteRule { LogCategories = [LogCategory.Application] };
     }
 }
-// Default Mode: Audit 

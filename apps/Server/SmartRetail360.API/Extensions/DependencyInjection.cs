@@ -96,7 +96,6 @@ public static class DependencyInjection
         
         services.ConfigureOptions<ConfigureSwaggerOptions>();
         
-        
         // otlp configuration
         var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint")
                            ?? "http://localhost:4317";

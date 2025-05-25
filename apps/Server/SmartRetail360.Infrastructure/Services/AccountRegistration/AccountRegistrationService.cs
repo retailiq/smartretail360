@@ -1,13 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using SmartRetail360.Application.Extensions;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Contracts.AccountRegistration.Requests;
 using SmartRetail360.Contracts.AccountRegistration.Responses;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
-using SmartRetail360.Shared.Messaging.Payloads;
+using SmartRetail360.Shared.Messaging.Factories;
 using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
@@ -23,9 +22,13 @@ public class AccountRegistrationService : IAccountRegistrationService
         _dep = dep;
     }
 
-    public async Task<ApiResponse<AccountRegisterResponse>> RegisterAccountAsync(AccountRegisterRequest request)
+    public async Task<ApiResponse<AccountRegisterResponse>> RegisterUserAsync(AccountRegisterRequest request)
     {
-        _dep.UserContext.Inject(email: request.Email, action: LogActions.AccountRegister);
+        _dep.UserContext.Inject(new UserExecutionContext
+        {
+            Email = request.Email,
+            Action = LogActions.UserRegister
+        });
 
         var slug = SlugGenerator.GenerateSlug(request.Email);
 
@@ -36,11 +39,11 @@ public class AccountRegistrationService : IAccountRegistrationService
         }
 
         var lockKey = RedisKeys.RegisterAccountLock(request.Email.ToLower());
-        var lockAcquired = await _dep.RedisLockService.AcquireLockAsync(lockKey,
+        var lockAcquired = await _dep.RedisOperation.AcquireLockAsync(lockKey,
             TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
 
         var lockCheck = await _dep.GuardChecker
-            .Check(() => !lockAcquired, LogEventType.RegisterFailure, LogReasons.LockNotAcquired,
+            .Check(() => !lockAcquired, LogEventType.RegisterUserFailure, LogReasons.LockNotAcquired,
                 ErrorCodes.DuplicateRegisterAttempt)
             .ValidateAsync();
 
@@ -49,34 +52,29 @@ public class AccountRegistrationService : IAccountRegistrationService
 
         try
         {
-            var userResult = await _dep.SafeExecutor.ExecuteAsync(
-                () => _dep.Db.Users.FirstOrDefaultAsync(t => t.Email == request.Email),
-                LogEventType.RegisterFailure,
-                LogReasons.DatabaseRetrievalFailed,
-                ErrorCodes.DatabaseUnavailable
-            );
-
-            if (!userResult.IsSuccess)
-                return userResult.ToObjectResponse().To<AccountRegisterResponse>();
-
-            var existingUser = userResult.Response.Data;
+            var (existingUser, userError) = await _dep.PlatformContext.GetUserByEmailAsync(request.Email);
+            if (userError != null)
+                return userError.To<AccountRegisterResponse>();
 
             if (existingUser != null)
             {
-                _dep.UserContext.Inject(userId: existingUser.Id);
+                _dep.UserContext.Inject(new UserExecutionContext
+                {
+                    UserId = existingUser.Id
+                });
             }
 
             var guardResult = await _dep.GuardChecker
-                .Check(() => existingUser is { IsEmailVerified: true }, LogEventType.RegisterFailure,
+                .Check(() => existingUser is { IsEmailVerified: true }, LogEventType.RegisterUserFailure,
                     LogReasons.AccountAlreadyActivated, ErrorCodes.AccountAlreadyActivated)
-                .Check(() => existingUser is { IsEmailVerified: false }, LogEventType.RegisterFailure,
+                .Check(() => existingUser is { IsEmailVerified: false }, LogEventType.RegisterUserFailure,
                     LogReasons.AccountExistsButNotActivated, ErrorCodes.AccountExistsButNotActivated)
                 .ValidateAsync();
 
             if (guardResult != null)
                 return guardResult.To<AccountRegisterResponse>();
 
-            var role = await _dep.RoleCache.GetSystemRoleAsync(SystemRoleType.Admin);
+            var role = await _dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Admin);
             if (role == null)
                 return ApiResponse<AccountRegisterResponse>.Fail(
                     ErrorCodes.DatabaseUnavailable,
@@ -85,11 +83,11 @@ public class AccountRegistrationService : IAccountRegistrationService
             var roleId = role.Id;
             var roleName = role.Name;
             var passwordHash = PasswordHelper.HashPassword(request.Password);
-            var emailVerificationToken = TokenGenerator.GenerateActivateAccountToken();
+            var emailVerificationToken = TokenHelper.GenerateActivateAccountToken();
 
             var user = new User
             {
-                Email = request.Email,
+                Email = request.Email.ToLowerInvariant(),
                 Name = request.Name,
                 PasswordHash = passwordHash,
                 TraceId = traceId,
@@ -116,15 +114,17 @@ public class AccountRegistrationService : IAccountRegistrationService
                 UserId = user.Id,
                 Token = emailVerificationToken,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.ActivationTokenLimitMinutes),
-                TraceId = traceId
+                TraceId = traceId,
+                SourceEnum = ActivationSource.Registration
             };
 
-            _dep.UserContext.Inject(
-                tenantId: tenant.Id,
-                userId: user.Id,
-                roleId: tenantUser.RoleId,
-                roleName: RoleHelper.ToPascalCaseName(roleName)
-            );
+            _dep.UserContext.Inject(new UserExecutionContext
+            {
+                TenantId = tenant.Id,
+                UserId = user.Id,
+                RoleId = tenantUser.RoleId,
+                RoleName = RoleHelper.ToPascalCaseName(roleName)
+            });
 
             var saveResult = await _dep.SafeExecutor.ExecuteAsync(
                 async () =>
@@ -134,10 +134,10 @@ public class AccountRegistrationService : IAccountRegistrationService
                     _dep.Db.TenantUsers.Add(tenantUser);
                     _dep.Db.AccountActivationTokens.Add(accountActivationToken);
                     await _dep.Db.SaveChangesAsync();
-                    await _dep.ActivationTokenCache.SetTokenAsync(accountActivationToken,
+                    await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken,
                         TimeSpan.FromMinutes(_dep.AppOptions.ActivationTokenLimitMinutes));
                 },
-                LogEventType.RegisterFailure,
+                LogEventType.RegisterUserFailure,
                 LogReasons.DatabaseSaveFailed,
                 ErrorCodes.DatabaseUnavailable
             );
@@ -145,32 +145,21 @@ public class AccountRegistrationService : IAccountRegistrationService
             if (!saveResult.IsSuccess)
                 return saveResult.ToObjectResponse().To<AccountRegisterResponse>();
 
-            var emailResult = await _dep.SafeExecutor.ExecuteAsync(
-                async () =>
-                {
-                    var payload = new ActivationEmailPayload
-                    {
-                        Email = user.Email,
-                        Token = emailVerificationToken,
-                        Timestamp = DateTime.UtcNow.ToString("o"),
-                        Action = LogActions.AccountRegistrationActivateEmailSend,
-                        EmailTemplate = EmailTemplate.AccountRegistrationActivation,
-                        UserName = user.Name,
-                    };
-
-                    _dep.UserContext.ApplyTo(payload);
-
-                    await _dep.EmailQueueProducer.SendAsync(payload);
-                },
-                LogEventType.RegisterFailure,
-                LogReasons.SendSqsMessageFailed,
-                ErrorCodes.EmailSendFailed
+            var payload = ActivationEmailPayloadFactory.Create(
+                user.Email,
+                user.Name,
+                emailVerificationToken,
+                LogActions.UserRegistrationActivationEmailSend,
+                EmailTemplate.UserRegistrationActivation,
+                _dep.AppOptions.ActivationTokenLimitMinutes
             );
+            
+            var emailError =
+                await _dep.PlatformContext.SendRegistrationInvitationEmailAsync(emailVerificationToken, payload);
+            if (emailError != null)
+                return emailError.To<AccountRegisterResponse>();
 
-            if (!emailResult.IsSuccess)
-                return emailResult.ToObjectResponse().To<AccountRegisterResponse>();
-
-            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterSuccess);
+            await _dep.LogDispatcher.Dispatch(LogEventType.RegisterUserSuccess);
 
             return ApiResponse<AccountRegisterResponse>.Ok(
                 new AccountRegisterResponse
@@ -178,13 +167,14 @@ public class AccountRegistrationService : IAccountRegistrationService
                     Status = user.Status,
                     Name = user.Name
                 },
-                _dep.Localizer.GetLocalizedText(LocalizedTextKey.AccountRegistered),
+                _dep.Localizer.GetLocalizedText(LocalizedTextKey.AccountRegistered,
+                    _dep.AppOptions.AccountActivationLimitMinutes),
                 traceId
             );
         }
         finally
         {
-            await _dep.RedisLockService.ReleaseLockAsync(lockKey);
+            await _dep.RedisOperation.ReleaseLockAsync(lockKey);
         }
     }
 }

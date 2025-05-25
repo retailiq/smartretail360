@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.Extensions.Logging;
-using SmartRetail360.Shared.Enums;
-using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.Domain.Entities;
 

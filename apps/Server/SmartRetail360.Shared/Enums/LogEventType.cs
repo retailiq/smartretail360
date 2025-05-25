@@ -2,8 +2,10 @@ namespace SmartRetail360.Shared.Enums;
 
 public enum LogEventType
 {
-    RegisterSuccess,
-    RegisterFailure,
+    RegisterUserSuccess,
+    RegisterUserFailure,
+    InviteUserSuccess,
+    InviteUserFailure,
     LoginSuccess,
     LoginFailure,
     AccountActivateSuccess,

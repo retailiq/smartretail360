@@ -12,20 +12,20 @@ namespace SmartRetail360.API.Controllers.V1.AccountRegistration;
 [Route("api/v{version:apiVersion}/users")]
 public class AccountRegistrationController : ControllerBase
 {
-    private readonly IAccountRegistrationService _accountRegistrationService;
+    private readonly IAccountRegistrationService _accountRegistration;
 
     public AccountRegistrationController(
-        IAccountRegistrationService accountRegistrationService
+        IAccountRegistrationService accountRegistration
     )
     {
-        _accountRegistrationService = accountRegistrationService;
+        _accountRegistration = accountRegistration;
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<ApiResponse<AccountRegisterResponse>>> AccountRegister(
+    public async Task<ActionResult<ApiResponse<AccountRegisterResponse>>> RegisterUser(
         [FromBody] AccountRegisterRequest request)
     {
-        var result = await _accountRegistrationService.RegisterAccountAsync(request);
+        var result = await _accountRegistration.RegisterUserAsync(request);
         return StatusCode(201, result);
     }
 }

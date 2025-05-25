@@ -6,5 +6,5 @@ namespace SmartRetail360.Application.Interfaces.AccountRegistration;
 
 public interface IAccountRegistrationService
 {
-    Task<ApiResponse<AccountRegisterResponse>> RegisterAccountAsync(AccountRegisterRequest request);
+    Task<ApiResponse<AccountRegisterResponse>> RegisterUserAsync(AccountRegisterRequest request);
 }

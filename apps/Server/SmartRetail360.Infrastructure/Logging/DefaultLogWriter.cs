@@ -4,6 +4,7 @@ using Serilog.Events;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure.Logging.Context;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.Infrastructure.Logging;
@@ -39,35 +40,32 @@ public class DefaultLogWriter : ILogWriter
                 SourceModule = _logContextAccessor.Module ?? GeneralConstants.Unknown,
                 UserId = _logContextAccessor.UserId,
                 TenantId = _logContextAccessor.TenantId,
-                Category = rule.LogCategory ?? LogCategory.Application
+                Category = rule.LogCategories.FirstOrDefault() ?? LogCategory.Application
             }));
         }
-
-        if (rule.WriteSystemLog)
+        
+        tasks.Add(Task.Run(() =>
         {
-            tasks.Add(Task.Run(() =>
-            {
-                using var _ = LogContextEnricher.EnrichFromContext(_logContextAccessor);
+            using var _ = LogContextEnricher.EnrichFromContext(_logContextAccessor);
 
-                using (LogContextEnricher.EnrichFromContext(_logContextAccessor))
-                {
-                    Log.Write(rule.LogLevel switch
-                        {
-                            LogLevel.Error => LogEventLevel.Error,
-                            LogLevel.Warning => LogEventLevel.Warning,
-                            _ => LogEventLevel.Information
-                        },
-                        "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason} | RoleName: {RoleName}",
-                        rule.LogCategory,
-                        rule.LogAction ?? _logContextAccessor.Action ?? GeneralConstants.Unknown,
-                        _logContextAccessor.Email ?? GeneralConstants.Unknown,
-                        rule.IsSuccess ?? true,
-                        context.Reason ?? "-",
-                        _logContextAccessor.RoleName ?? GeneralConstants.Unknown
-                    );
-                }
-            }));
-        }
+            foreach (var category in rule.LogCategories.Distinct())
+            {
+                Log.Write(rule.LogLevel switch
+                    {
+                        LogLevel.Error => LogEventLevel.Error,
+                        LogLevel.Warning => LogEventLevel.Warning,
+                        _ => LogEventLevel.Information
+                    },
+                    "[{Category}] {Action} | Email: {Email} | Success: {IsSuccess} | Reason: {Reason} | RoleName: {RoleName}",
+                    category,
+                    rule.LogAction ?? _logContextAccessor.Action ?? GeneralConstants.Unknown,
+                    _logContextAccessor.Email ?? GeneralConstants.Unknown,
+                    rule.IsSuccess ?? true,
+                    context.Reason ?? "-",
+                    _logContextAccessor.RoleName ?? GeneralConstants.Unknown
+                );
+            }
+        }));
 
         if (rule.SendToSentry)
         {
@@ -84,7 +82,7 @@ public class DefaultLogWriter : ILogWriter
                 tasks.Add(Task.Run(() =>
                 {
                     SentrySdk.CaptureMessage(
-                        $"[{rule.LogCategory}] {rule.LogAction}: {context.Reason ?? "N/A"}",
+                        $"[{rule.LogCategories.FirstOrDefault() ?? LogCategory.Application}] {rule.LogAction}: {context.Reason ?? "N/A"}",
                         SentryLevel.Warning
                     );
                 }));
