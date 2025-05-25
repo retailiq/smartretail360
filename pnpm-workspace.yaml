@@ -1,14 +1,14 @@
 packages:
   - 'apps/*'
   - 'packages/*'
-  - 'libs/*'
+  - 'libs/*'        # 如果未来有通用库
   - 'ci'
   - 'scripts'
 
 
-# Declares which subprojects belong to the monorepo.
-# Each subproject (e.g., apps/client, apps/ai-services) only declares its dependencies in its own package.json.
-# When you run `pnpm install` from the root:
-#    • All dependencies are downloaded into the .pnpm/ directory (deduplicated and globally cached)
-#    • Hard links are created into the top-level node_modules directory
-#    • Each subproject no longer has its own node_modules — dependencies are resolved via the shared .pnpm/ store
+# 声明了哪些子项目属于同一个 monorepo。
+# 每个子项目 (apps/client, apps/ai-services, 等) 只写依赖声明 package.json。
+# pnpm install 在根目录执行后：
+#   	•	所有依赖下载到 .pnpm/ 目录（去重 + 全局缓存）
+#  •	并用 硬链接 方式放到根 node_modules 下
+#  •	每个子项目内部 不再拥有自己的 node_modules，而是从上层 node_modules/.pnpm/... 中引导依赖。
