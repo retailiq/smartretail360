@@ -27,7 +27,7 @@
     <data name="DuplicateLoginAttempt" xml:space="preserve"><value>您的登录请求已在处理中，请稍后再试</value></data>
     <data name="PasswordEmailMismatch" xml:space="preserve"><value>您输入的邮箱和密码不匹配，请重试</value></data>
     <data name="AccountNotActivated" xml:space="preserve"><value>您的账户尚未激活，请检查您的邮箱完成激活操作</value></data>
-    <data name="UserLoginSuccess" xml:space="preserve"><value>您已成功登录。</value></data>
+    <data name="UserLoginSuccess" xml:space="preserve"><value>您已成功登录</value></data>
     
     <!-- Account-related -->
     <data name="AccountLocked" xml:space="preserve"><value>账户已锁定</value></data>
