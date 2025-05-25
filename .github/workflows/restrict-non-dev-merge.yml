@@ -1,18 +1,18 @@
 name: Block Non-Dev Merges to Main
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [main]
 
 jobs:
   restrict:
-    if: github.base_ref == 'main'
     runs-on: ubuntu-latest
+    if: github.event.pull_request.base.ref == 'main'
     steps:
       - name: Check source branch is dev
-        if: github.head_ref != 'dev'
+        if: github.event.pull_request.head.ref != 'dev'
         run: |
-          echo "❌ Only 'dev' branch can be merged into 'main'. Current branch: ${{ github.head_ref }}"
+          echo "❌ Only 'dev' branch can be merged into 'main'. Current branch: ${{ github.event.pull_request.head.ref }}"
           exit 1
       - name: Allow merge from dev
         run: echo "✅ 'dev' is allowed to merge into 'main'"
