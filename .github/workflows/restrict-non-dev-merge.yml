@@ -6,10 +6,13 @@ on:
 
 jobs:
   restrict:
+    if: github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
-      - name: Block Non-Dev Merges to Main
+      - name: Check source branch is dev
         if: github.head_ref != 'dev'
         run: |
-          echo "Only 'dev' branch can be merged into 'main'. Current branch: ${{ github.head_ref }}"
+          echo "❌ Only 'dev' branch can be merged into 'main'. Current branch: ${{ github.head_ref }}"
           exit 1
+      - name: Allow merge from dev
+        run: echo "✅ 'dev' is allowed to merge into 'main'"
