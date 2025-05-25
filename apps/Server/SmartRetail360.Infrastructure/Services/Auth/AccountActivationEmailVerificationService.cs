@@ -23,7 +23,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
     {
         var traceId = _dep.UserContext.TraceId;
 
-        var (tokenEntity, user, tenant, error) = await LoadEntitiesAsync(token);
+        var (tokenEntity, user, tenant, tenantUser, error) = await LoadEntitiesAsync(token);
         if (error != null)
             return error;
 
@@ -42,10 +42,10 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         {
             RoleName = RoleHelper.ToPascalCaseName(role?.Name ?? GeneralConstants.Unknown)
         });
-        return await ActivateEntities(tokenEntity!, user!, tenant!, token, traceId);
+        return await ActivateEntities(tokenEntity!, user!, tenant!, tenantUser!, token, traceId);
     }
 
-    private async Task<(AccountActivationToken?, User?, Tenant?, ApiResponse<object>?)>
+    private async Task<(AccountActivationToken?, User?, Tenant?, TenantUser?, ApiResponse<object>?)>
         LoadEntitiesAsync(string token)
     {
         var tokenEntity = await _dep.RedisOperation.GetActivationTokenAsync(token);
@@ -56,26 +56,26 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
                 LogReasons.InvalidToken,
                 ErrorCodes.InvalidToken)
             .ValidateAsync();
-        if (checkResult != null) return (null, null, null, checkResult);
+        if (checkResult != null) return (null, null, null, null, checkResult);
         var action = tokenEntity!.SourceEnum == ActivationSource.Registration
             ? LogActions.UserRegistrationActivate
             : LogActions.UserInvitationActivate;
         _dep.UserContext.Inject(new UserExecutionContext { Action = action });
 
         var (user, userError) = await _dep.PlatformContext.GetUserByIdAsync(tokenEntity.UserId);
-        if (userError != null) return (null, null, null, userError);
+        if (userError != null) return (null, null, null, null, userError);
 
         var (tenantUser, tenantUserError) = await _dep.PlatformContext.GetTenantUserAsync(tokenEntity.UserId);
-        if (tenantUserError != null) return (null, null, null, tenantUserError);
+        if (tenantUserError != null) return (null, null, null, null, tenantUserError);
 
         Tenant? tenant = null;
         if (tenantUser != null)
         {
             var (tenantEntity, tenantError) = await _dep.PlatformContext.GetTenantAsync(tenantUser.TenantId);
-            if (tenantError != null) return (null, null, null, tenantError);
+            if (tenantError != null) return (null, null, null, null, tenantError);
             tenant = tenantEntity;
         }
-        
+
         _dep.UserContext.Inject(new UserExecutionContext
         {
             UserId = user?.Id,
@@ -84,7 +84,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
             RoleId = tenantUser?.RoleId
         });
 
-        return (tokenEntity, user, tenant, null);
+        return (tokenEntity, user, tenant, tenantUser, null);
     }
 
     private async Task<ApiResponse<object>?> CheckIdempotencyAsync(User? user)
@@ -139,7 +139,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
     }
 
     private async Task<ApiResponse<object>> ActivateEntities(AccountActivationToken token, User user, Tenant tenant,
-        string tokenStr, string traceId)
+        TenantUser tenantUser, string tokenStr, string traceId)
     {
         user.IsEmailVerified = true;
         user.TraceId = traceId;
@@ -148,6 +148,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         tenant.StatusEnum = AccountStatus.Active;
         token.StatusEnum = ActivationTokenStatus.Used;
         token.TraceId = traceId;
+        tenantUser.IsActive = true;
 
         var result = await _dep.SafeExecutor.ExecuteAsync(
             async () =>
