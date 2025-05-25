@@ -1,4 +1,4 @@
-name: Block Non-Dev Merges to Main
+name: Restrict Non-Dev Merge to Main (v2)
 
 on:
   pull_request:
