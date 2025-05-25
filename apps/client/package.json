@@ -6,8 +6,7 @@
     "dev": "cross-env PORT=50000 bash -c 'next dev -p $PORT'",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "generate:api": "openapi-typescript http://localhost:50001/swagger/v1/swagger.json -o src/types/api.d.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "next": "15.3.2",
@@ -23,7 +22,6 @@
     "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "openapi-typescript": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
