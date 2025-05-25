@@ -11,7 +11,7 @@ public class TenantUser : IHasCreatedAt, IHasUpdatedAt
     public Guid TenantId { get; set; }
     public Guid UserId { get; set; }
     public Guid RoleId { get; set; }
-    public bool IsActive { get; set; } = true;                 
+    public bool IsActive { get; set; } = false;                 
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow; 
     public DateTime? DeactivatedAt { get; set; } = null;
     public Guid? DeactivatedBy { get; set; } = null;                  
