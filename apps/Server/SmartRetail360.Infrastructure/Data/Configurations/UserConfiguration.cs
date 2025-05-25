@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Infrastructure.Data.Configurations;
@@ -40,8 +41,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         entity.Property(e => e.PhoneNumber)
             .HasMaxLength(32);
 
-        entity.Property(e => e.LogoUrl)
+        entity.Property(e => e.AvatarUrl)
             .HasMaxLength(512);
+        
+        entity.Property(e => e.Locale)
+            .HasConversion(
+                v => v.GetEnumMemberValue(), // enum -> string
+                v => v.ToEnumFromMemberValue<LocaleType>() // string -> enum
+            );
 
         entity.Property(e => e.Status)
             .HasMaxLength(64)

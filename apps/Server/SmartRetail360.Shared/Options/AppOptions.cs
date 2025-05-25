@@ -19,6 +19,9 @@ public class AppOptions
     public List<string> SensitiveFields { get; set; } = new() { "password", "token", "apiKey" };
     public double AccountActivationLimitMinutes { get; set; } = 1;
     public int ActivationTokenLimitMinutes { get; set; } = 15;
+    public double UserLoginLockTtlSeconds { get; set; } = 10;
+    public string JwtSecret { get; set; } = string.Empty;
+    public int JwtExpirySeconds { get; set; } = 3600;
 }
 
 // Always use { get; set; } in options classes — binding requires a public setter, even for read-only values.

@@ -13,6 +13,7 @@ public enum LocalizedTextKey
     AccountActivatedSuccessfully,
     EmailResent,
     AccountActivationValidityNotice,
+    UserLoginSuccess,
     
     // Role descriptions
     RoleOwnerDescription,

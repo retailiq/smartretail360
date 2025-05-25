@@ -6,7 +6,7 @@ public static class LogReasons
     public const string LockNotAcquired = "LOCK_NOT_ACQUIRED";
 
     // Auth
-    public const string InvalidCredentials = "INVALID_CREDENTIALS";
+    public const string PasswordEmailMismatch = "PASSWORD_EMAIL_MISMATCH";
     public const string TokenDeserializationFailed = "TOKEN_DESERIALIZATION_FAILED";
     public const string RoleDeserializationFailed = "ROLE_DESERIALIZATION_FAILED";
     public const string TokenAlreadyUsed = "TOKEN_ALREADY_USED";
@@ -14,7 +14,8 @@ public static class LogReasons
     public const string TokenExpired = "TOKEN_EXPIRED";
     public const string TokenRevoked = "TOKEN_REVOKED";
     public const string HasPendingActivationEmail = "HAS_PENDING_ACTIVATION_EMAIL";
-    
+    public const string AccountNotActivated = "ACCOUNT_NOT_ACTIVATED";
+
     // Account
     public const string AccountAlreadyExists = "ACCOUNT_ALREADY_EXISTS";
     public const string AccountAlreadyActivated = "ACCOUNT_ALREADY_ACTIVATED";

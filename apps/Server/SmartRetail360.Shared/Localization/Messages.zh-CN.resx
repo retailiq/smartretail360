@@ -16,7 +16,6 @@
     <!-- General -->
     <data name="InternalServerError" xml:space="preserve"><value>服务器内部错误</value></data>
     <data name="DatabaseUnavailable" xml:space="preserve"><value>数据库暂时不可用</value></data>
-    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试</value></data>
 
     <!-- Auth-->
     <data name="InvalidPassword" xml:space="preserve"><value>密码错误</value></data>
@@ -25,6 +24,10 @@
     <data name="TokenAlreadyUsed" xml:space="preserve"><value>令牌已被使用</value></data>
     <data name="TokenRevoked" xml:space="preserve"><value>激活链接已被撤销</value></data>
     <data name="HasPendingActivationEmail" xml:space="preserve"><value>已有激活邮件正在等待确认，请检查您的邮箱</value></data>
+    <data name="DuplicateLoginAttempt" xml:space="preserve"><value>您的登录请求已在处理中，请稍后再试</value></data>
+    <data name="PasswordEmailMismatch" xml:space="preserve"><value>您输入的邮箱和密码不匹配，请重试</value></data>
+    <data name="AccountNotActivated" xml:space="preserve"><value>您的账户尚未激活，请检查您的邮箱完成激活操作</value></data>
+    <data name="UserLoginSuccess" xml:space="preserve"><value>您已成功登录。</value></data>
     
     <!-- Account-related -->
     <data name="AccountLocked" xml:space="preserve"><value>账户已锁定</value></data>
@@ -34,6 +37,7 @@
     <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>您激活账户的频率过高，请稍后再试</value></data>
     <data name="AccountRegistered" xml:space="preserve"><value>租户注册成功，已向您的邮箱发送激活链接，请尽快验证以完成注册，该链接有效期为{0}分钟</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>账户激活成功，您现在可以安全登录平台</value></data>
+    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试</value></data>
     
     <!-- Email & Notification -->
     <data name="TooFrequentEmailRequest" xml:space="preserve"><value>邮件发送请求过于频繁，请稍后再试</value></data>

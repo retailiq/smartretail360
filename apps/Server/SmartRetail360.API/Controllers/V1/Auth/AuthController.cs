@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Application.Interfaces.Auth;
-using SmartRetail360.Application.Interfaces.Notifications;
-using SmartRetail360.Infrastructure.Data;
+using SmartRetail360.Contracts.Auth.Requests;
+using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.API.Controllers.V1.Auth;
@@ -13,12 +12,18 @@ namespace SmartRetail360.API.Controllers.V1.Auth;
 [ApiExplorerSettings(GroupName = "v1")]
 public class AuthController : ControllerBase
 {
-    private readonly AppDbContext _dbContext;
-    // private readonly IEmailNotificationService _emailNotificationService;
+    private readonly ILoginService _loginService;
 
-    // public AuthController(AppDbContext dbContext, IEmailNotificationService emailNotificationService)
-    // {
-    //     _dbContext = dbContext;
-    //     _emailNotificationService = emailNotificationService;
-    // }
+    public AuthController(ILoginService loginService)
+    {
+        _loginService = loginService;
+    }
+
+
+    [HttpPost("login")]
+    public async Task<ActionResult<ApiResponse<LoginResponse>>> Login([FromBody] LoginRequest request)
+    {
+        var result = await _loginService.LoginAsync(request);
+        return StatusCode(200, result);
+    }
 }

@@ -6,6 +6,7 @@ using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Messaging.Factories;
 using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
@@ -41,12 +42,10 @@ public class AccountRegistrationService : IAccountRegistrationService
         var lockKey = RedisKeys.RegisterAccountLock(request.Email.ToLower());
         var lockAcquired = await _dep.RedisOperation.AcquireLockAsync(lockKey,
             TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
-
         var lockCheck = await _dep.GuardChecker
             .Check(() => !lockAcquired, LogEventType.RegisterUserFailure, LogReasons.LockNotAcquired,
                 ErrorCodes.DuplicateRegisterAttempt)
             .ValidateAsync();
-
         if (lockCheck != null)
             return lockCheck.To<AccountRegisterResponse>();
 
@@ -58,10 +57,7 @@ public class AccountRegistrationService : IAccountRegistrationService
 
             if (existingUser != null)
             {
-                _dep.UserContext.Inject(new UserExecutionContext
-                {
-                    UserId = existingUser.Id
-                });
+                _dep.UserContext.Inject(new UserExecutionContext { UserId = existingUser.Id });
             }
 
             var guardResult = await _dep.GuardChecker
@@ -91,7 +87,8 @@ public class AccountRegistrationService : IAccountRegistrationService
                 Name = request.Name,
                 PasswordHash = passwordHash,
                 TraceId = traceId,
-                LastEmailSentAt = DateTime.UtcNow
+                LastEmailSentAt = DateTime.UtcNow,
+                Locale = (_dep.UserContext.Locale ?? "en").ToEnumFromMemberValue<LocaleType>()
             };
 
             var tenant = new Tenant
@@ -153,7 +150,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                 EmailTemplate.UserRegistrationActivation,
                 _dep.AppOptions.ActivationTokenLimitMinutes
             );
-            
+
             var emailError =
                 await _dep.PlatformContext.SendRegistrationInvitationEmailAsync(emailVerificationToken, payload);
             if (emailError != null)
@@ -178,5 +175,3 @@ public class AccountRegistrationService : IAccountRegistrationService
         }
     }
 }
-
-// TODO: 初始化权限组/角色/默认设置

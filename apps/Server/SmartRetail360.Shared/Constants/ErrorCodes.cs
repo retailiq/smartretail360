@@ -6,6 +6,7 @@ public static class ErrorCodes
     public const int InternalServerError = 10000;
     public const int DatabaseUnavailable = 10001;
     public const int DuplicateRegisterAttempt = 10002;
+    public const int DuplicateLoginAttempt = 10003;
 
     // Auth
     public const int InvalidPassword = 5001;
@@ -14,6 +15,8 @@ public static class ErrorCodes
     public const int TokenAlreadyUsed = 5004;
     public const int TokenRevoked = 5005;
     public const int HasPendingActivationEmail = 5006;
+    public const int PasswordEmailMismatch = 5007;
+    public const int AccountNotActivated = 5008;
 
     // Account
     public const int AccountLocked = 6001;

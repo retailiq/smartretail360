@@ -12,7 +12,8 @@ public class User : IHasCreatedAt, IHasUpdatedAt
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; } = string.Empty;
-    public string? LogoUrl { get; set; } = string.Empty;
+    public string? AvatarUrl { get; set; } = string.Empty;
+    public LocaleType Locale { get; set; } = LocaleType.En;
     public string Status { get; set; } = StringCaseConverter.ToSnakeCase(nameof(AccountStatus.PendingVerification));
     [NotMapped]
     public AccountStatus StatusEnum

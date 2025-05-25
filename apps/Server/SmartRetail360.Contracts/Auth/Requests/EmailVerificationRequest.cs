@@ -1,5 +1,3 @@
-using SmartRetail360.Shared.Enums;
-
 namespace SmartRetail360.Contracts.Auth.Requests;
 
 public class EmailVerificationRequest

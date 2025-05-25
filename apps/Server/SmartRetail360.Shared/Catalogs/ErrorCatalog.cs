@@ -18,6 +18,8 @@ public static class ErrorCatalog
         { ErrorCodes.TokenAlreadyUsed, "TokenAlreadyUsed" },
         { ErrorCodes.TokenRevoked, "TokenRevoked" },
         { ErrorCodes.HasPendingActivationEmail, "HasPendingActivationEmail" },
+        { ErrorCodes.PasswordEmailMismatch, "PasswordEmailMismatch" },
+        { ErrorCodes.AccountNotActivated, "AccountNotActivated" },
 
         // Account
         { ErrorCodes.AccountLocked, "AccountLocked" },

@@ -95,7 +95,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
         #region Login - Success & Failures
 
         {
-            (LogEventType.LoginFailure, LogReasons.InvalidCredentials),
+            (LogEventType.UserLoginFailure, LogReasons.PasswordEmailMismatch),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -107,7 +107,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.LoginSuccess, null),
+            (LogEventType.UserLoginSuccess, null),
             new LogWriteRule
             {
                 WriteAudit = true,

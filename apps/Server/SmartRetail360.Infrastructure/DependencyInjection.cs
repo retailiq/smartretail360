@@ -68,9 +68,11 @@ public static class DependencyInjection
         // Register the Tenant Registration Service
         services.AddScoped<IAccountRegistrationService, AccountRegistrationService>();
 
-        // Register Email Verification
+        // Auth Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
-
+        services.AddScoped<ILoginService, LoginService>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
@@ -98,8 +100,8 @@ public static class DependencyInjection
             PlatformContext = sp.GetRequiredService<IPlatformContextService>()
         });
 
-        // Register the Auth Dependencies
-        services.AddScoped<AuthDependencies>(sp => new AuthDependencies
+        // Register the Email Verification Dependencies
+        services.AddScoped<AccountActivationEmailVerificationDependencies>(sp => new AccountActivationEmailVerificationDependencies
         {
             Db = sp.GetRequiredService<AppDbContext>(),
             UserContext = sp.GetRequiredService<IUserContextService>(),
@@ -110,6 +112,20 @@ public static class DependencyInjection
             GuardChecker = sp.GetRequiredService<IGuardChecker>(),
             RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
             PlatformContext = sp.GetRequiredService<IPlatformContextService>()
+        });
+        
+        // Register the Login Dependencies
+        services.AddScoped<LoginDependencies>(sp => new LoginDependencies
+        {
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
+            Localizer = sp.GetRequiredService<MessageLocalizer>(),
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
+            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
+            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
+            Db = sp.GetRequiredService<AppDbContext>(),
+            UserContext = sp.GetRequiredService<IUserContextService>(),
+            AppOptions = sp.GetRequiredService<AppOptions>(),
+            JwtTokenGenerator = sp.GetRequiredService<IJwtTokenGenerator>()
         });
 
         // Register the Notification Dependencies

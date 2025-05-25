@@ -12,9 +12,9 @@ namespace SmartRetail360.Infrastructure.Services.Auth;
 
 public class AccountActivationEmailVerificationService : IAccountEmailVerificationService
 {
-    private readonly AuthDependencies _dep;
+    private readonly AccountActivationEmailVerificationDependencies _dep;
 
-    public AccountActivationEmailVerificationService(AuthDependencies dep)
+    public AccountActivationEmailVerificationService(AccountActivationEmailVerificationDependencies dep)
     {
         _dep = dep;
     }
