@@ -1,6 +1,6 @@
 namespace SmartRetail360.Application.Interfaces.Auth;
 
-public interface IJwtTokenGenerator
+public interface IAccessTokenGenerator
 {
     string GenerateToken(
         string userId,

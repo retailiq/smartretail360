@@ -14,5 +14,8 @@ public class ConfirmTenantLoginRequestValidator : AbstractValidator<ConfirmTenan
 
         RuleFor(x => x.UserId)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.UserIdIsRequired));
+
+        RuleFor(x => x.IsStaySignedIn)
+            .NotNull().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.IsStaySignedInIsRequired));
     }
 }

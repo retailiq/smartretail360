@@ -12,19 +12,22 @@ public class RedisOperationService : IRedisOperationService
     private readonly IRedisLogSamplingService _logSampler;
     private readonly IRoleCacheService _roleCache;
     private readonly IActivationTokenCacheService _tokenCache;
+    private readonly ILoginFailureLimiter _loginFailureLimiter;
 
     public RedisOperationService(
         IRedisLimiterService limiter,
         IRedisLockService locker,
         IRedisLogSamplingService logSampler,
         IRoleCacheService roleCache,
-        IActivationTokenCacheService tokenCache)
+        IActivationTokenCacheService tokenCache,
+        ILoginFailureLimiter loginFailureLimiter)
     {
         _limiter = limiter;
         _locker = locker;
         _logSampler = logSampler;
         _roleCache = roleCache;
         _tokenCache = tokenCache;
+        _loginFailureLimiter = loginFailureLimiter;
     }
 
     // Limit methods
@@ -47,4 +50,9 @@ public class RedisOperationService : IRedisOperationService
     public Task SetActivationTokenAsync(AccountActivationToken tokenEntity, TimeSpan ttl) => _tokenCache.SetTokenAsync(tokenEntity, ttl);
     public Task<AccountActivationToken?> GetActivationTokenAsync(string token) => _tokenCache.GetTokenAsync(token);
     public Task InvalidateActivationTokenAsync(string token) => _tokenCache.InvalidateTokenAsync(token);
+    
+    // User Login Lock
+    public Task<bool> IsUserLoginLockedAsync(string lockKey) => _loginFailureLimiter.IsLockedAsync(lockKey);
+    public Task<int> IncrementUserLoginFailureAsync(string failKey, string lockKey) => _loginFailureLimiter.IncrementFailureAsync(failKey, lockKey);
+    public Task ResetUserLoginFailuresAsync(string failKey, string lockKey) => _loginFailureLimiter.ResetFailuresAsync(failKey, lockKey);
 }

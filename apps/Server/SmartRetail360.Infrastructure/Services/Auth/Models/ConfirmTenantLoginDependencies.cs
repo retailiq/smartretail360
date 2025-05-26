@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Auth;
@@ -19,5 +20,7 @@ public class ConfirmTenantLoginDependencies
     public required AppDbContext Db { get; init; }
     public required IUserContextService UserContext { get; init; }
     public required AppOptions AppOptions { get; init; }
-    public required IJwtTokenGenerator JwtTokenGenerator { get; init; }
+    public required IAccessTokenGenerator AccessTokenGenerator { get; init; }
+    public required IRefreshTokenService RefreshTokenService { get; init; }
+    public required HttpContext HttpContext { get; init; }
 }

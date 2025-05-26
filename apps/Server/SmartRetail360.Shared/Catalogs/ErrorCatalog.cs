@@ -20,14 +20,18 @@ public static class ErrorCatalog
         { ErrorCodes.HasPendingActivationEmail, "HasPendingActivationEmail" },
         { ErrorCodes.PasswordEmailMismatch, "PasswordEmailMismatch" },
         { ErrorCodes.AccountNotActivated, "AccountNotActivated" },
+        { ErrorCodes.AccountLocked, "AccountLocked" },
+        { ErrorCodes.AllTenantsDisabled, "AllTenantsDisabled" },
+        { ErrorCodes.TenantDisabled, "TenantDisabled" },
+        { ErrorCodes.TenantUserDisabled, "TenantUserDisabled" },
 
         // Account
-        { ErrorCodes.AccountLocked, "AccountLocked" },
         { ErrorCodes.AccountNotFound, "AccountNotFound" },
         { ErrorCodes.AccountAlreadyActivated, "AccountAlreadyActivated" },
         { ErrorCodes.AccountExistsButNotActivated, "AccountExistsButNotActivated" },
         { ErrorCodes.TooFrequentActivationAttempt, "TooFrequentActivationAttempt" },
-
+        { ErrorCodes.TenantNotFound, "TenantNotFound" },
+        
         // Email & Notification
         { ErrorCodes.EmailExists, "EmailExists" },
         { ErrorCodes.TooFrequentEmailRequest, "TooFrequentEmailRequest" },

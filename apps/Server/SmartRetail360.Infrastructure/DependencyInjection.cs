@@ -1,4 +1,5 @@
 using Amazon.SQS;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,9 +72,10 @@ public static class DependencyInjection
         // Auth Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<ILoginService, LoginService>();
-        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IAccessTokenGenerator, AccessTokenGenerator>();
         services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService>();
-
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
@@ -83,7 +85,8 @@ public static class DependencyInjection
         services.AddScoped<IRoleCacheService, RoleCacheService>();
         services.AddScoped<IActivationTokenCacheService, ActivationTokenCacheService>();
         services.AddScoped<IRedisOperationService, RedisOperationService>();
-
+        services.AddScoped<ILoginFailureLimiter, LoginFailureLimiter>();
+        
         // Register the Tenant Registration Dependencies
         services.AddScoped<AccountRegistrationDependencies>(sp => new AccountRegistrationDependencies
         {
@@ -127,7 +130,7 @@ public static class DependencyInjection
             Db = sp.GetRequiredService<AppDbContext>(),
             UserContext = sp.GetRequiredService<IUserContextService>(),
             AppOptions = sp.GetRequiredService<AppOptions>(),
-            JwtTokenGenerator = sp.GetRequiredService<IJwtTokenGenerator>()
+            AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
         });
 
         services.AddScoped<ConfirmTenantLoginDependencies>(sp => new ConfirmTenantLoginDependencies
@@ -140,7 +143,9 @@ public static class DependencyInjection
             Db = sp.GetRequiredService<AppDbContext>(),
             UserContext = sp.GetRequiredService<IUserContextService>(),
             AppOptions = sp.GetRequiredService<AppOptions>(),
-            JwtTokenGenerator = sp.GetRequiredService<IJwtTokenGenerator>()
+            AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
+            RefreshTokenService = sp.GetRequiredService<IRefreshTokenService>(),
+            HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!
         });
 
         // Register the Notification Dependencies

@@ -25,4 +25,9 @@ public interface IRedisOperationService
     Task SetActivationTokenAsync(AccountActivationToken tokenEntity, TimeSpan ttl);
     Task<AccountActivationToken?> GetActivationTokenAsync(string token);
     Task InvalidateActivationTokenAsync(string token);
+    
+    // User Login Lock
+    Task<bool> IsUserLoginLockedAsync(string lockKey);
+    Task<int> IncrementUserLoginFailureAsync(string failKey, string lockKey);
+    Task ResetUserLoginFailuresAsync(string failKey, string lockKey);
 }

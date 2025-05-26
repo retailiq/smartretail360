@@ -19,5 +19,5 @@ public class LoginDependencies
     public required AppDbContext Db { get; init; }
     public required IUserContextService UserContext { get; init; }
     public required AppOptions AppOptions { get; init; }
-    public required IJwtTokenGenerator JwtTokenGenerator { get; init; }
+    public required IAccessTokenGenerator AccessTokenGenerator { get; init; }
 }

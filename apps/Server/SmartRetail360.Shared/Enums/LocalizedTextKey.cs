@@ -41,4 +41,5 @@ public enum LocalizedTextKey
     NameMustNotExceed50Characters,
     TenantIdIsRequired,
     UserIdIsRequired,
+    IsStaySignedInIsRequired,
 }

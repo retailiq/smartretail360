@@ -28,9 +28,12 @@
     <data name="PasswordEmailMismatch" xml:space="preserve"><value>The email and password you entered do not match. Please try again.</value></data>
     <data name="AccountNotActivated" xml:space="preserve"><value>Your account is not activated yet. Please check your email to complete the activation.</value></data>
     <data name="UserLoginSuccess" xml:space="preserve"><value>You have successfully logged in</value></data>
+    <data name="AccountLocked" xml:space="preserve"><value>Your account has been locked, please contact support</value></data>
+    <data name="AllTenantsDisabled" xml:space="preserve"><value>Your account is associated with tenants that are all currently disabled. Please contact support</value></data>
+    <data name="TenantUserDisabled" xml:space="preserve"><value>Your access to this tenant has been disabled. Please contact the tenant administrator</value></data>
+    <data name="TenantDisabled" xml:space="preserve"><value>This tenant has been disabled. Please contact the platform administrator</value></data>
     
     <!-- Account-related -->
-    <data name="AccountLocked" xml:space="preserve"><value>Account is locked</value></data>
     <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>
     <data name="AccountExistsButNotActivated" xml:space="preserve"><value>This account already exists but has not been activated yet. Please check your email or resend the activation link</value></data>
     <data name="AccountAlreadyActivated" xml:space="preserve"><value>This account has already been activated. Please log in directly</value></data>
@@ -38,6 +41,7 @@
     <data name="AccountRegistered" xml:space="preserve"><value>Tenant registered successfully, an activation link has been sent to your email, please verify to complete registration, the link is valid for {0} minutes</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>Your account has been successfully activated. You may now log in securely</value></data>
     <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>Your registration is already in progress. Please try again later</value></data>
+    <data name="TenantNotFound" xml:space="preserve"><value>The specified tenant could not be found. Please verify your selection or contact support</value></data>
     
     <!-- Email & Notification -->
     <data name="EmailExists" xml:space="preserve"><value>Email already exists</value></data>
@@ -74,6 +78,7 @@
     <data name="NameMustNotExceed50Characters" xml:space="preserve"><value>Name must not exceed 50 characters</value></data>
     <data name="TenantIdIsRequired" xml:space="preserve"><value>Tenant ID is required</value></data>
     <data name="UserIdIsRequired" xml:space="preserve"><value>User ID is required</value></data>
+    <data name="IsStaySignedInIsRequired" xml:space="preserve"><value>The stay signed in option must be specified</value></data>
     
     <!-- Role Description -->
     <data name="RoleOwnerDescription" xml:space="preserve"><value>Tenant owner</value></data>

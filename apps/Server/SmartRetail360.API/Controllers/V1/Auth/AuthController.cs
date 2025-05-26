@@ -23,7 +23,6 @@ public class AuthController : ControllerBase
         _confirmTenantLogin = confirmTenantLogin;
     }
 
-
     [HttpPost("login")]
     public async Task<ActionResult<ApiResponse<LoginResponse>>> Login([FromBody] LoginRequest request)
     {

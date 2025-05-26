@@ -12,5 +12,8 @@ public enum LogEventType
     AccountActivateFailure,
     EmailSendSuccess,
     EmailSendFailure,
-    WriteLogFailure
+    WriteLogFailure,
+    GeneralError,
+    ConfirmTenantLoginFailure,
+    ConfirmTenantLoginSuccess,
 }

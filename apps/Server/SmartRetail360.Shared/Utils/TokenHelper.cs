@@ -1,11 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
-using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Shared.Utils;
 
@@ -22,7 +18,7 @@ public static class TokenHelper
             ? LogActions.UserRegistrationActivationEmailResend
             : LogActions.UserInvitationActivationEmailResend;
     }
-    
+
     public static string GenerateRefreshToken(int byteLength = 64)
     {
         var randomBytes = new byte[byteLength];
@@ -30,8 +26,15 @@ public static class TokenHelper
         rng.GetBytes(randomBytes);
 
         return Convert.ToBase64String(randomBytes)
-            .Replace("+", "")
-            .Replace("/", "")
+            .Replace("+", "-")
+            .Replace("/", "_")
             .Replace("=", "");
+    }
+
+    public static string HashToken(string token)
+    {
+        using var sha = SHA256.Create();
+        var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(token));
+        return Convert.ToHexString(bytes);
     }
 }

@@ -8,11 +8,11 @@ using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure.Services.Auth;
 
-public class JwtTokenGenerator : IJwtTokenGenerator
+public class AccessTokenGenerator : IAccessTokenGenerator
 {
     private readonly AppOptions _options;
 
-    public JwtTokenGenerator(IOptions<AppOptions> options)
+    public AccessTokenGenerator(IOptions<AppOptions> options)
     {
         _options = options.Value;
     }
@@ -30,7 +30,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var now = DateTime.UtcNow;
-        var expires = now.AddSeconds(_options.JwtExpirySeconds);
+        var expires = now.AddSeconds(_options.AccessTokenExpirySeconds);
 
         var claims = new[]
         {

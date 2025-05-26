@@ -21,7 +21,12 @@ public class AppOptions
     public int ActivationTokenLimitMinutes { get; set; } = 15;
     public double UserLoginLockTtlSeconds { get; set; } = 10;
     public string JwtSecret { get; set; } = string.Empty;
-    public int JwtExpirySeconds { get; set; } = 3600;
+    public int UserLoginFailureThreshold { get; set; } = 3;
+    public int RefreshTokenExpiryDaysWhenStaySignedIn { get; set; } = 30;
+    public int RefreshTokenExpiryDaysDefault { get; set; } = 7;
+    public int AccessTokenExpirySeconds { get; set; } = 1200; // 20 minutes
+    public string RefreshTokenPath { get; set; } = "/api/v1/auth/refresh";
+    public string CookieDomain { get; set; } = "example.com";
 }
 
 // Always use { get; set; } in options classes — binding requires a public setter, even for read-only values.
