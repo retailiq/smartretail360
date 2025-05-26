@@ -72,6 +72,8 @@
     <data name="NameIsRequired" xml:space="preserve"><value>姓名不能为空</value></data>
     <data name="NameMustBeAtLeast1Characters" xml:space="preserve"><value>姓名至少需要 1 个字符</value></data>
     <data name="NameMustNotExceed50Characters" xml:space="preserve"><value>姓名不能超过 50 个字符</value></data>
+    <data name="TenantIdIsRequired" xml:space="preserve"><value>租户 ID 是必填项</value></data>
+    <data name="UserIdIsRequired" xml:space="preserve"><value>用户 ID 是必填项</value></data>
     
     <!-- Role Description -->
     <data name="RoleOwnerDescription" xml:space="preserve"><value>租户所有者</value></data>

@@ -4,6 +4,7 @@ using SmartRetail360.API.Configuration.Swagger;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 using System.Globalization;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using OpenTelemetry.Exporter;
@@ -46,7 +47,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<MessageLocalizer>();
-        
+
         // API Versioning
         services.AddApiVersioning(options =>
         {
@@ -57,7 +58,7 @@ public static class DependencyInjection
                 new UrlSegmentApiVersionReader()
             );
         });
-        
+
         // Swagger API 
         services.AddVersionedApiExplorer(options =>
         {
@@ -93,9 +94,9 @@ public static class DependencyInjection
                 }
             });
         });
-        
+
         services.ConfigureOptions<ConfigureSwaggerOptions>();
-        
+
         // otlp configuration
         var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint")
                            ?? "http://localhost:4317";
@@ -114,8 +115,8 @@ public static class DependencyInjection
                         opt.Protocol = OtlpExportProtocol.Grpc;
                     });
             });
-        
-        
+
+
         return services;
     }
 }

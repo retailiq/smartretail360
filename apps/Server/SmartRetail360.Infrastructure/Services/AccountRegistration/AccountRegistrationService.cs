@@ -109,6 +109,7 @@ public class AccountRegistrationService : IAccountRegistrationService
             var accountActivationToken = new AccountActivationToken
             {
                 UserId = user.Id,
+                TenantId = tenant.Id,
                 Token = emailVerificationToken,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.ActivationTokenLimitMinutes),
                 TraceId = traceId,

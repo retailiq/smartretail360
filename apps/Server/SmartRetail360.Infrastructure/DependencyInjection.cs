@@ -56,7 +56,7 @@ public static class DependencyInjection
 
         // Email Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
-        services.AddScoped<IAccountActivationEmailResendingService, AccountActivationResendingService>();
+        services.AddScoped<IAccountActivationEmailResendingService, AccountActivationEmailResendingService>();
         services.AddScoped<IEmailSender, MailKitEmailSender>();
         services.AddScoped<IEmailTemplateProvider, DefaultEmailTemplateProvider>();
         services.AddScoped<AccountRegistrationActivationTemplate>();
@@ -72,7 +72,8 @@ public static class DependencyInjection
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<ILoginService, LoginService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-        
+        services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService>();
+
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
@@ -101,21 +102,35 @@ public static class DependencyInjection
         });
 
         // Register the Email Verification Dependencies
-        services.AddScoped<AccountActivationEmailVerificationDependencies>(sp => new AccountActivationEmailVerificationDependencies
+        services.AddScoped<AccountActivationEmailVerificationDependencies>(sp =>
+            new AccountActivationEmailVerificationDependencies
+            {
+                Db = sp.GetRequiredService<AppDbContext>(),
+                UserContext = sp.GetRequiredService<IUserContextService>(),
+                Localizer = sp.GetRequiredService<MessageLocalizer>(),
+                AppOptions = sp.GetRequiredService<AppOptions>(),
+                LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
+                SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
+                GuardChecker = sp.GetRequiredService<IGuardChecker>(),
+                RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
+                PlatformContext = sp.GetRequiredService<IPlatformContextService>()
+            });
+
+        // Register the Login Dependencies
+        services.AddScoped<LoginDependencies>(sp => new LoginDependencies
         {
-            Db = sp.GetRequiredService<AppDbContext>(),
-            UserContext = sp.GetRequiredService<IUserContextService>(),
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
             Localizer = sp.GetRequiredService<MessageLocalizer>(),
-            AppOptions = sp.GetRequiredService<AppOptions>(),
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
             GuardChecker = sp.GetRequiredService<IGuardChecker>(),
             RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>()
+            Db = sp.GetRequiredService<AppDbContext>(),
+            UserContext = sp.GetRequiredService<IUserContextService>(),
+            AppOptions = sp.GetRequiredService<AppOptions>(),
+            JwtTokenGenerator = sp.GetRequiredService<IJwtTokenGenerator>()
         });
-        
-        // Register the Login Dependencies
-        services.AddScoped<LoginDependencies>(sp => new LoginDependencies
+
+        services.AddScoped<ConfirmTenantLoginDependencies>(sp => new ConfirmTenantLoginDependencies
         {
             PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
             Localizer = sp.GetRequiredService<MessageLocalizer>(),

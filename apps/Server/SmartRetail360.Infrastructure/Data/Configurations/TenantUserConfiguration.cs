@@ -22,6 +22,7 @@ public class TenantUserConfiguration : IEntityTypeConfiguration<TenantUser>
         entity.HasIndex(e => e.CreatedAt);
         entity.HasIndex(e => e.IsActive);
         entity.HasIndex(e => e.RoleId);
+        entity.HasIndex(e => e.IsDefault);
         entity.HasIndex(e => e.DeactivatedAt);
 
         // Required relationships
@@ -32,6 +33,10 @@ public class TenantUserConfiguration : IEntityTypeConfiguration<TenantUser>
         // Soft ban
         entity.Property(e => e.IsActive)
             .HasDefaultValue(true)
+            .IsRequired();
+        
+        entity.Property(e => e.IsDefault)
+            .HasDefaultValue(false)
             .IsRequired();
 
         entity.Property(e => e.DeactivationReason)
@@ -62,5 +67,23 @@ public class TenantUserConfiguration : IEntityTypeConfiguration<TenantUser>
 
         entity.Property(e => e.DeletedAt)
             .HasColumnType("timestamp with time zone");
+        
+        entity.HasOne(e => e.Tenant)
+            .WithMany()
+            .HasForeignKey(e => e.TenantId)
+            .HasConstraintName("FK_tenant_users_tenants_TenantId")
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.HasOne(e => e.Role)
+            .WithMany()
+            .HasForeignKey(e => e.RoleId)
+            .HasConstraintName("FK_tenant_users_roles_RoleId")
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        entity.HasOne(e => e.User)
+            .WithMany()
+            .HasForeignKey(e => e.UserId)
+            .HasConstraintName("FK_tenant_users_users_UserId")
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -27,12 +27,13 @@ public class ApiResponse<T>
         };
     }
 
-    public static ApiResponse<T> Fail(int code, string details, string? traceId = null)
+    public static ApiResponse<T> Fail(int code, string details, string? traceId = null, T? data = default)
     {
         return new ApiResponse<T>
         {
             Success = false,
             TraceId = traceId,
+            Data = data,
             Error = new ErrorInfo { Code = code, Details = details }
         };
     }

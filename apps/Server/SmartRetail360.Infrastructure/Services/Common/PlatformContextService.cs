@@ -55,10 +55,21 @@ public class PlatformContextService : IPlatformContextService
         return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
     }
 
-    public async Task<(TenantUser?, ApiResponse<object>?)> GetTenantUserAsync(Guid userId)
+    public async Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByTenantAndUserIdAsync(Guid userId, Guid tenantId)
     {
         var result = await _safeExecutor.ExecuteAsync(
-            () => _db.TenantUsers.FirstOrDefaultAsync(tu => tu.UserId == userId),
+            () => _db.TenantUsers.Where(tu => tu.UserId == userId && tu.TenantId == tenantId).ToListAsync(),
+            LogEventType.RegisterUserFailure,
+            LogReasons.DatabaseRetrievalFailed,
+            ErrorCodes.DatabaseUnavailable
+        );
+        return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
+    }
+    
+    public async Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByUserIdAsync(Guid userId)
+    {
+        var result = await _safeExecutor.ExecuteAsync(
+            () => _db.TenantUsers.Where(tu => tu.UserId == userId).ToListAsync(),
             LogEventType.RegisterUserFailure,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
@@ -70,6 +81,17 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId),
+            LogEventType.RegisterUserFailure,
+            LogReasons.DatabaseRetrievalFailed,
+            ErrorCodes.DatabaseUnavailable
+        );
+        return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
+    }
+    
+    public async Task<(List<Tenant>?, ApiResponse<object>?)> GetTenantsByIdsAsync(List<Guid> tenantIds)
+    {
+        var result = await _safeExecutor.ExecuteAsync(
+            () => _db.Tenants.Where(t => tenantIds.Contains(t.Id)).ToListAsync(),
             LogEventType.RegisterUserFailure,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable

@@ -12,11 +12,11 @@ using SmartRetail360.Shared.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications;
 
-public class AccountActivationResendingService : IAccountActivationEmailResendingService
+public class AccountActivationEmailResendingService : IAccountActivationEmailResendingService
 {
     private readonly NotificationDependencies _dep;
 
-    public AccountActivationResendingService(NotificationDependencies dep)
+    public AccountActivationEmailResendingService(NotificationDependencies dep)
     {
         _dep = dep;
     }
@@ -101,6 +101,7 @@ public class AccountActivationResendingService : IAccountActivationEmailResendin
         var accountActivationToken = new AccountActivationToken
         {
             UserId = existingUser!.Id,
+            TenantId = latestPendingToken.TenantId,
             Token = emailVerificationToken,
             ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.ActivationTokenLimitMinutes),
             TraceId = _dep.UserContext.TraceId,

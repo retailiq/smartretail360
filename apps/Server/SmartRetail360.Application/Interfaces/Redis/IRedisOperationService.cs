@@ -19,6 +19,7 @@ public interface IRedisOperationService
 
     // Role cache
     Task<Role?> GetSystemRoleAsync(SystemRoleType roleType);
+    Task<List<Role>> GetSystemRolesByIdsAsync(List<Guid> roleIds);
     
     // Token cache
     Task SetActivationTokenAsync(AccountActivationToken tokenEntity, TimeSpan ttl);

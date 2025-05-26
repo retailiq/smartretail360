@@ -65,26 +65,27 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         var (user, userError) = await _dep.PlatformContext.GetUserByIdAsync(tokenEntity.UserId);
         if (userError != null) return (null, null, null, null, userError);
 
-        var (tenantUser, tenantUserError) = await _dep.PlatformContext.GetTenantUserAsync(tokenEntity.UserId);
+        var (tenantUser, tenantUserError) =
+            await _dep.PlatformContext.GetTenantUserByTenantAndUserIdAsync(tokenEntity.UserId, tokenEntity.TenantId);
         if (tenantUserError != null) return (null, null, null, null, tenantUserError);
 
         Tenant? tenant = null;
         if (tenantUser != null)
         {
-            var (tenantEntity, tenantError) = await _dep.PlatformContext.GetTenantAsync(tenantUser.TenantId);
+            var (tenantEntity, tenantError) = await _dep.PlatformContext.GetTenantAsync(tokenEntity.TenantId);
             if (tenantError != null) return (null, null, null, null, tenantError);
             tenant = tenantEntity;
         }
-
+        
         _dep.UserContext.Inject(new UserExecutionContext
         {
             UserId = user?.Id,
             Email = user?.Email,
             TenantId = tenant?.Id,
-            RoleId = tenantUser?.RoleId
+            RoleId = tenantUser?[0].RoleId
         });
 
-        return (tokenEntity, user, tenant, tenantUser, null);
+        return (tokenEntity, user, tenant, tenantUser?[0], null);
     }
 
     private async Task<ApiResponse<object>?> CheckIdempotencyAsync(User? user)

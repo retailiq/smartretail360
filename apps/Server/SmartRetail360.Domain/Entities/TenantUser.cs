@@ -9,9 +9,13 @@ public class TenantUser : IHasCreatedAt, IHasUpdatedAt
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid TenantId { get; set; }
+    public Tenant Tenant { get; set; } = null!;
     public Guid UserId { get; set; }
+    public User User { get; set; } = null!;
     public Guid RoleId { get; set; }
-    public bool IsActive { get; set; } = false;                 
+    public Role Role { get; set; } = null!;
+    public bool IsActive { get; set; } = false;   
+    public bool IsDefault { get; set; } = false; // Indicates if this is the default user for the tenant
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow; 
     public DateTime? DeactivatedAt { get; set; } = null;
     public Guid? DeactivatedBy { get; set; } = null;                  

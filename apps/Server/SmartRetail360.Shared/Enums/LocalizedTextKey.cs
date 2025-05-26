@@ -38,5 +38,7 @@ public enum LocalizedTextKey
     InvalidEmailTemplate,
     NameIsRequired,
     NameMustBeAtLeast1Characters,
-    NameMustNotExceed50Characters
+    NameMustNotExceed50Characters,
+    TenantIdIsRequired,
+    UserIdIsRequired,
 }

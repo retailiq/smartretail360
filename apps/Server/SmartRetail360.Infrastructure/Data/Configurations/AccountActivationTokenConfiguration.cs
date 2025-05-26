@@ -15,6 +15,7 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
         entity.HasKey(e => e.Id);
 
         entity.HasIndex(e => e.UserId);
+        entity.HasIndex(e => e.TenantId);
         entity.HasIndex(e => e.Token).IsUnique();
         entity.HasIndex(e => e.Status);
         entity.HasIndex(e => e.ExpiresAt);
@@ -23,6 +24,9 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
         entity.HasIndex(e => new { e.UserId, e.Status, e.ExpiresAt });
         
         entity.Property(e => e.UserId)
+            .IsRequired();
+        
+        entity.Property(e => e.TenantId)
             .IsRequired();
 
         entity.Property(e => e.Token)

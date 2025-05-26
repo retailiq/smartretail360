@@ -12,7 +12,7 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.EmailIsRequired))
             .EmailAddress().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.InvalidEmailFormat));
-
+    
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.PasswordIsRequired));
     }

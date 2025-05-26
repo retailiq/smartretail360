@@ -1,13 +1,10 @@
-using SmartRetail360.Contracts.AccountRegistration.Responses;
-using SmartRetail360.Shared.Constants;
-
 namespace SmartRetail360.Contracts.Auth.Responses;
 
 public class LoginResponse
 {
-    public string AccessToken { get; set; } = string.Empty;
-    public string RefreshToken { get; set; } = string.Empty;
-    public string TokenType { get; set; } = GeneralConstants.Bearer;
-    public int ExpiresIn { get; set; } // in seconds
-    public AuthUserInfo User { get; set; } = new();
+    public string? UserId { get; set; }
+    public string? Email { get; set; }
+    public bool? ShouldChooseTenant { get; set; }
+    public bool? ShouldShowResendButton { get; set; }
+    public List<TenantLoginCandidate>? TenantOptions { get; set; }
 }

@@ -41,7 +41,8 @@ public class RedisOperationService : IRedisOperationService
 
     // Role cache
     public Task<Role?> GetSystemRoleAsync(SystemRoleType roleType) => _roleCache.GetSystemRoleAsync(roleType);
-
+    public Task<List<Role>> GetSystemRolesByIdsAsync(List<Guid> roleIds) => _roleCache.GetSystemRolesByIdsAsync(roleIds);
+    
     // Activation token cache
     public Task SetActivationTokenAsync(AccountActivationToken tokenEntity, TimeSpan ttl) => _tokenCache.SetTokenAsync(tokenEntity, ttl);
     public Task<AccountActivationToken?> GetActivationTokenAsync(string token) => _tokenCache.GetTokenAsync(token);

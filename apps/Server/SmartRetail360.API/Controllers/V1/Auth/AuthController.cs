@@ -13,10 +13,14 @@ namespace SmartRetail360.API.Controllers.V1.Auth;
 public class AuthController : ControllerBase
 {
     private readonly ILoginService _loginService;
+    private readonly IConfirmTenantLoginService _confirmTenantLogin;
 
-    public AuthController(ILoginService loginService)
+    public AuthController(
+        ILoginService loginService,
+        IConfirmTenantLoginService confirmTenantLogin)
     {
         _loginService = loginService;
+        _confirmTenantLogin = confirmTenantLogin;
     }
 
 
@@ -24,6 +28,14 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<ApiResponse<LoginResponse>>> Login([FromBody] LoginRequest request)
     {
         var result = await _loginService.LoginAsync(request);
+        return StatusCode(200, result);
+    }
+
+    [HttpPost("login/tenant")]
+    public async Task<ActionResult<ApiResponse<ConfirmTenantLoginResponse>>> ConfirmTenantLogin(
+        [FromBody] ConfirmTenantLoginRequest request)
+    {
+        var result = await _confirmTenantLogin.ConfirmTenantLoginAsync(request);
         return StatusCode(200, result);
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartRetail360.Infrastructure.Data;
@@ -11,9 +12,11 @@ using SmartRetail360.Infrastructure.Data;
 namespace SmartRetail360.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250526003000_AddTenantIdAccountActivationTokenTable")]
+    partial class AddTenantIdAccountActivationTokenTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -340,8 +343,6 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
 
                     b.HasIndex("TraceId");
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("TenantId", "UserId")
                         .IsUnique();
 
@@ -459,36 +460,6 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.HasIndex("IsEmailVerified", "Status");
 
                     b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("SmartRetail360.Domain.Entities.TenantUser", b =>
-                {
-                    b.HasOne("SmartRetail360.Domain.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_tenant_users_roles_RoleId");
-
-                    b.HasOne("SmartRetail360.Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_tenant_users_tenants_TenantId");
-
-                    b.HasOne("SmartRetail360.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_tenant_users_users_UserId");
-
-                    b.Navigation("Role");
-
-                    b.Navigation("Tenant");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

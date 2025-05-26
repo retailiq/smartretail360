@@ -9,8 +9,10 @@ public interface IPlatformContextService
 {
     Task<(UserEntity?, ApiResponse<object>?)> GetUserByIdAsync(Guid userId);
     Task<(UserEntity?, ApiResponse<object>?)> GetUserByEmailAsync(string email);
-    Task<(TenantUser?, ApiResponse<object>?)> GetTenantUserAsync(Guid userId);
+    Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByTenantAndUserIdAsync(Guid userId, Guid tenantId);
+    Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByUserIdAsync(Guid userId);
     Task<(Tenant?, ApiResponse<object>?)> GetTenantAsync(Guid tenantId);
+    Task<(List<Tenant>?, ApiResponse<object>?)> GetTenantsByIdsAsync(List<Guid> tenantIds);
     
     Task<ApiResponse<object>?> SendRegistrationInvitationEmailAsync(string token, ActivationEmailPayload payload);
 }

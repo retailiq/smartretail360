@@ -15,6 +15,7 @@ public static class LogReasons
     public const string TokenRevoked = "TOKEN_REVOKED";
     public const string HasPendingActivationEmail = "HAS_PENDING_ACTIVATION_EMAIL";
     public const string AccountNotActivated = "ACCOUNT_NOT_ACTIVATED";
+    public const string TenantUserRecordNotFound = "TENANT_USER_RECORD_NOT_FOUND";
 
     // Account
     public const string AccountAlreadyExists = "ACCOUNT_ALREADY_EXISTS";
