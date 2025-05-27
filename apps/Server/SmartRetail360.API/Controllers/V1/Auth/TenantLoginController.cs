@@ -10,30 +10,14 @@ namespace SmartRetail360.API.Controllers.V1.Auth;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
 [ApiExplorerSettings(GroupName = "v1")]
-public class AuthController : ControllerBase
+public class TenantLoginController : ControllerBase
 {
-    private readonly ILoginService _loginService;
     private readonly IConfirmTenantLoginService _confirmTenantLogin;
 
-    public AuthController(
-        ILoginService loginService,
+    public TenantLoginController(
         IConfirmTenantLoginService confirmTenantLogin)
     {
-        _loginService = loginService;
         _confirmTenantLogin = confirmTenantLogin;
-    }
-
-    [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse<LoginResponse>>> Login([FromBody] LoginRequest request)
-    {
-        var result = await _loginService.LoginAsync(request);
-        return StatusCode(200, result);
-    }
-
-    [HttpPost("oauth/login")]
-    public async Task<ActionResult<ApiResponse<LoginResponse>>> OAuthLogin([FromBody] OAuthLoginRequest request)
-    {
-        return StatusCode(200, "OAuth login successful. This endpoint is not implemented yet.");
     }
 
     [HttpPost("login/tenant")]

@@ -37,6 +37,8 @@
     <data name="AccountBanned" xml:space="preserve"><value>您的账号因违反政策已被永久封禁</value></data>
     <data name="TenantUserRecordNotFound" xml:space="preserve"><value>未找到该用户在当前租户中的记录，请确认账号信息</value></data>
     <data name="TokenNotFound" xml:space="preserve"><value>令牌未找到</value></data>
+    <data name="InvalidOAuthProvider" xml:space="preserve"><value>无效的 OAuth 登录平台</value></data>
+    <data name="OAuthUserProfileFetchFailed" xml:space="preserve"><value>无法获取第三方用户信息</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>

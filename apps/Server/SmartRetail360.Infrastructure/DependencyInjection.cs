@@ -32,12 +32,16 @@ using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin;
+using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin.Handlers;
+using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin.Options;
+using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin.Strategies;
 using SmartRetail360.Infrastructure.Services.Auth.Tokens;
 using SmartRetail360.Infrastructure.Services.Auth.UserLogin;
 using SmartRetail360.Infrastructure.Services.Common;
 using SmartRetail360.Infrastructure.Services.Messaging;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Infrastructure.Services.Redis;
+using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 
@@ -57,7 +61,23 @@ public static class DependencyInjection
             options.UseNpgsql(config.GetConnectionString("DefaultConnection"))
                 .AddInterceptors(interceptor);
         });
-
+        
+        // HttpClient Configuration
+        services.AddHttpClient(GeneralConstants.GoogleOAuth, c =>
+        {
+            c.BaseAddress = new Uri("https://oauth2.googleapis.com");
+        });
+        services.AddHttpClient(GeneralConstants.FacebookOAuth, c =>
+        {
+            c.BaseAddress = new Uri("https://graph.facebook.com");
+        });
+        services.AddHttpClient(GeneralConstants.MicrosoftOAuth, c =>
+        {
+            c.BaseAddress = new Uri("https://login.microsoftonline.com");
+        });
+        
+        services.Configure<OAuthOptions>(config.GetSection("OAuth"));
+        
         // Email Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<IAccountActivationEmailResendingService, AccountActivationEmailResendingService>();
@@ -79,6 +99,10 @@ public static class DependencyInjection
         services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService1>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IOAuthLoginService, OAuthLoginService>();
+        services.AddScoped<GoogleOAuthHandler>();
+        services.AddScoped<OAuthProviderStrategy>();
+        services.AddScoped<FacebookOAuthHandler>();
+        services.AddScoped<MicrosoftOAuthHandler>();
         
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
@@ -151,7 +175,8 @@ public static class DependencyInjection
             AppOptions = sp.GetRequiredService<AppOptions>(),
             AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
             LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
-            AccountSupport = sp.GetRequiredService<IAccountSupportService>()
+            AccountSupport = sp.GetRequiredService<IAccountSupportService>(),
+            OAuthProviderStrategy = sp.GetRequiredService<OAuthProviderStrategy>()
         });
 
         services.AddScoped<ConfirmTenantLoginDependencies>(sp => new ConfirmTenantLoginDependencies

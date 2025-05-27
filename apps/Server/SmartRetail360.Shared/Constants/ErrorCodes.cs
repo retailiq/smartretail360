@@ -26,6 +26,8 @@ public static class ErrorCodes
     public const int AccountBanned = 5015;
     public const int TenantUserRecordNotFound = 5016;
     public const int TokenNotFound = 5017;
+    public const int InvalidOAuthProvider = 5018;
+    public const int OAuthUserProfileFetchFailed = 5019;
 
     // Account
     public const int AccountNotFound = 6002;

@@ -6,4 +6,7 @@ public static class GeneralConstants
     public const string Autogen = "autogen";
     public const string Bearer = "Bearer";
     public const string Sr360RefreshToken = "sr360_refresh_token";
+    public const string GoogleOAuth = "GoogleOAuth";
+    public const string FacebookOAuth = "FacebookOAuth";
+    public const string MicrosoftOAuth = "MicrosoftOAuth";
 }

@@ -37,6 +37,8 @@
     <data name="AccountBanned" xml:space="preserve"><value>Your account has been permanently banned due to policy violations</value></data>
     <data name="TenantUserRecordNotFound" xml:space="preserve"><value>User record not found in the current tenant. Please verify your account</value></data>
     <data name="TokenNotFound" xml:space="preserve"><value>The token was not found</value></data>
+    <data name="InvalidOAuthProvider" xml:space="preserve"><value>Invalid OAuth provider</value></data>
+    <data name="OAuthUserProfileFetchFailed" xml:space="preserve"><value>Failed to fetch user profile from provider</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>

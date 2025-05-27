@@ -29,6 +29,8 @@ public static class ErrorCatalog
         { ErrorCodes.AccountBanned, "AccountBanned" },
         { ErrorCodes.TenantUserRecordNotFound, "TenantUserRecordNotFound" },
         { ErrorCodes.TokenNotFound, "TokenNotFound" },
+        { ErrorCodes.InvalidOAuthProvider, "InvalidOAuthProvider" },
+        { ErrorCodes.OAuthUserProfileFetchFailed, "OAuthUserProfileFetchFailed" },
 
         // Account
         { ErrorCodes.AccountNotFound, "AccountNotFound" },

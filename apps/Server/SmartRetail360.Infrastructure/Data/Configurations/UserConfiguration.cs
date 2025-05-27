@@ -93,5 +93,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         entity.Property(e => e.DeletedAt)
             .HasColumnType("timestamp with time zone");
+
+        entity.HasMany(u => u.OAuthAccounts)
+            .WithOne(o => o.User)
+            .HasForeignKey(o => o.UserId)
+            .HasConstraintName("FK_oauth_accounts_users_UserId")
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

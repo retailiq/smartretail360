@@ -47,4 +47,6 @@ public class User : IHasCreatedAt, IHasUpdatedAt
         get => DeactivationReason.ToEnumFromMemberValue<AccountBanReason>();
         set => DeactivationReason = value.GetEnumMemberValue();
     }
+    
+    public ICollection<OAuthAccount> OAuthAccounts { get; set; } = new List<OAuthAccount>();
 }

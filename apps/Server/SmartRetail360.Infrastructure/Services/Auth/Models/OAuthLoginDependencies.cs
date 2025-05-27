@@ -5,6 +5,7 @@ using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Data;
+using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin.Strategies;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 
@@ -23,4 +24,5 @@ public class OAuthLoginDependencies
     public required IAccessTokenGenerator AccessTokenGenerator { get; init; }
     public required ILogDispatcher LogDispatcher { get; init; }
     public required IAccountSupportService AccountSupport { get; init; }
+    public required OAuthProviderStrategy OAuthProviderStrategy { get; init; }
 }
