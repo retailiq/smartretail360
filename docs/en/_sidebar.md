@@ -5,6 +5,8 @@
 * [🔐 Access Control](/en/abac-permission-access-control.md)
 * [📊 Data Flow](/en/dataflow.md)
 * [📈 Logging and Observability](/en/logging-observability.md)
+* [📚 Private Policy](/en/privacy-policy.md)
+* [🗑️ Data Deletion](/en/data-deletion.md)
 
 ---
 
