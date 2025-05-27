@@ -75,7 +75,7 @@ public static class DependencyInjection
         services.AddScoped<IAccessTokenGenerator, AccessTokenGenerator>();
         services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-        
+
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
@@ -86,7 +86,7 @@ public static class DependencyInjection
         services.AddScoped<IActivationTokenCacheService, ActivationTokenCacheService>();
         services.AddScoped<IRedisOperationService, RedisOperationService>();
         services.AddScoped<ILoginFailureLimiter, LoginFailureLimiter>();
-        
+
         // Register the Tenant Registration Dependencies
         services.AddScoped<AccountRegistrationDependencies>(sp => new AccountRegistrationDependencies
         {
@@ -131,6 +131,8 @@ public static class DependencyInjection
             UserContext = sp.GetRequiredService<IUserContextService>(),
             AppOptions = sp.GetRequiredService<AppOptions>(),
             AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
+            AccountSupport = sp.GetRequiredService<IAccountSupportService>()
         });
 
         services.AddScoped<ConfirmTenantLoginDependencies>(sp => new ConfirmTenantLoginDependencies
@@ -145,7 +147,8 @@ public static class DependencyInjection
             AppOptions = sp.GetRequiredService<AppOptions>(),
             AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
             RefreshTokenService = sp.GetRequiredService<IRefreshTokenService>(),
-            HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!
+            HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!,
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>()
         });
 
         // Register the Notification Dependencies
@@ -161,7 +164,8 @@ public static class DependencyInjection
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
             GuardChecker = sp.GetRequiredService<IGuardChecker>(),
             RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>()
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
+            AccountSupport = sp.GetRequiredService<IAccountSupportService>()
         });
 
         // Logs
@@ -184,6 +188,7 @@ public static class DependencyInjection
         services.AddScoped<ISafeExecutor, SafeExecutor>();
         services.AddTransient<IGuardChecker, GuardChecker>();
         services.AddScoped<IPlatformContextService, PlatformContextService>();
+        services.AddScoped<IAccountSupportService, AccountSupportService>();
 
         return services;
     }

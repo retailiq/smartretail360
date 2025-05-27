@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Constants;
@@ -23,49 +22,45 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
 
     public async Task<ApiResponse<object>> ResendEmailAsync(string email)
     {
-        var tokenList = new List<AccountActivationToken>();
-        String action = string.Empty;
-        ActivationSource? latestSource = null;
-
         _dep.UserContext.Inject(new UserExecutionContext { Email = email });
 
         var (existingUser, userError) = await _dep.PlatformContext.GetUserByEmailAsync(email);
         if (userError != null)
             return userError;
 
-        if (existingUser != null)
+        var userCheckResult = await _dep.GuardChecker
+            .Check(() => existingUser == null,
+                LogEventType.EmailSendFailure, LogReasons.AccountNotFound,
+                ErrorCodes.AccountNotFound)
+            .ValidateAsync();
+        if (userCheckResult != null)
+            return userCheckResult;
+
+        var (tokenList, tokenListError) = await _dep.AccountSupport.GetActivationTokenListAsync(existingUser!.Id);
+        if (tokenListError != null)
+            return tokenListError;
+        var tokenListCheckResult = await _dep.GuardChecker
+            .Check(() => tokenList!.Count == 0,
+                LogEventType.EmailSendFailure, LogReasons.TokenNotFound,
+                ErrorCodes.TokenNotFound)
+            .ValidateAsync();
+        if (tokenListCheckResult != null)
+            return tokenListCheckResult;
+
+        var latestToken = tokenList!.FirstOrDefault();
+        var latestSource = latestToken?.SourceEnum ?? ActivationSource.None;
+        var action = TokenHelper.GetLogAction(latestSource);
+        _dep.UserContext.Inject(new UserExecutionContext
         {
-            var tokenListResult = await _dep.SafeExecutor.ExecuteAsync(
-                () => _dep.Db.AccountActivationTokens
-                    .Where(t => t.UserId == existingUser.Id)
-                    .OrderByDescending(t => t.CreatedAt)
-                    .ToListAsync(),
-                LogEventType.AccountActivateFailure,
-                LogReasons.DatabaseRetrievalFailed,
-                ErrorCodes.DatabaseUnavailable
-            );
-
-            if (!tokenListResult.IsSuccess)
-                return tokenListResult.ToObjectResponse();
-
-            tokenList = tokenListResult.Response.Data!;
-            var latestToken = tokenList.FirstOrDefault();
-            latestSource = (latestToken?.SourceEnum) ?? ActivationSource.None;
-            action = TokenHelper.GetLogAction(latestSource ?? ActivationSource.None);
-            _dep.UserContext.Inject(new UserExecutionContext
-            {
-                UserId = existingUser.Id,
-                Action = action
-            });
-        }
+            UserId = existingUser.Id,
+            Action = action
+        });
 
         var redisKey = RedisKeys.ResendAccountActivationEmail(email);
         var isLimited = await _dep.RedisLimiterService.IsLimitedAsync(redisKey);
 
         var guardResult = await _dep.GuardChecker
-            .Check(() => existingUser == null, LogEventType.EmailSendFailure, LogReasons.AccountNotFound,
-                ErrorCodes.AccountNotFound)
-            .Check(() => existingUser!.IsEmailVerified && existingUser.StatusEnum == AccountStatus.Active,
+            .Check(() => existingUser is { IsEmailVerified: true, StatusEnum: AccountStatus.Active },
                 LogEventType.EmailSendFailure, LogReasons.AccountAlreadyActivated, ErrorCodes.AccountAlreadyActivated)
             .Check(() => isLimited, LogEventType.EmailSendFailure, LogReasons.TooFrequentEmailRequest,
                 ErrorCodes.TooFrequentEmailRequest)
@@ -74,7 +69,7 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         if (guardResult != null)
             return guardResult;
 
-        var pendingTokens = tokenList
+        var pendingTokens = tokenList!
             .Where(t => t.StatusEnum == ActivationTokenStatus.Pending)
             .OrderByDescending(t => t.CreatedAt)
             .ToList();
@@ -82,7 +77,7 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         var latestPendingToken = pendingTokens.FirstOrDefault();
 
         var checkResult = await _dep.GuardChecker
-            .Check(() => pendingTokens.Count > 0 && latestPendingToken.ExpiresAt > DateTime.UtcNow,
+            .Check(() => pendingTokens.Count > 0 && latestPendingToken?.ExpiresAt > DateTime.UtcNow,
                 LogEventType.AccountActivateFailure,
                 LogReasons.HasPendingActivationEmail,
                 ErrorCodes.HasPendingActivationEmail)
@@ -100,12 +95,12 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         var emailVerificationToken = TokenHelper.GenerateActivateAccountToken();
         var accountActivationToken = new AccountActivationToken
         {
-            UserId = existingUser!.Id,
-            TenantId = latestPendingToken.TenantId,
+            UserId = existingUser.Id,
+            TenantId = latestPendingToken!.TenantId,
             Token = emailVerificationToken,
             ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.ActivationTokenLimitMinutes),
             TraceId = _dep.UserContext.TraceId,
-            SourceEnum = latestSource ?? ActivationSource.None
+            SourceEnum = latestSource
         };
         existingUser.LastEmailSentAt = DateTime.UtcNow;
 

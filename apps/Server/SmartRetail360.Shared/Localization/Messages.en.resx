@@ -32,6 +32,11 @@
     <data name="AllTenantsDisabled" xml:space="preserve"><value>Your account is associated with tenants that are all currently disabled. Please contact support</value></data>
     <data name="TenantUserDisabled" xml:space="preserve"><value>Your access to this tenant has been disabled. Please contact the tenant administrator</value></data>
     <data name="TenantDisabled" xml:space="preserve"><value>This tenant has been disabled. Please contact the platform administrator</value></data>
+    <data name="AccountSuspended" xml:space="preserve"><value>Your account has been temporarily suspended. Please contact support</value></data>
+    <data name="AccountDeleted" xml:space="preserve"><value>This account has been deleted. Access is no longer available</value></data>
+    <data name="AccountBanned" xml:space="preserve"><value>Your account has been permanently banned due to policy violations</value></data>
+    <data name="TenantUserRecordNotFound" xml:space="preserve"><value>User record not found in the current tenant. Please verify your account</value></data>
+    <data name="TokenNotFound" xml:space="preserve"><value>The token was not found</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>

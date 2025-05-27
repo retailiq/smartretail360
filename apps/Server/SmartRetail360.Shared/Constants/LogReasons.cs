@@ -22,6 +22,11 @@ public static class LogReasons
     public const string AllTenantsDisabled = "ALL_TENANTS_DISABLED";
     public const string TenantDisabled = "TENANT_DISABLED";
     public const string TenantUserDisabled = "TENANT_USER_DISABLED";
+    public const string AccountSuspended = "ACCOUNT_SUSPENDED";
+    public const string AccountDeleted = "ACCOUNT_DELETED";
+    public const string AccountBanned = "ACCOUNT_BANNED";
+    public const string TokenNotFound = "TOKEN_NOT_FOUND";
+    public const string RefreshTokenCreationFailed = "REFRESH_TOKEN_CREATION_FAILED";
     
     // Account
     public const string AccountAlreadyExists = "ACCOUNT_ALREADY_EXISTS";
@@ -43,4 +48,5 @@ public static class LogReasons
     // Database
     public const string DatabaseSaveFailed = "DATABASE_SAVE_FAILED";
     public const string DatabaseRetrievalFailed = "DATABASE_RETRIEVAL_FAILED";
+    public const string RedisOperateFailed = "REDIS_OPERATE_FAILED";
 }

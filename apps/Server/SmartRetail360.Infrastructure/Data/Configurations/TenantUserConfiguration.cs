@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Infrastructure.Data.Configurations;
@@ -41,7 +42,7 @@ public class TenantUserConfiguration : IEntityTypeConfiguration<TenantUser>
 
         entity.Property(e => e.DeactivationReason)
             .HasMaxLength(64)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountBanReason.None)))
+            .HasDefaultValue(AccountBanReason.None.GetEnumMemberValue())
             .IsRequired();
 
         entity.Property(e => e.DeactivatedAt)

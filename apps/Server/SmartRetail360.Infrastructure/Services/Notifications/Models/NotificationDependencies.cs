@@ -23,4 +23,5 @@ public class NotificationDependencies
     public required IGuardChecker GuardChecker { get; init; }
     public required IRedisOperationService RedisOperation { get; init; }
     public required IPlatformContextService PlatformContext { get; init; }
+    public required IAccountSupportService AccountSupport { get; init; }
 }

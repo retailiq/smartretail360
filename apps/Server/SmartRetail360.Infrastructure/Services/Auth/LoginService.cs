@@ -64,7 +64,7 @@ public class LoginService : ILoginService
             if (userCheckResult != null)
                 return userCheckResult.To<LoginResponse>();
 
-            _dep.UserContext.Inject(new UserExecutionContext { UserId = user!.Id });
+            _dep.UserContext.Inject(new UserExecutionContext { UserId = user!.Id, UserName = user.Name });
 
             var isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
             var guardResult = await _dep.GuardChecker
@@ -77,7 +77,14 @@ public class LoginService : ILoginService
                 if (count >= 3)
                 {
                     user.StatusEnum = AccountStatus.Locked;
-                    await _dep.Db.SaveChangesAsync();
+                    user.DeactivationReasonEnum = AccountBanReason.LoginFailureLimit;
+
+                    await _dep.SafeExecutor.ExecuteAsync(
+                        async () => { await _dep.Db.SaveChangesAsync(); },
+                        LogEventType.DatabaseError,
+                        LogReasons.DatabaseSaveFailed,
+                        ErrorCodes.DatabaseUnavailable
+                    );
 
                     return ApiResponse<LoginResponse>.Fail(
                         code: ErrorCodes.AccountLocked,
@@ -99,19 +106,18 @@ public class LoginService : ILoginService
                 .ValidateAsync();
             if (accountActivationResult != null)
             {
-                var tokenListResult = await _dep.SafeExecutor.ExecuteAsync(
-                    () => _dep.Db.AccountActivationTokens
-                        .Where(t => t.UserId == user.Id)
-                        .OrderByDescending(t => t.CreatedAt)
-                        .ToListAsync(),
-                    LogEventType.UserLoginFailure,
-                    LogReasons.DatabaseRetrievalFailed,
-                    ErrorCodes.DatabaseUnavailable
-                );
-                if (!tokenListResult.IsSuccess)
-                    return tokenListResult.ToObjectResponse().To<LoginResponse>();
-                var tokenList = tokenListResult.Response.Data!;
-                var latestToken = tokenList.FirstOrDefault();
+                var (tokenList, tokenListError) = await _dep.AccountSupport.GetActivationTokenListAsync(user.Id);
+                if (tokenListError != null)
+                    return tokenListError.To<LoginResponse>();
+                var tokenListCheckResult = await _dep.GuardChecker
+                    .Check(() => tokenList!.Count == 0,
+                        LogEventType.UserLoginFailure, LogReasons.TokenNotFound,
+                        ErrorCodes.TokenNotFound)
+                    .ValidateAsync();
+                if (tokenListCheckResult != null)
+                    return tokenListCheckResult.To<LoginResponse>();
+
+                var latestToken = tokenList!.FirstOrDefault();
                 var isPending = latestToken!.ExpiresAt < DateTime.UtcNow &&
                                 latestToken.StatusEnum == ActivationTokenStatus.Pending;
                 return accountActivationResult.To(new LoginResponse
@@ -124,20 +130,55 @@ public class LoginService : ILoginService
                 .Check(() => user.StatusEnum == AccountStatus.Locked,
                     LogEventType.UserLoginFailure, LogReasons.AccountLocked,
                     ErrorCodes.AccountLocked)
+                .Check(() => user.StatusEnum == AccountStatus.Suspended,
+                    LogEventType.UserLoginFailure, LogReasons.AccountSuspended,
+                    ErrorCodes.AccountSuspended)
+                .Check(() => user.StatusEnum == AccountStatus.Deleted,
+                    LogEventType.UserLoginFailure, LogReasons.AccountDeleted,
+                    ErrorCodes.AccountDeleted)
+                .Check(() => user.StatusEnum == AccountStatus.Banned,
+                    LogEventType.UserLoginFailure, LogReasons.AccountBanned,
+                    ErrorCodes.AccountBanned)
                 .ValidateAsync();
             if (accountStatusResult != null)
                 return accountStatusResult.To<LoginResponse>();
 
-            var tenantUsers = await _dep.Db.TenantUsers
-                .Where(tu => tu.UserId == user.Id)
-                .Include(tu => tu.Tenant)
-                .Include(tu => tu.Role)
-                .ToListAsync();
+            var tenantUsersResult = await _dep.SafeExecutor.ExecuteAsync(
+                () =>
+                    _dep.Db.TenantUsers
+                        .Where(tu => tu.UserId == user.Id)
+                        .Include(tu => tu.Tenant)
+                        .Include(tu => tu.Role)
+                        .ToListAsync(),
+                LogEventType.DatabaseError,
+                LogReasons.DatabaseRetrievalFailed,
+                ErrorCodes.DatabaseUnavailable
+            );
+            if (!tenantUsersResult.IsSuccess)
+                return tenantUsersResult.ToObjectResponse().To<LoginResponse>();
+
+            var tenantUsers = tenantUsersResult.Response.Data!;
+
+            var tenantUsersCheckResult = await _dep.GuardChecker
+                .Check(() => tenantUsers.Count == 0,
+                    LogEventType.UserLoginFailure, LogReasons.TenantUserRecordNotFound,
+                    ErrorCodes.TenantUserRecordNotFound)
+                .ValidateAsync();
+            if (tenantUsersCheckResult != null)
+                return tenantUsersCheckResult.To<LoginResponse>();
 
             var inactiveTenants = tenantUsers
                 .Where(tu => !tu.Tenant!.IsActive)
                 .ToList();
+            var tenantCount = tenantUsers
+                .Where(tu => tu.Tenant != null)
+                .Select(tu => tu.Tenant!.Id)
+                .Distinct()
+                .Count();
             var tenantStatusResult = await _dep.GuardChecker
+                .Check(() => tenantCount == 0,
+                    LogEventType.UserLoginFailure, LogReasons.TenantNotFound,
+                    ErrorCodes.TenantNotFound)
                 .Check(() => inactiveTenants.Count == tenantUsers.Count,
                     LogEventType.UserLoginFailure, LogReasons.AllTenantsDisabled,
                     ErrorCodes.AllTenantsDisabled)
@@ -175,17 +216,16 @@ public class LoginService : ILoginService
                 ShouldChooseTenant = shouldChooseTenant,
                 TenantOptions = candidates
             };
-            
+
             await _dep.SafeExecutor.ExecuteAsync(
-                async () =>
-                {
-                    await _dep.RedisOperation.ResetUserLoginFailuresAsync(failKey, lockKey);
-                },
-                LogEventType.GeneralError,
-                LogReasons.DatabaseSaveFailed,
+                async () => { await _dep.RedisOperation.ResetUserLoginFailuresAsync(failKey, securityKey); },
+                LogEventType.RedisError,
+                LogReasons.RedisOperateFailed,
                 ErrorCodes.DatabaseUnavailable
             );
-            
+
+            await _dep.LogDispatcher.Dispatch(LogEventType.UserLoginSuccess);
+
             return ApiResponse<LoginResponse>.Ok(
                 loginResponse,
                 _dep.Localizer.GetLocalizedText(LocalizedTextKey.UserLoginSuccess),

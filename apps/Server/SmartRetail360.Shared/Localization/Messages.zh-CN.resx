@@ -32,6 +32,11 @@
     <data name="AllTenantsDisabled" xml:space="preserve"><value>您的账户关联的所有租户均已被禁用，请联系平台管理员</value></data>
     <data name="TenantUserDisabled" xml:space="preserve"><value>您在该租户下的账户已被禁用，请联系租户管理员</value></data>
     <data name="TenantDisabled" xml:space="preserve"><value>该租户已被禁用，请联系平台管理员</value></data>
+    <data name="AccountSuspended" xml:space="preserve"><value>您的账号已被临时停用，请联系平台客服</value></data>
+    <data name="AccountDeleted" xml:space="preserve"><value>该账号已被删除，无法继续访问</value></data>
+    <data name="AccountBanned" xml:space="preserve"><value>您的账号因违反政策已被永久封禁</value></data>
+    <data name="TenantUserRecordNotFound" xml:space="preserve"><value>未找到该用户在当前租户中的记录，请确认账号信息</value></data>
+    <data name="TokenNotFound" xml:space="preserve"><value>令牌未找到</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>

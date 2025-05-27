@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using SmartRetail360.Domain.Interfaces;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Domain.Entities;
@@ -13,19 +14,19 @@ public class Tenant : IHasCreatedAt, IHasUpdatedAt
     public string? Industry { get; set; } = string.Empty;
     public int? Size { get; set; } = null;
     public string? LogoUrl { get; set; } = string.Empty;
-    public string Status { get; set; } = StringCaseConverter.ToSnakeCase(nameof(AccountStatus.PendingVerification));
+    public string Status { get; set; } = AccountStatus.PendingVerification.GetEnumMemberValue();
     [NotMapped]
     public AccountStatus StatusEnum
     {
-        get => Enum.Parse<AccountStatus>(StringCaseConverter.ToPascalCase(Status));
-        set => Status = StringCaseConverter.ToSnakeCase(value.ToString());
+        get => Status.ToEnumFromMemberValue<AccountStatus>();
+        set => Status = value.GetEnumMemberValue();
     }
-    public string Plan { get; set; } = StringCaseConverter.ToSnakeCase(nameof(AccountPlan.Free));
+    public string Plan { get; set; } = AccountPlan.Free.GetEnumMemberValue();
     [NotMapped]
     public AccountPlan PlanEnum
     {
-        get => Enum.Parse<AccountPlan>(StringCaseConverter.ToPascalCase(Plan));
-        set => Plan = StringCaseConverter.ToSnakeCase(value.ToString());
+        get => Plan.ToEnumFromMemberValue<AccountPlan>();
+        set => Plan = value.GetEnumMemberValue();
     }
     public string TraceId { get; set; } = string.Empty;
     public Guid CreatedBy { get; set; }
@@ -36,11 +37,11 @@ public class Tenant : IHasCreatedAt, IHasUpdatedAt
     public bool IsActive { get; set; } = true;
     public DateTime? DeactivatedAt { get; set; } = null;
     public Guid? DeactivatedBy { get; set; } = null;
-    public string DeactivationReason { get; set; } = StringCaseConverter.ToSnakeCase(nameof(AccountBanReason.None));
+    public string DeactivationReason { get; set; } = AccountBanReason.None.GetEnumMemberValue();
     [NotMapped]
     public AccountBanReason DeactivationReasonEnum
     {
-        get => Enum.Parse<AccountBanReason>(StringCaseConverter.ToPascalCase(DeactivationReason));
-        set => DeactivationReason = StringCaseConverter.ToSnakeCase(value.ToString());
+        get => DeactivationReason.ToEnumFromMemberValue<AccountBanReason>();
+        set => DeactivationReason = value.GetEnumMemberValue();
     }
 }

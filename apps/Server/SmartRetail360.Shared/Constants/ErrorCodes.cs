@@ -21,6 +21,11 @@ public static class ErrorCodes
     public const int AllTenantsDisabled = 5010;
     public const int TenantDisabled = 5011;
     public const int TenantUserDisabled = 5012;
+    public const int AccountSuspended = 5013;
+    public const int AccountDeleted = 5014;
+    public const int AccountBanned = 5015;
+    public const int TenantUserRecordNotFound = 5016;
+    public const int TokenNotFound = 5017;
 
     // Account
     public const int AccountNotFound = 6002;

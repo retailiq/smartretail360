@@ -14,6 +14,8 @@ public enum LogEventType
     EmailSendFailure,
     WriteLogFailure,
     GeneralError,
+    RedisError,
+    DatabaseError,
     ConfirmTenantLoginFailure,
     ConfirmTenantLoginSuccess,
 }

@@ -2,6 +2,7 @@ using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Localization;
@@ -20,4 +21,6 @@ public class LoginDependencies
     public required IUserContextService UserContext { get; init; }
     public required AppOptions AppOptions { get; init; }
     public required IAccessTokenGenerator AccessTokenGenerator { get; init; }
+    public required ILogDispatcher LogDispatcher { get; init; }
+    public required IAccountSupportService AccountSupport { get; init; }
 }

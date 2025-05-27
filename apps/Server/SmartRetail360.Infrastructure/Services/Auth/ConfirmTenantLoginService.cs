@@ -5,9 +5,11 @@ using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Responses;
+using StackExchange.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Auth;
 
@@ -23,36 +25,59 @@ public class ConfirmTenantLoginService : IConfirmTenantLoginService
     public async Task<ApiResponse<ConfirmTenantLoginResponse>> ConfirmTenantLoginAsync(
         ConfirmTenantLoginRequest request)
     {
+        _dep.UserContext.Inject(new UserExecutionContext
+        {
+            Action = LogActions.ConfirmTenantLogin,
+            UserId = request.UserId,
+            TenantId = request.TenantId,
+        });
+        
         var traceId = _dep.UserContext.TraceId;
         var refreshTokenExpiryDays = request.IsStaySignedIn == true
             ? _dep.AppOptions.RefreshTokenExpiryDaysWhenStaySignedIn
             : _dep.AppOptions.RefreshTokenExpiryDaysDefault;
 
-        var tenantUser = await _dep.Db.TenantUsers
-            .Include(tu => tu.Tenant)
-            .Include(tu => tu.Role)
-            .Include(tu => tu.User)
-            .FirstOrDefaultAsync(tu =>
-                tu.UserId == request.UserId &&
-                tu.TenantId == request.TenantId &&
-                tu.IsActive);
-
+        var tenantUserResult = await _dep.SafeExecutor.ExecuteAsync(
+            () =>
+                _dep.Db.TenantUsers
+                    .Include(tu => tu.Tenant)
+                    .Include(tu => tu.Role)
+                    .Include(tu => tu.User)
+                    .FirstOrDefaultAsync(tu =>
+                        tu.UserId == request.UserId &&
+                        tu.TenantId == request.TenantId &&
+                        tu.IsActive),
+            LogEventType.DatabaseError,
+            LogReasons.DatabaseRetrievalFailed,
+            ErrorCodes.DatabaseUnavailable
+        );
+        if (!tenantUserResult.IsSuccess)
+            return tenantUserResult.ToObjectResponse().To<ConfirmTenantLoginResponse>();
+        var tenantUser = tenantUserResult.Response.Data;
         var accountCheckResult = await _dep.GuardChecker
             .Check(() => tenantUser == null,
-                LogEventType.UserLoginFailure, LogReasons.TenantUserDisabled,
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserDisabled,
                 ErrorCodes.TenantUserDisabled)
             .Check(() => tenantUser is { User: null },
-                LogEventType.UserLoginFailure, LogReasons.AccountNotFound,
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.AccountNotFound,
                 ErrorCodes.AccountNotFound)
             .Check(() => tenantUser is { Tenant: null },
-                LogEventType.UserLoginFailure, LogReasons.TenantNotFound,
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantNotFound,
                 ErrorCodes.TenantNotFound)
             .Check(() => !tenantUser!.Tenant!.IsActive,
-                LogEventType.UserLoginFailure, LogReasons.TenantDisabled,
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantDisabled,
                 ErrorCodes.TenantDisabled)
             .ValidateAsync();
         if (accountCheckResult != null)
             return accountCheckResult.To<ConfirmTenantLoginResponse>();
+        
+        _dep.UserContext.Inject(new UserExecutionContext
+        {
+            RoleId = tenantUser!.Role!.Id,
+            RoleName = tenantUser.Role.Name,
+            Email = tenantUser!.User!.Email,
+            UserName = tenantUser.User.Name,
+        });
 
         var isFirstLogin = tenantUser!.User!.IsFirstLogin;
 
@@ -62,27 +87,34 @@ public class ConfirmTenantLoginService : IConfirmTenantLoginService
             name: tenantUser.User.Name,
             tenantId: tenantUser.TenantId.ToString(),
             roleId: tenantUser.RoleId.ToString(),
-            locale: tenantUser.User.Locale.GetEnumMemberValue(),
+            locale: tenantUser.User.Locale,
             traceId: _dep.UserContext.TraceId
         );
-
-        var refreshToken = await _dep.RefreshTokenService.CreateRefreshTokenAsync(
-            tenantUser.UserId,
-            tenantUser.TenantId,
-            _dep.UserContext.IpAddress,
-            refreshTokenExpiryDays
+        
+        var refreshTokenResult = await _dep.SafeExecutor.ExecuteAsync(
+            () =>
+                _dep.RefreshTokenService.CreateRefreshTokenAsync(
+                    tenantUser.UserId,
+                    tenantUser.TenantId,
+                    _dep.UserContext.IpAddress,
+                    refreshTokenExpiryDays
+                ),
+            LogEventType.ConfirmTenantLoginFailure,
+            LogReasons.RefreshTokenCreationFailed,
+            ErrorCodes.InternalServerError
         );
-
+        if (!refreshTokenResult.IsSuccess)
+            return refreshTokenResult.ToObjectResponse().To<ConfirmTenantLoginResponse>();
+        
+        var refreshToken = refreshTokenResult.Response.Data ?? Guid.NewGuid().ToString();
+        
         tenantUser.User.LastLoginAt = DateTime.UtcNow;
         tenantUser.User.TraceId = traceId;
         tenantUser.User.IsFirstLogin = false;
 
         var saveResult = await _dep.SafeExecutor.ExecuteAsync(
-            async () =>
-            {
-                await _dep.Db.SaveChangesAsync();
-            },
-            LogEventType.ConfirmTenantLoginFailure,
+            async () => { await _dep.Db.SaveChangesAsync(); },
+            LogEventType.DatabaseError,
             LogReasons.DatabaseSaveFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -99,6 +131,8 @@ public class ConfirmTenantLoginService : IConfirmTenantLoginService
             Expires = DateTimeOffset.UtcNow.Add(TimeSpan.FromDays(refreshTokenExpiryDays))
         });
 
+        await _dep.LogDispatcher.Dispatch(LogEventType.ConfirmTenantLoginSuccess);
+        
         return ApiResponse<ConfirmTenantLoginResponse>.Ok(
             new ConfirmTenantLoginResponse
             {
@@ -109,14 +143,13 @@ public class ConfirmTenantLoginService : IConfirmTenantLoginService
                     UserId = tenantUser.UserId.ToString(),
                     Email = tenantUser.User.Email,
                     Name = tenantUser.User.Name,
-                    Locale = tenantUser.User.Locale.GetEnumMemberValue(),
+                    Locale = tenantUser.User.Locale,
                     TenantId = tenantUser.TenantId.ToString(),
                     RoleId = tenantUser.RoleId.ToString(),
                     AvatarUrl = tenantUser.User.AvatarUrl ?? GeneralConstants.Unknown,
                     IsFirstLogin = isFirstLogin,
-                    // TODO: Add Role and Permission handling
+                    // TODO: Add Role and Permission later
                     Permissions = new List<string>()
-                    // Permissions = await _dep.PlatformContext.GetUserPermissionsAsync(user.Id, tenantUser.RoleId)
                 }
             },
             _dep.Localizer.GetLocalizedText(LocalizedTextKey.UserLoginSuccess),
@@ -124,4 +157,3 @@ public class ConfirmTenantLoginService : IConfirmTenantLoginService
         );
     }
 }
-

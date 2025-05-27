@@ -43,17 +43,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         entity.Property(e => e.AvatarUrl)
             .HasMaxLength(512);
-        
+
         entity.Property(e => e.Locale)
-            .HasConversion(
-                v => v.GetEnumMemberValue(), // enum -> string
-                v => v.ToEnumFromMemberValue<LocaleType>() // string -> enum
-            );
+            .IsRequired()
+            .HasMaxLength(10)
+            .IsUnicode(false)
+            .HasDefaultValue(LocaleType.En.GetEnumMemberValue());
 
         entity.Property(e => e.Status)
             .HasMaxLength(64)
             .IsRequired()
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountStatus.PendingVerification)));
+            .HasDefaultValue(AccountStatus.PendingVerification.GetEnumMemberValue());
 
         entity.Property(e => e.IsEmailVerified)
             .IsRequired()
@@ -68,8 +68,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
 
         entity.Property(e => e.DeactivationReason)
+            .IsRequired()
             .HasMaxLength(64)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountBanReason.None)));
+            .HasDefaultValue(AccountBanReason.None.GetEnumMemberValue());
 
         entity.Property(e => e.IsActive)
             .IsRequired()

@@ -88,7 +88,9 @@ public class AccountRegistrationService : IAccountRegistrationService
                 PasswordHash = passwordHash,
                 TraceId = traceId,
                 LastEmailSentAt = DateTime.UtcNow,
-                Locale = (_dep.UserContext.Locale ?? "en").ToEnumFromMemberValue<LocaleType>()
+                Locale = string.IsNullOrWhiteSpace(_dep.UserContext.Locale)
+                    ? LocaleType.En.GetEnumMemberValue()
+                    : _dep.UserContext.Locale.ToEnumFromMemberValue<LocaleType>().GetEnumMemberValue()
             };
 
             var tenant = new Tenant

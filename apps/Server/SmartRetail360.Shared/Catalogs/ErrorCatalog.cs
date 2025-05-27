@@ -24,6 +24,11 @@ public static class ErrorCatalog
         { ErrorCodes.AllTenantsDisabled, "AllTenantsDisabled" },
         { ErrorCodes.TenantDisabled, "TenantDisabled" },
         { ErrorCodes.TenantUserDisabled, "TenantUserDisabled" },
+        { ErrorCodes.AccountSuspended, "AccountSuspended" },
+        { ErrorCodes.AccountDeleted, "AccountDeleted" },
+        { ErrorCodes.AccountBanned, "AccountBanned" },
+        { ErrorCodes.TenantUserRecordNotFound, "TenantUserRecordNotFound" },
+        { ErrorCodes.TokenNotFound, "TokenNotFound" },
 
         // Account
         { ErrorCodes.AccountNotFound, "AccountNotFound" },

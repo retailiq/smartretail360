@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using SmartRetail360.Domain.Interfaces;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Domain.Entities;
@@ -13,13 +14,19 @@ public class User : IHasCreatedAt, IHasUpdatedAt
     public string PasswordHash { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? AvatarUrl { get; set; } = string.Empty;
-    public LocaleType Locale { get; set; } = LocaleType.En;
-    public string Status { get; set; } = StringCaseConverter.ToSnakeCase(nameof(AccountStatus.PendingVerification));
+    public string Locale { get; set; } = LocaleType.En.GetEnumMemberValue();
+    [NotMapped]
+    public LocaleType LocaleEnum
+    {
+        get => Locale.ToEnumFromMemberValue<LocaleType>();
+        set => Locale = value.GetEnumMemberValue();
+    }
+    public string Status { get; set; } = AccountStatus.PendingVerification.GetEnumMemberValue();
     [NotMapped]
     public AccountStatus StatusEnum
     {
-        get => Enum.Parse<AccountStatus>(StringCaseConverter.ToPascalCase(Status));
-        set => Status = StringCaseConverter.ToSnakeCase(value.ToString());
+        get => Status.ToEnumFromMemberValue<AccountStatus>();
+        set => Status = value.GetEnumMemberValue();
     }
     public bool IsEmailVerified { get; set; } = false;
     public bool IsFirstLogin { get; set; } = true;
@@ -33,11 +40,11 @@ public class User : IHasCreatedAt, IHasUpdatedAt
     public bool IsActive { get; set; } = true;
     public DateTime? DeactivatedAt { get; set; } = null;
     public Guid? DeactivatedBy { get; set; } = null;
-    public string DeactivationReason { get; set; } = StringCaseConverter.ToSnakeCase(nameof(AccountBanReason.None));
+    public string DeactivationReason { get; set; } = AccountBanReason.None.GetEnumMemberValue();
     [NotMapped]
     public AccountBanReason DeactivationReasonEnum
     {
-        get => Enum.Parse<AccountBanReason>(StringCaseConverter.ToPascalCase(DeactivationReason));
-        set => DeactivationReason = StringCaseConverter.ToSnakeCase(value.ToString());
+        get => DeactivationReason.ToEnumFromMemberValue<AccountBanReason>();
+        set => DeactivationReason = value.GetEnumMemberValue();
     }
 }

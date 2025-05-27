@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 
 namespace SmartRetail360.Infrastructure.Data.Configurations;
 
@@ -45,6 +47,7 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 
         entity.Property(rt => rt.ReasonRevoked)
             .HasMaxLength(64)
-            .IsRequired();
+            .IsRequired()
+            .HasDefaultValue(RefreshTokenRevokeReason.None.GetEnumMemberValue());
     }
 }

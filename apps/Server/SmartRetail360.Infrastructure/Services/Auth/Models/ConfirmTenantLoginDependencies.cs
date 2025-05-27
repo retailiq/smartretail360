@@ -3,6 +3,7 @@ using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Common;
+using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Localization;
@@ -23,4 +24,5 @@ public class ConfirmTenantLoginDependencies
     public required IAccessTokenGenerator AccessTokenGenerator { get; init; }
     public required IRefreshTokenService RefreshTokenService { get; init; }
     public required HttpContext HttpContext { get; init; }
+    public required ILogDispatcher LogDispatcher { get; init; }
 }
