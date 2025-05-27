@@ -31,6 +31,9 @@ using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
+using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin;
+using SmartRetail360.Infrastructure.Services.Auth.Tokens;
+using SmartRetail360.Infrastructure.Services.Auth.UserLogin;
 using SmartRetail360.Infrastructure.Services.Common;
 using SmartRetail360.Infrastructure.Services.Messaging;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
@@ -73,9 +76,10 @@ public static class DependencyInjection
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<ILoginService, LoginService>();
         services.AddScoped<IAccessTokenGenerator, AccessTokenGenerator>();
-        services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService>();
+        services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService1>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-
+        services.AddScoped<IOAuthLoginService, OAuthLoginService>();
+        
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
@@ -121,6 +125,21 @@ public static class DependencyInjection
 
         // Register the Login Dependencies
         services.AddScoped<LoginDependencies>(sp => new LoginDependencies
+        {
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
+            Localizer = sp.GetRequiredService<MessageLocalizer>(),
+            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
+            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
+            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
+            Db = sp.GetRequiredService<AppDbContext>(),
+            UserContext = sp.GetRequiredService<IUserContextService>(),
+            AppOptions = sp.GetRequiredService<AppOptions>(),
+            AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
+            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
+            AccountSupport = sp.GetRequiredService<IAccountSupportService>()
+        });
+        
+        services.AddScoped<OAuthLoginDependencies>(sp => new OAuthLoginDependencies
         {
             PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
             Localizer = sp.GetRequiredService<MessageLocalizer>(),

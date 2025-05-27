@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Shared.Options;
 
-namespace SmartRetail360.Infrastructure.Services.Auth;
+namespace SmartRetail360.Infrastructure.Services.Auth.Tokens;
 
 public class AccessTokenGenerator : IAccessTokenGenerator
 {

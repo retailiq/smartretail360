@@ -13,11 +13,11 @@ using StackExchange.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Auth;
 
-public class ConfirmTenantLoginService : IConfirmTenantLoginService
+public class ConfirmTenantLoginService1 : IConfirmTenantLoginService
 {
     private readonly ConfirmTenantLoginDependencies _dep;
 
-    public ConfirmTenantLoginService(ConfirmTenantLoginDependencies dep)
+    public ConfirmTenantLoginService1(ConfirmTenantLoginDependencies dep)
     {
         _dep = dep;
     }

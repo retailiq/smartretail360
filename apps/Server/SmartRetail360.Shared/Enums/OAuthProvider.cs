@@ -1,10 +1,21 @@
+using System.Runtime.Serialization;
+
 namespace SmartRetail360.Shared.Enums;
 
 public enum OAuthProvider
 {
-    None = 0,
-    Google = 1,
-    Apple = 2,
-    Facebook = 3,
-    Microsoft = 4
+    [EnumMember(Value = "none")]
+    None,
+
+    [EnumMember(Value = "google")]
+    Google,
+
+    [EnumMember(Value = "apple")]
+    Apple,
+
+    [EnumMember(Value = "facebook")]
+    Facebook,
+
+    [EnumMember(Value = "microsoft")]
+    Microsoft
 }

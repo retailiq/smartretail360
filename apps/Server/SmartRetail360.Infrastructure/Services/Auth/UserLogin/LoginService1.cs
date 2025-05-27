@@ -10,13 +10,13 @@ using SmartRetail360.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Shared.Utils;
 
-namespace SmartRetail360.Infrastructure.Services.Auth;
+namespace SmartRetail360.Infrastructure.Services.Auth.UserLogin;
 
-public class LoginService : ILoginService
+public class LoginService1 : ILoginService
 {
     private readonly LoginDependencies _dep;
 
-    public LoginService(LoginDependencies dep)
+    public LoginService1(LoginDependencies dep)
     {
         _dep = dep;
     }

@@ -4,6 +4,7 @@ using SmartRetail360.API.Configuration.Swagger;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -20,8 +21,13 @@ public static class DependencyInjection
         // Controller
         services.AddControllers().AddJsonOptions(options =>
         {
+            // Ignore null values globally
             options.JsonSerializerOptions.DefaultIgnoreCondition =
                 System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            // Use camelCase and allow integer values for enums
+            options.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true)
+            );
         });
 
         services.AddEndpointsApiExplorer();

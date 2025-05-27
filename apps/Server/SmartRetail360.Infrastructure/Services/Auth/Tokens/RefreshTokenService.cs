@@ -5,7 +5,7 @@ using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Utils;
 
-namespace SmartRetail360.Infrastructure.Services.Auth;
+namespace SmartRetail360.Infrastructure.Services.Auth.Tokens;
 
 public class RefreshTokenService : IRefreshTokenService
 {

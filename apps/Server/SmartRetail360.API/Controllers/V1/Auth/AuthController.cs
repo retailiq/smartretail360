@@ -30,6 +30,12 @@ public class AuthController : ControllerBase
         return StatusCode(200, result);
     }
 
+    [HttpPost("oauth/login")]
+    public async Task<ActionResult<ApiResponse<LoginResponse>>> OAuthLogin([FromBody] OAuthLoginRequest request)
+    {
+        return StatusCode(200, "OAuth login successful. This endpoint is not implemented yet.");
+    }
+
     [HttpPost("login/tenant")]
     public async Task<ActionResult<ApiResponse<ConfirmTenantLoginResponse>>> ConfirmTenantLogin(
         [FromBody] ConfirmTenantLoginRequest request)

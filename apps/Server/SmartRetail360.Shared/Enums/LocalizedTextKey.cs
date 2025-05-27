@@ -42,4 +42,8 @@ public enum LocalizedTextKey
     TenantIdIsRequired,
     UserIdIsRequired,
     IsStaySignedInIsRequired,
+    InvalidOAuthProvider,
+    OAuthCodeIsRequired,
+    OAuthStateIsRequired,
+    OAuthRedirectUriIsRequired
 }
