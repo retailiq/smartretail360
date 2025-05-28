@@ -2,10 +2,11 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
+using SmartRetail360.Application.Interfaces.Messaging;
 
 namespace SmartRetail360.Infrastructure.Services.Messaging;
 
-public class SqsEmailProducer
+public class SqsEmailProducer : IEmailQueueProducer
 {
     private readonly IConfiguration _config;
     private readonly IAmazonSQS _sqs;

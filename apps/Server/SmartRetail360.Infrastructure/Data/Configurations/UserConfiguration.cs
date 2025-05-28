@@ -35,8 +35,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
 
         entity.Property(e => e.PasswordHash)
-            .HasMaxLength(255)
-            .IsRequired();
+            .HasMaxLength(255);
 
         entity.Property(e => e.PhoneNumber)
             .HasMaxLength(32);

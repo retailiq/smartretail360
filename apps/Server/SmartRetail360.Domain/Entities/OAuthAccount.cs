@@ -26,4 +26,24 @@ public class OAuthAccount : IHasCreatedAt, IHasUpdatedAt
     public string TraceId { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public string Status { get; set; } = AccountStatus.Active.GetEnumMemberValue();
+
+    [NotMapped]
+    public AccountStatus StatusEnum
+    {
+        get => Status.ToEnumFromMemberValue<AccountStatus>();
+        set => Status = value.GetEnumMemberValue();
+    }
+
+    public bool IsActive { get; set; } = true;
+    public DateTime? DeactivatedAt { get; set; } = null;
+    public Guid? DeactivatedBy { get; set; } = null;
+    public string DeactivationReason { get; set; } = AccountBanReason.None.GetEnumMemberValue();
+
+    [NotMapped]
+    public AccountBanReason DeactivationReasonEnum
+    {
+        get => DeactivationReason.ToEnumFromMemberValue<AccountBanReason>();
+        set => DeactivationReason = value.GetEnumMemberValue();
+    }
 }

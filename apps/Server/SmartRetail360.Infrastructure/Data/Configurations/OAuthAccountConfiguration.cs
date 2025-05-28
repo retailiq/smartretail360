@@ -19,6 +19,7 @@ public class OAuthAccountConfiguration : IEntityTypeConfiguration<OAuthAccount>
         entity.HasIndex(e => e.Provider);
         entity.HasIndex(e => e.UserId);
         entity.HasIndex(e => e.TraceId);
+        entity.HasIndex(e => new { e.Email, e.Provider });
 
         entity.Property(e => e.Name)
             .HasMaxLength(128);
@@ -51,6 +52,23 @@ public class OAuthAccountConfiguration : IEntityTypeConfiguration<OAuthAccount>
 
         entity.Property(e => e.UpdatedAt)
             .IsRequired();
+        
+        entity.Property(e => e.Status)
+            .IsRequired()
+            .HasMaxLength(64)
+            .HasDefaultValue(AccountStatus.Active.GetEnumMemberValue());
+        
+        entity.Property(e => e.IsActive)
+            .IsRequired()
+            .HasDefaultValue(true);
+        
+        entity.Property(e => e.DeactivatedAt)
+            .HasColumnType("timestamp with time zone");
+        
+        entity.Property(e => e.DeactivationReason)
+            .IsRequired()
+            .HasMaxLength(64)
+            .HasDefaultValue(AccountBanReason.None.GetEnumMemberValue());
         
         entity.HasOne(e => e.User)
             .WithMany(u => u.OAuthAccounts)

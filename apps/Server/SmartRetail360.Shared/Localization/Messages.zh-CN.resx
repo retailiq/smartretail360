@@ -39,6 +39,7 @@
     <data name="TokenNotFound" xml:space="preserve"><value>令牌未找到</value></data>
     <data name="InvalidOAuthProvider" xml:space="preserve"><value>无效的 OAuth 登录平台</value></data>
     <data name="OAuthUserProfileFetchFailed" xml:space="preserve"><value>无法获取第三方用户信息</value></data>
+    <data name="OAuthUserProfileNotExists" xml:space="preserve"><value>第三方用户信息不存在</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>
@@ -86,7 +87,6 @@
     <data name="NameMustNotExceed50Characters" xml:space="preserve"><value>姓名不能超过 50 个字符</value></data>
     <data name="TenantIdIsRequired" xml:space="preserve"><value>租户 ID 是必填项</value></data>
     <data name="UserIdIsRequired" xml:space="preserve"><value>用户 ID 是必填项</value></data>
-    <data name="InvalidOAuthProvider" xml:space="preserve"><value>无效的 OAuth 登录平台</value></data>
     <data name="OAuthCodeIsRequired" xml:space="preserve"><value>授权码是必填项</value></data>
     <data name="OAuthStateIsRequired" xml:space="preserve"><value>状态标识是必填项</value></data>
     <data name="OAuthRedirectUriIsRequired" xml:space="preserve"><value>回调地址是必填项</value></data>

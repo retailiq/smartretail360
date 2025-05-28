@@ -28,6 +28,7 @@ public static class ErrorCodes
     public const int TokenNotFound = 5017;
     public const int InvalidOAuthProvider = 5018;
     public const int OAuthUserProfileFetchFailed = 5019;
+    public const int OAuthUserProfileNotExists = 5020;
 
     // Account
     public const int AccountNotFound = 6002;

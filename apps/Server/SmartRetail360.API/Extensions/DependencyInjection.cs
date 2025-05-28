@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin;
 
 namespace SmartRetail360.API.Extensions;
 

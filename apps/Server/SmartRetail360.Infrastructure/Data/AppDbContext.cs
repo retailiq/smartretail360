@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<AccountActivationToken> AccountActivationTokens => Set<AccountActivationToken>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<OAuthAccount> OAuthAccounts => Set<OAuthAccount>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

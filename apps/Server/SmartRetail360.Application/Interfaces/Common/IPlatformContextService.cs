@@ -1,4 +1,5 @@
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Messaging.Payloads;
 using SmartRetail360.Shared.Responses;
 using UserEntity = SmartRetail360.Domain.Entities.User;
@@ -13,6 +14,7 @@ public interface IPlatformContextService
     Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByUserIdAsync(Guid userId);
     Task<(Tenant?, ApiResponse<object>?)> GetTenantAsync(Guid tenantId);
     Task<(List<Tenant>?, ApiResponse<object>?)> GetTenantsByIdsAsync(List<Guid> tenantIds);
-    
+    Task<(OAuthAccount?, ApiResponse<object>?)> GetOAuthAccountAsync(string email, OAuthProvider provider);
+
     Task<ApiResponse<object>?> SendRegistrationInvitationEmailAsync(string token, ActivationEmailPayload payload);
 }

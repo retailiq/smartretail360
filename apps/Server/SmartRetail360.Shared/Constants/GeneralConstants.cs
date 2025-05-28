@@ -9,4 +9,5 @@ public static class GeneralConstants
     public const string GoogleOAuth = "GoogleOAuth";
     public const string FacebookOAuth = "FacebookOAuth";
     public const string MicrosoftOAuth = "MicrosoftOAuth";
+    public const string NotSet = "Not Set";
 }

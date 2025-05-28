@@ -8,6 +8,8 @@ public enum LogEventType
     InviteUserFailure,
     UserLoginSuccess,
     UserLoginFailure,
+    OAuthLoginSuccess,
+    OAuthLoginFailure,
     AccountActivateSuccess,
     AccountActivateFailure,
     EmailSendSuccess,

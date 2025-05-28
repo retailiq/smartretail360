@@ -39,6 +39,7 @@
     <data name="TokenNotFound" xml:space="preserve"><value>The token was not found</value></data>
     <data name="InvalidOAuthProvider" xml:space="preserve"><value>Invalid OAuth provider</value></data>
     <data name="OAuthUserProfileFetchFailed" xml:space="preserve"><value>Failed to fetch user profile from provider</value></data>
+    <data name="OAuthUserProfileNotExists" xml:space="preserve"><value>OAuth user profile does not exist</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>
@@ -86,7 +87,6 @@
     <data name="TenantIdIsRequired" xml:space="preserve"><value>Tenant ID is required</value></data>
     <data name="UserIdIsRequired" xml:space="preserve"><value>User ID is required</value></data>
     <data name="IsStaySignedInIsRequired" xml:space="preserve"><value>The stay signed in option must be specified</value></data>
-    <data name="InvalidOAuthProvider" xml:space="preserve"><value>Invalid OAuth provider</value></data>
     <data name="OAuthCodeIsRequired" xml:space="preserve"><value>Authorization code is required</value></data>
     <data name="OAuthStateIsRequired" xml:space="preserve"><value>State is required</value></data>
     <data name="OAuthRedirectUriIsRequired" xml:space="preserve"><value>Redirect URI is required</value></data>

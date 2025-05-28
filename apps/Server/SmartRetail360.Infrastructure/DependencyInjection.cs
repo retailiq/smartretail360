@@ -18,10 +18,10 @@ using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
 using SmartRetail360.Application.Common.Execution;
-using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Caching;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
+using SmartRetail360.Application.Interfaces.Messaging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
 using SmartRetail360.Infrastructure.Common.Execution;
@@ -30,19 +30,18 @@ using SmartRetail360.Infrastructure.Logging.Dispatcher;
 using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+using SmartRetail360.Infrastructure.Services.Auth.Login.CredentialsLogin;
+using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin;
+using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Handlers;
+using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Options;
+using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Strategies;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
-using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin;
-using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin.Handlers;
-using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin.Options;
-using SmartRetail360.Infrastructure.Services.Auth.OAuthLogin.Strategies;
 using SmartRetail360.Infrastructure.Services.Auth.Tokens;
-using SmartRetail360.Infrastructure.Services.Auth.UserLogin;
 using SmartRetail360.Infrastructure.Services.Common;
 using SmartRetail360.Infrastructure.Services.Messaging;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Infrastructure.Services.Redis;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure;
@@ -51,6 +50,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureLayer(this IServiceCollection services, IConfiguration config)
     {
+        var oauthUris = config.GetSection("App:OAuthUris").Get<OAuthUris>();
         services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>));
 
         // Inject the Interceptors
@@ -61,23 +61,17 @@ public static class DependencyInjection
             options.UseNpgsql(config.GetConnectionString("DefaultConnection"))
                 .AddInterceptors(interceptor);
         });
-        
+
         // HttpClient Configuration
-        services.AddHttpClient(GeneralConstants.GoogleOAuth, c =>
-        {
-            c.BaseAddress = new Uri("https://oauth2.googleapis.com");
-        });
-        services.AddHttpClient(GeneralConstants.FacebookOAuth, c =>
-        {
-            c.BaseAddress = new Uri("https://graph.facebook.com");
-        });
-        services.AddHttpClient(GeneralConstants.MicrosoftOAuth, c =>
-        {
-            c.BaseAddress = new Uri("https://login.microsoftonline.com");
-        });
-        
+        services.AddHttpClient(GeneralConstants.GoogleOAuth,
+            c => { c.BaseAddress = new Uri(oauthUris!.Google); });
+        services.AddHttpClient(GeneralConstants.FacebookOAuth,
+            c => { c.BaseAddress = new Uri(oauthUris!.Facebook); });
+        services.AddHttpClient(GeneralConstants.MicrosoftOAuth,
+            c => { c.BaseAddress = new Uri(oauthUris!.Microsoft); });
+
         services.Configure<OAuthOptions>(config.GetSection("OAuth"));
-        
+
         // Email Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<IAccountActivationEmailResendingService, AccountActivationEmailResendingService>();
@@ -94,7 +88,7 @@ public static class DependencyInjection
 
         // Auth Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
-        services.AddScoped<ILoginService, LoginService>();
+        services.AddScoped<ILoginService, CredentialsLoginService>();
         services.AddScoped<IAccessTokenGenerator, AccessTokenGenerator>();
         services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService1>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
@@ -103,7 +97,7 @@ public static class DependencyInjection
         services.AddScoped<OAuthProviderStrategy>();
         services.AddScoped<FacebookOAuthHandler>();
         services.AddScoped<MicrosoftOAuthHandler>();
-        
+
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
         services.AddSingleton<IConnectionMultiplexer>(redis);
@@ -115,102 +109,43 @@ public static class DependencyInjection
         services.AddScoped<IRedisOperationService, RedisOperationService>();
         services.AddScoped<ILoginFailureLimiter, LoginFailureLimiter>();
 
-        // Register the Tenant Registration Dependencies
-        services.AddScoped<AccountRegistrationDependencies>(sp => new AccountRegistrationDependencies
-        {
-            Db = sp.GetRequiredService<AppDbContext>(),
-            UserContext = sp.GetRequiredService<IUserContextService>(),
-            Localizer = sp.GetRequiredService<MessageLocalizer>(),
-            EmailContext = sp.GetRequiredService<EmailContext>(),
-            AppOptions = sp.GetRequiredService<AppOptions>(),
-            AuditLogger = sp.GetRequiredService<IAuditLogger>(),
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
-            EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>()
-        });
 
-        // Register the Email Verification Dependencies
-        services.AddScoped<AccountActivationEmailVerificationDependencies>(sp =>
-            new AccountActivationEmailVerificationDependencies
+        services.AddScoped<AccountRegistrationDependencies>(sp =>
+            DependencyBuilder.Build<AccountRegistrationDependencies>(sp, deps =>
             {
-                Db = sp.GetRequiredService<AppDbContext>(),
-                UserContext = sp.GetRequiredService<IUserContextService>(),
-                Localizer = sp.GetRequiredService<MessageLocalizer>(),
-                AppOptions = sp.GetRequiredService<AppOptions>(),
-                LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
-                SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-                GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-                RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-                PlatformContext = sp.GetRequiredService<IPlatformContextService>()
-            });
-
-        // Register the Login Dependencies
-        services.AddScoped<LoginDependencies>(sp => new LoginDependencies
-        {
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
-            Localizer = sp.GetRequiredService<MessageLocalizer>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            Db = sp.GetRequiredService<AppDbContext>(),
-            UserContext = sp.GetRequiredService<IUserContextService>(),
-            AppOptions = sp.GetRequiredService<AppOptions>(),
-            AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
-            AccountSupport = sp.GetRequiredService<IAccountSupportService>()
-        });
-        
-        services.AddScoped<OAuthLoginDependencies>(sp => new OAuthLoginDependencies
-        {
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
-            Localizer = sp.GetRequiredService<MessageLocalizer>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            Db = sp.GetRequiredService<AppDbContext>(),
-            UserContext = sp.GetRequiredService<IUserContextService>(),
-            AppOptions = sp.GetRequiredService<AppOptions>(),
-            AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
-            AccountSupport = sp.GetRequiredService<IAccountSupportService>(),
-            OAuthProviderStrategy = sp.GetRequiredService<OAuthProviderStrategy>()
-        });
-
-        services.AddScoped<ConfirmTenantLoginDependencies>(sp => new ConfirmTenantLoginDependencies
-        {
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
-            Localizer = sp.GetRequiredService<MessageLocalizer>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            Db = sp.GetRequiredService<AppDbContext>(),
-            UserContext = sp.GetRequiredService<IUserContextService>(),
-            AppOptions = sp.GetRequiredService<AppOptions>(),
-            AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>(),
-            RefreshTokenService = sp.GetRequiredService<IRefreshTokenService>(),
-            HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!,
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>()
-        });
-
-        // Register the Notification Dependencies
-        services.AddScoped<NotificationDependencies>(sp => new NotificationDependencies
-        {
-            Db = sp.GetRequiredService<AppDbContext>(),
-            AppOptions = sp.GetRequiredService<AppOptions>(),
-            UserContext = sp.GetRequiredService<IUserContextService>(),
-            Localizer = sp.GetRequiredService<MessageLocalizer>(),
-            RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>(),
-            LogDispatcher = sp.GetRequiredService<ILogDispatcher>(),
-            EmailQueueProducer = sp.GetRequiredService<SqsEmailProducer>(),
-            SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
-            GuardChecker = sp.GetRequiredService<IGuardChecker>(),
-            RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
-            AccountSupport = sp.GetRequiredService<IAccountSupportService>()
-        });
+                deps.EmailContext = sp.GetRequiredService<EmailContext>();
+                deps.AuditLogger = sp.GetRequiredService<IAuditLogger>();
+                deps.EmailQueueProducer = sp.GetRequiredService<IEmailQueueProducer>();
+            }));
+        services.AddScoped<AccountActivationEmailVerificationDependencies>(sp =>
+            DependencyBuilder.Build<AccountActivationEmailVerificationDependencies>(sp, deps => { }));
+        services.AddScoped<LoginDependencies>(sp =>
+            DependencyBuilder.Build<LoginDependencies>(sp, deps =>
+            {
+                deps.AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>();
+                deps.AccountSupport = sp.GetRequiredService<IAccountSupportService>();
+            }));
+        services.AddScoped<OAuthLoginDependencies>(sp =>
+            DependencyBuilder.Build<OAuthLoginDependencies>(sp, deps =>
+            {
+                deps.AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>();
+                deps.AccountSupport = sp.GetRequiredService<IAccountSupportService>();
+                deps.OAuthProviderStrategy = sp.GetRequiredService<OAuthProviderStrategy>();
+            }));
+        services.AddScoped<ConfirmTenantLoginDependencies>(sp =>
+            DependencyBuilder.Build<ConfirmTenantLoginDependencies>(sp, deps =>
+            {
+                deps.AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>();
+                deps.RefreshTokenService = sp.GetRequiredService<IRefreshTokenService>();
+                deps.HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!;
+            }));
+        services.AddScoped<NotificationDependencies>(sp =>
+            DependencyBuilder.Build<NotificationDependencies>(sp, deps =>
+            {
+                deps.EmailQueueProducer = sp.GetRequiredService<IEmailQueueProducer>();
+                deps.RedisLimiterService = sp.GetRequiredService<IRedisLimiterService>();
+                deps.AccountSupport = sp.GetRequiredService<IAccountSupportService>();
+            }));
 
         // Logs
         services.AddScoped<ILogDispatcher, LogDispatcher>();
@@ -229,6 +164,7 @@ public static class DependencyInjection
                     RegionEndpoint = Amazon.RegionEndpoint.APSoutheast2
                 }));
 
+        services.AddSingleton<IEmailQueueProducer, SqsEmailProducer>();
         services.AddScoped<ISafeExecutor, SafeExecutor>();
         services.AddTransient<IGuardChecker, GuardChecker>();
         services.AddScoped<IPlatformContextService, PlatformContextService>();

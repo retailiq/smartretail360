@@ -27,6 +27,9 @@ public static class LogReasons
     public const string AccountBanned = "ACCOUNT_BANNED";
     public const string TokenNotFound = "TOKEN_NOT_FOUND";
     public const string RefreshTokenCreationFailed = "REFRESH_TOKEN_CREATION_FAILED";
+    public const string OAuthHandlerNotFound = "OAUTH_HANDLER_NOT_FOUND";
+    public const string OAuthUserProfileFetchFailed = "OAUTH_USER_PROFILE_FETCH_FAILED";
+    public const string OAuthUserProfileNotExists = "OAUTH_USER_PROFILE_NOT_EXISTS";
     
     // Account
     public const string AccountAlreadyExists = "ACCOUNT_ALREADY_EXISTS";
