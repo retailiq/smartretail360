@@ -37,7 +37,7 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.Users.FirstOrDefaultAsync(u => u.Id == userId),
-            LogEventType.RegisterUserFailure,
+            LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -48,7 +48,7 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLowerInvariant()),
-            LogEventType.RegisterUserFailure,
+            LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -60,7 +60,7 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.TenantUsers.Where(tu => tu.UserId == userId && tu.TenantId == tenantId).ToListAsync(),
-            LogEventType.RegisterUserFailure,
+            LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -71,7 +71,7 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.TenantUsers.Where(tu => tu.UserId == userId).ToListAsync(),
-            LogEventType.RegisterUserFailure,
+            LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -82,7 +82,18 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId),
-            LogEventType.RegisterUserFailure,
+            LogEventType.DatabaseError,
+            LogReasons.DatabaseRetrievalFailed,
+            ErrorCodes.DatabaseUnavailable
+        );
+        return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
+    }
+    
+    public async Task<(RefreshToken?, ApiResponse<object>?)> GetRefreshTokenAsync(string token)
+    {
+        var result = await _safeExecutor.ExecuteAsync(
+            () => _db.RefreshTokens.FirstOrDefaultAsync(t => t.Token == token),
+            LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -93,7 +104,7 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.Tenants.Where(t => tenantIds.Contains(t.Id)).ToListAsync(),
-            LogEventType.RegisterUserFailure,
+            LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -106,7 +117,7 @@ public class PlatformContextService : IPlatformContextService
         var providerStr = provider.GetEnumMemberValue();
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.OAuthAccounts.FirstOrDefaultAsync(t => t.Email == email && t.Provider == providerStr),
-            LogEventType.RegisterUserFailure,
+            LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -122,7 +133,7 @@ public class PlatformContextService : IPlatformContextService
                 _userContext.ApplyTo(payload);
                 await _emailQueueProducer.SendAsync(payload);
             },
-            LogEventType.RegisterUserFailure,
+            LogEventType.SqsError,
             LogReasons.SendSqsMessageFailed,
             ErrorCodes.EmailSendFailed
         );

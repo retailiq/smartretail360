@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using StackExchange.Redis;
@@ -10,6 +11,7 @@ using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Options;
 using SmartRetail360.Shared.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Redis;
@@ -21,25 +23,29 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
     private readonly ILogDispatcher _logDispatcher;
     private readonly IUserContextService _userContext;
     private readonly ISafeExecutor _safeExecutor;
+    private readonly AppOptions _options;
 
     public ActivationTokenCacheService(
         IConnectionMultiplexer redis,
         AppDbContext db,
         ILogDispatcher logDispatcher,
         IUserContextService userContext,
-        ISafeExecutor safeExecutor)
+        ISafeExecutor safeExecutor,
+        IOptions<AppOptions> options)
     {
         _redis = redis.GetDatabase();
         _db = db;
         _logDispatcher = logDispatcher;
         _userContext = userContext;
         _safeExecutor = safeExecutor;
+        _options = options.Value;
     }
 
-    public async Task SetTokenAsync(AccountActivationToken tokenEntity, TimeSpan ttl)
+    public async Task SetTokenAsync(AccountActivationToken tokenEntity)
     {
         var key = RedisKeys.ActivationToken(tokenEntity.Token);
         var json = JsonSerializer.Serialize(tokenEntity);
+        var ttl = TimeSpan.FromMinutes(_options.ActivationTokenLimitMinutes);
         await _redis.StringSetAsync(key, json, ttl);
     }
 
@@ -68,7 +74,7 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
         // If not found in Redis, check the database
         var roleResult = await _safeExecutor.ExecuteAsync(
             () => _db.AccountActivationTokens.AsNoTracking().FirstOrDefaultAsync(x => x.Token == token),
-            LogEventType.RegisterUserFailure,
+            LogEventType.RedisError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );

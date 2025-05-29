@@ -16,6 +16,7 @@ public static class LogActions
     public const string UserResetPassword = "USER_RESET_PASSWORD";
     public const string UserLogin = "USER_LOGIN";
     public const string OAuthLogin = "OAUTH_LOGIN";
+    public const string CredentialsLogin = "CREDENTIALS_LOGIN";
     public const string ConfirmTenantLogin = "CONFIRM_TENANT_LOGIN";
     
     // ===== Email & Notification =====

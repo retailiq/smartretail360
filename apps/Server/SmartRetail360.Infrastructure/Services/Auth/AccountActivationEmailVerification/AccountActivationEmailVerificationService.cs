@@ -4,11 +4,10 @@ using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
-using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
 
-namespace SmartRetail360.Infrastructure.Services.Auth;
+namespace SmartRetail360.Infrastructure.Services.Auth.AccountActivationEmailVerification;
 
 public class AccountActivationEmailVerificationService : IAccountEmailVerificationService
 {
@@ -124,8 +123,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
 
     private async Task<ApiResponse<object>?> RunValidationGuards(AccountActivationToken token, string tokenStr)
     {
-        var redisKey = RedisKeys.VerifyEmailRateLimit(tokenStr);
-        var isLimited = await _dep.RedisOperation.IsLimitedAsync(redisKey);
+        var isLimited = await _dep.RedisOperation.IsAccountActivationLimitedAsync(tokenStr);
 
         return await _dep.GuardChecker
             .Check(() => token.StatusEnum == ActivationTokenStatus.Used, LogEventType.AccountActivateFailure,
@@ -164,10 +162,8 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         );
 
         if (!result.IsSuccess) return result.ToObjectResponse();
-
-        var redisKey = RedisKeys.VerifyEmailRateLimit(tokenStr);
-        await _dep.RedisOperation.SetLimitAsync(redisKey,
-            TimeSpan.FromMinutes(_dep.AppOptions.AccountActivationLimitMinutes));
+        
+        await _dep.RedisOperation.SetAccountActivationLimitAsync(tokenStr);
         await _dep.LogDispatcher.Dispatch(LogEventType.AccountActivateSuccess);
 
         return ApiResponse<object>.Ok(null,

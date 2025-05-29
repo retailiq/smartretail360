@@ -18,15 +18,16 @@ public class CredentialsLoginPasswordChecker
     {
         var isPasswordValid = BCrypt.Net.BCrypt.Verify(_ctx.Request.Password, _ctx.User!.PasswordHash);
         var guardResult = await _ctx.Dep.GuardChecker
-            .Check(() => !isPasswordValid, LogEventType.UserLoginFailure,
+            .Check(() => !isPasswordValid, LogEventType.CredentialsLoginFailure,
                 LogReasons.PasswordEmailMismatch, ErrorCodes.PasswordEmailMismatch)
             .ValidateAsync();
         if (guardResult != null)
         {
-            var count = await _ctx.Dep.RedisOperation.IncrementUserLoginFailureAsync(_ctx.FailKey, _ctx.LockKey);
+            var count = await _ctx.Dep.RedisOperation.IncrementUserLoginFailureAsync(_ctx.User!.Email);
             if (count >= 3)
             {
                 _ctx.User.StatusEnum = AccountStatus.Locked;
+                _ctx.User.IsActive = false;
                 _ctx.User.DeactivationReasonEnum = AccountBanReason.LoginFailureLimit;
                 await _ctx.Dep.SafeExecutor.ExecuteAsync(
                     async () => { await _ctx.Dep.Db.SaveChangesAsync(); },

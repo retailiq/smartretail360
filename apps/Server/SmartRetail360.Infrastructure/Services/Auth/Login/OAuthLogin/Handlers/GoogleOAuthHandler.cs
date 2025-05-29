@@ -1,13 +1,13 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Models;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Options;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Handlers;
 
@@ -15,21 +15,29 @@ public class GoogleOAuthHandler : IOAuthProviderHandler
 {
     private readonly HttpClient _http;
     private readonly OAuthProviderOptions _options;
-    private readonly ILogger<GoogleOAuthHandler> _logger;
+
+    private readonly List<string> _uriWhitelist;
 
     public GoogleOAuthHandler(
         IHttpClientFactory factory,
         IOptions<OAuthOptions> options,
-        ILogger<GoogleOAuthHandler> logger)
+        IOptions<AppOptions> appOptions)
     {
         _http = factory.CreateClient(GeneralConstants.GoogleOAuth);
         _options = options.Value.Providers[OAuthProvider.Google];
-        _logger = logger;
+        _uriWhitelist = appOptions.Value.OAuth.RedirectUriWhitelist;
     }
 
     public async Task<OAuthUserInfo> GetUserProfileAsync(OAuthLoginRequest request)
     {
         // Step 1: exchange code -> token
+        // var redirectUri = $"{_appOptions.BaseUrl}/auth/callback/{request.Provider.GetEnumMemberValue()}";
+        if (!_uriWhitelist.Contains(request.RedirectUri, StringComparer.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.OAuthRedirectUriUnauthorized}, Requested URI: {request.RedirectUri}");
+        }
+
         var tokenRequest = new Dictionary<string, string>
         {
             { "code", request.Code },
@@ -39,35 +47,38 @@ public class GoogleOAuthHandler : IOAuthProviderHandler
             { "grant_type", "authorization_code" }
         };
 
-        var tokenResponse = await _http.PostAsync("/token", new FormUrlEncodedContent(tokenRequest));
+        var tokenResponse = await _http.PostAsync(
+            _options.TokenEndpoint,
+            new FormUrlEncodedContent(tokenRequest));
         if (!tokenResponse.IsSuccessStatusCode)
         {
-            _logger.LogWarning("[OAuth:Google] Token exchange failed. Status: {Status}", tokenResponse.StatusCode);
-            throw new InvalidOperationException("Google token exchange failed");
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.GoogleTokenExchangeFailed}, Status: {tokenResponse.StatusCode}");
         }
 
         var tokenPayload = JsonSerializer.Deserialize<GoogleTokenResponse>(
             await tokenResponse.Content.ReadAsStringAsync());
         if (tokenPayload == null || string.IsNullOrEmpty(tokenPayload.AccessToken))
         {
-            throw new InvalidOperationException("Invalid Google token response");
+            throw new InvalidOperationException($"Reason: {LogReasons.GoogleInvalidTokenResponse}");
         }
 
         // Step 2: access token -> user profile
-        var userRequest = new HttpRequestMessage(HttpMethod.Get, "https://www.googleapis.com/oauth2/v2/userinfo");
-        userRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenPayload.AccessToken);
+        var userRequest = new HttpRequestMessage(HttpMethod.Get, _options.ProfileEndpoint);
+        userRequest.Headers.Authorization =
+            new AuthenticationHeaderValue(GeneralConstants.Bearer, tokenPayload.AccessToken);
         var userResponse = await _http.SendAsync(userRequest);
         if (!userResponse.IsSuccessStatusCode)
         {
-            _logger.LogWarning("[OAuth:Google] Failed to get user profile. Status: {Status}", userResponse.StatusCode);
-            throw new InvalidOperationException("Google profile fetch failed");
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.GoogleProfileFetchFailed}, Status: {userResponse.StatusCode}");
         }
 
         var profile = JsonSerializer.Deserialize<GoogleProfileResponse>(
             await userResponse.Content.ReadAsStringAsync());
         if (profile == null || string.IsNullOrEmpty(profile.Email))
         {
-            throw new InvalidOperationException("Invalid Google user profile");
+            throw new InvalidOperationException($"Reason: {LogReasons.GoogleInvalidUserProfile}");
         }
 
         return new OAuthUserInfo

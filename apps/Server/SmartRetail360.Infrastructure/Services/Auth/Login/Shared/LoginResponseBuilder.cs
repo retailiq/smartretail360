@@ -40,13 +40,13 @@ public class LoginResponseBuilder
         };
 
         await _ctx.Dep.SafeExecutor.ExecuteAsync(
-            async () => { await _ctx.Dep.RedisOperation.ResetUserLoginFailuresAsync(_ctx.FailKey, _ctx.SecurityKey); },
+            async () => { await _ctx.Dep.RedisOperation.ResetUserLoginFailuresAsync(_ctx.User.Email); },
             LogEventType.RedisError,
             LogReasons.RedisOperateFailed,
             ErrorCodes.DatabaseUnavailable
         );
 
-        await _ctx.Dep.LogDispatcher.Dispatch(LogEventType.UserLoginSuccess);
+        await _ctx.Dep.LogDispatcher.Dispatch(LogEventType.LoginSuccess);
 
         return ApiResponse<LoginResponse>.Ok(
             loginResponse,

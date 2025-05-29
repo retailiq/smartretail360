@@ -10,11 +10,11 @@ namespace SmartRetail360.API.Controllers.V1.Auth;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/auth")]
 [ApiExplorerSettings(GroupName = "v1")]
-public class BasicLoginController : ControllerBase
+public class CredentialsLoginController : ControllerBase
 {
     private readonly ILoginService _login;
 
-    public BasicLoginController(
+    public CredentialsLoginController(
         ILoginService login)
     {
         _login = login;

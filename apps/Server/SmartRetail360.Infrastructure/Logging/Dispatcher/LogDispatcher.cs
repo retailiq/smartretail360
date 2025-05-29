@@ -2,11 +2,9 @@ using Microsoft.Extensions.Options;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
 using SmartRetail360.Infrastructure.Services.Redis;
-using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Logging;
 using SmartRetail360.Shared.Options;
-using SmartRetail360.Shared.Redis;
 
 namespace SmartRetail360.Infrastructure.Logging.Dispatcher;
 
@@ -31,10 +29,8 @@ public class LogDispatcher : ILogDispatcher
 
     public async Task Dispatch(LogEventType eventType, string? reason = null)
     {
-        var samplingKey = RedisKeys.LogSampling(eventType, reason ?? GeneralConstants.Unknown);
-        
         if (_appOptions.LogSamplingLimitMinutes <= 0 ||
-            await _redisLogSampling.ShouldSampleAsync(samplingKey, TimeSpan.FromMinutes(_appOptions.LogSamplingLimitMinutes)))
+            await _redisLogSampling.ShouldSampleAsync(eventType, reason, _appOptions))
         {
             var policy = _policyProvider.GetPolicy(eventType, reason);
         

@@ -35,6 +35,7 @@ public class AccessTokenGenerator : IAccessTokenGenerator
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("email", email),
             new Claim("name", name),
             new Claim("tenant_id", tenantId),

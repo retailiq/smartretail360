@@ -1,4 +1,5 @@
 using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Application.Common.UserContext;
 
@@ -17,6 +18,7 @@ public interface IUserContextService
     string? RoleName { get; set; }
     string? LogId { get; set; }
     string? UserName { get; set; }
+    LogEventType? LogEventType { get; set; }
     
     void Inject(UserExecutionContext context);
 }

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
+using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
@@ -24,7 +25,8 @@ public static class DependencyBuilder
             SafeExecutor = sp.GetRequiredService<ISafeExecutor>(),
             GuardChecker = sp.GetRequiredService<IGuardChecker>(),
             RedisOperation = sp.GetRequiredService<IRedisOperationService>(),
-            PlatformContext = sp.GetRequiredService<IPlatformContextService>()
+            PlatformContext = sp.GetRequiredService<IPlatformContextService>(),
+            RefreshTokenService = sp.GetRequiredService<IRefreshTokenService>()
         };
 
         configureExtra(instance);

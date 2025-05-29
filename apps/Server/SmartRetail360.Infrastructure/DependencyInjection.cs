@@ -11,7 +11,6 @@ using SmartRetail360.Application.Interfaces.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Interceptors;
 using SmartRetail360.Infrastructure.Services.AccountRegistration;
-using SmartRetail360.Infrastructure.Services.Auth;
 using SmartRetail360.Infrastructure.Services.Notifications;
 using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
 using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
@@ -30,11 +29,14 @@ using SmartRetail360.Infrastructure.Logging.Dispatcher;
 using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
+using SmartRetail360.Infrastructure.Services.Auth;
+using SmartRetail360.Infrastructure.Services.Auth.AccountActivationEmailVerification;
 using SmartRetail360.Infrastructure.Services.Auth.Login.CredentialsLogin;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Handlers;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Options;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Strategies;
+using SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Infrastructure.Services.Auth.Tokens;
 using SmartRetail360.Infrastructure.Services.Common;
@@ -42,7 +44,6 @@ using SmartRetail360.Infrastructure.Services.Messaging;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Infrastructure.Services.Redis;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure;
 
@@ -50,7 +51,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureLayer(this IServiceCollection services, IConfiguration config)
     {
-        var oauthUris = config.GetSection("App:OAuthUris").Get<OAuthUris>();
         services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>));
 
         // Inject the Interceptors
@@ -63,12 +63,9 @@ public static class DependencyInjection
         });
 
         // HttpClient Configuration
-        services.AddHttpClient(GeneralConstants.GoogleOAuth,
-            c => { c.BaseAddress = new Uri(oauthUris!.Google); });
-        services.AddHttpClient(GeneralConstants.FacebookOAuth,
-            c => { c.BaseAddress = new Uri(oauthUris!.Facebook); });
-        services.AddHttpClient(GeneralConstants.MicrosoftOAuth,
-            c => { c.BaseAddress = new Uri(oauthUris!.Microsoft); });
+        services.AddHttpClient(GeneralConstants.GoogleOAuth);
+        services.AddHttpClient(GeneralConstants.FacebookOAuth);
+        services.AddHttpClient(GeneralConstants.MicrosoftOAuth);
 
         services.Configure<OAuthOptions>(config.GetSection("OAuth"));
 
@@ -90,13 +87,14 @@ public static class DependencyInjection
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<ILoginService, CredentialsLoginService>();
         services.AddScoped<IAccessTokenGenerator, AccessTokenGenerator>();
-        services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService1>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IOAuthLoginService, OAuthLoginService>();
+        services.AddScoped<IConfirmTenantLoginService, ConfirmTenantLoginService>();
         services.AddScoped<GoogleOAuthHandler>();
         services.AddScoped<OAuthProviderStrategy>();
         services.AddScoped<FacebookOAuthHandler>();
         services.AddScoped<MicrosoftOAuthHandler>();
+        services.AddScoped<IAuthService, AuthService>();
 
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
@@ -119,6 +117,13 @@ public static class DependencyInjection
             }));
         services.AddScoped<AccountActivationEmailVerificationDependencies>(sp =>
             DependencyBuilder.Build<AccountActivationEmailVerificationDependencies>(sp, deps => { }));
+        services.AddScoped<AuthTokenDependencies>(sp =>
+            DependencyBuilder.Build<AuthTokenDependencies>(sp, deps =>
+            {
+                deps.AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>();
+                deps.RefreshTokenService = sp.GetRequiredService<IRefreshTokenService>();
+                deps.HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!;
+            }));
         services.AddScoped<LoginDependencies>(sp =>
             DependencyBuilder.Build<LoginDependencies>(sp, deps =>
             {

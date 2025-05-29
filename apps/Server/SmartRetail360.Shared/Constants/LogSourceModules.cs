@@ -11,5 +11,6 @@ public static class LogSourceModules
     public const string ConfirmTenantLoginService = "CONFIRM_TENANT_LOGIN_SERVICE";
     public const string RefreshTokenService = "REFRESH_TOKEN_SERVICE";
     public const string OAuthLoginService = "OAUTH_LOGIN_SERVICE";
+    public const string LogoutService = "LOGOUT_SERVICE";
     public const string CommonApi = "CommonApi";
 }

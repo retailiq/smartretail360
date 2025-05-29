@@ -108,7 +108,7 @@ public class RoleCacheService : IRoleCacheService
             missedIds.Add(roleId); // cache miss or deserialization fail
         }
 
-        // fallback to database for missed roles
+        // fallback to the database for missed roles
         if (missedIds.Count > 0)
         {
             var dbResult = await _safeExecutor.ExecuteAsync(

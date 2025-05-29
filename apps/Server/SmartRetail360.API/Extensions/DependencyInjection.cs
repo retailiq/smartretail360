@@ -32,7 +32,6 @@ public static class DependencyInjection
 
         services.AddEndpointsApiExplorer();
         
-
         // Application Options
         services.Configure<AppOptions>(config.GetSection("App"));
         services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AppOptions>>().Value);

@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Models;
@@ -16,15 +15,14 @@ public class MicrosoftOAuthHandler : IOAuthProviderHandler
 {
     private readonly HttpClient _http;
     private readonly OAuthProviderOptions _options;
-    private readonly ILogger<MicrosoftOAuthHandler> _logger;
 
+    private readonly List<string> _uriWhitelist;
+    
     public MicrosoftOAuthHandler(
         IHttpClientFactory factory,
         IOptions<OAuthOptions> options,
-        ILogger<MicrosoftOAuthHandler> logger,
         IOptions<AppOptions> appOptions)
     {
-        _logger = logger;
         var tenant = appOptions.Value.OAuth.Tenant;
         var rawOptions = options.Value.Providers[OAuthProvider.Microsoft];
         _options = new OAuthProviderOptions
@@ -32,15 +30,21 @@ public class MicrosoftOAuthHandler : IOAuthProviderHandler
             ClientId = rawOptions.ClientId,
             ClientSecret = rawOptions.ClientSecret,
             TokenEndpoint = rawOptions.TokenEndpoint.Replace("{tenant}", tenant),
-            AuthorizeEndpoint = rawOptions.AuthorizeEndpoint.Replace("{tenant}", tenant)
+            ProfileEndpoint = rawOptions.ProfileEndpoint
         };
-
+        _uriWhitelist = appOptions.Value.OAuth.RedirectUriWhitelist;
         _http = factory.CreateClient(GeneralConstants.MicrosoftOAuth);
     }
 
     public async Task<OAuthUserInfo> GetUserProfileAsync(OAuthLoginRequest request)
     {
         // Step 1: exchange code for access_token
+        if (!_uriWhitelist.Contains(request.RedirectUri, StringComparer.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.OAuthRedirectUriUnauthorized}, Requested URI: {request.RedirectUri}");
+        }
+        
         var tokenRequest = new Dictionary<string, string>
         {
             { "client_id", _options.ClientId },
@@ -59,33 +63,33 @@ public class MicrosoftOAuthHandler : IOAuthProviderHandler
         var tokenResponse = await _http.SendAsync(tokenHttpRequest);
         if (!tokenResponse.IsSuccessStatusCode)
         {
-            _logger.LogWarning("[OAuth:Microsoft] Token exchange failed. Status: {Status}", tokenResponse.StatusCode);
-            throw new InvalidOperationException("Microsoft token exchange failed");
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.MicrosoftTokenExchangeFailed}, Status: {tokenResponse.StatusCode}");
         }
 
         var tokenPayload = JsonSerializer.Deserialize<MicrosoftTokenResponse>(
             await tokenResponse.Content.ReadAsStringAsync());
         if (tokenPayload == null || string.IsNullOrEmpty(tokenPayload.AccessToken))
         {
-            throw new InvalidOperationException("Invalid Microsoft token response");
+            throw new InvalidOperationException($"Reason: {LogReasons.MicrosoftInvalidTokenResponse}");
         }
 
         // Step 2: access_token → profile
-        var profileRequest = new HttpRequestMessage(HttpMethod.Get, "https://graph.microsoft.com/v1.0/me");
-        profileRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenPayload.AccessToken);
+        var profileRequest = new HttpRequestMessage(HttpMethod.Get, _options.ProfileEndpoint);
+        profileRequest.Headers.Authorization = new AuthenticationHeaderValue(GeneralConstants.Bearer, tokenPayload.AccessToken);
         var profileResponse = await _http.SendAsync(profileRequest);
 
         if (!profileResponse.IsSuccessStatusCode)
         {
-            _logger.LogWarning("[OAuth:Microsoft] Profile fetch failed. Status: {Status}", profileResponse.StatusCode);
-            throw new InvalidOperationException("Microsoft profile fetch failed");
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.MicrosoftProfileFetchFailed}, Status: {profileResponse.StatusCode}");
         }
 
         var profile = JsonSerializer.Deserialize<MicrosoftProfileResponse>(
             await profileResponse.Content.ReadAsStringAsync());
         if (profile == null || string.IsNullOrEmpty(profile.Mail ?? profile.UserPrincipalName))
         {
-            throw new InvalidOperationException("Invalid Microsoft user profile");
+            throw new InvalidOperationException($"Reason: {LogReasons.MicrosoftInvalidUserProfile}");
         }
 
         return new OAuthUserInfo

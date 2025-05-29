@@ -4,7 +4,7 @@ using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Context;
 
-namespace SmartRetail360.Infrastructure.Services.Auth.TenantLogin;
+namespace SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
 
 public class ConfirmTenantLoginContext
 {

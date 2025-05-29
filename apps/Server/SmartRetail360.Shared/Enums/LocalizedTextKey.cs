@@ -14,6 +14,8 @@ public enum LocalizedTextKey
     EmailResent,
     AccountActivationValidityNotice,
     UserLoginSuccess,
+    RefreshTokenSuccess,
+    LogoutSuccess,
     
     // Role descriptions
     RoleOwnerDescription,

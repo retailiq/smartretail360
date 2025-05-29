@@ -32,12 +32,12 @@ public class CredentialsLoginService : ILoginService
 
         try
         {
-            var result = await guardChecks.CheckRedisLocksAsync();
+            var result = await userLoader.LoadUserAsync();
             if (result != null) return result;
 
-            result = await userLoader.LoadUserAsync();
+            result = await guardChecks.CheckRedisLocksAsync();
             if (result != null) return result;
-
+            
             result = await passwordChecker.CheckPasswordAsync();
             if (result != null) return result;
 
@@ -52,7 +52,7 @@ public class CredentialsLoginService : ILoginService
         }
         finally
         {
-            await _dep.RedisOperation.ReleaseLockAsync(context.LockKey);
+            await _dep.RedisOperation.ReleaseUserLoginLockAsync(request.Email.ToLower());
         }
     }
 }

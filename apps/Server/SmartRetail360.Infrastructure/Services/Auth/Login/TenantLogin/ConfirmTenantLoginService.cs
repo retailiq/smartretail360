@@ -2,9 +2,11 @@ using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
+using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Responses;
 
-namespace SmartRetail360.Infrastructure.Services.Auth.TenantLogin;
+namespace SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
 
 public class ConfirmTenantLoginService : IConfirmTenantLoginService
 {
@@ -15,8 +17,11 @@ public class ConfirmTenantLoginService : IConfirmTenantLoginService
         _dep = dep;
     }
 
-    public async Task<ApiResponse<ConfirmTenantLoginResponse>> ConfirmTenantLoginAsync(ConfirmTenantLoginRequest request)
+    public async Task<ApiResponse<ConfirmTenantLoginResponse>> ConfirmTenantLoginAsync(
+        ConfirmTenantLoginRequest request)
     {
+        _dep.UserContext.Inject(new UserExecutionContext { Action = LogActions.ConfirmTenantLogin });
+
         var context = new ConfirmTenantLoginContext(_dep, request);
         var guards = new ConfirmTenantLoginGuardChecks(context);
         var tokens = new ConfirmTenantLoginTokenGenerator(context);
@@ -29,6 +34,6 @@ public class ConfirmTenantLoginService : IConfirmTenantLoginService
         if (result != null) return result;
 
         result = await responseBuilder.FinalizeLoginAsync();
-        return result!;
+        return result;
     }
 }

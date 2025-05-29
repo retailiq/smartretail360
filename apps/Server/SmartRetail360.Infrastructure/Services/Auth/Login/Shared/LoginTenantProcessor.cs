@@ -35,7 +35,7 @@ public class LoginTenantProcessor
 
         var tenantUsersCheckResult = await _ctx.Dep.GuardChecker
             .Check(() => _ctx.TenantUsers.Count == 0,
-                LogEventType.UserLoginFailure, LogReasons.TenantUserRecordNotFound,
+                LogEventType.LoginFailure, LogReasons.TenantUserRecordNotFound,
                 ErrorCodes.TenantUserRecordNotFound)
             .ValidateAsync();
         if (tenantUsersCheckResult != null)
@@ -51,10 +51,10 @@ public class LoginTenantProcessor
             .Count();
         var tenantStatusResult = await _ctx.Dep.GuardChecker
             .Check(() => tenantCount == 0,
-                LogEventType.UserLoginFailure, LogReasons.TenantNotFound,
+                LogEventType.LoginFailure, LogReasons.TenantNotFound,
                 ErrorCodes.TenantNotFound)
             .Check(() => inactiveTenants.Count == _ctx.TenantUsers.Count,
-                LogEventType.UserLoginFailure, LogReasons.AllTenantsDisabled,
+                LogEventType.LoginFailure, LogReasons.AllTenantsDisabled,
                 ErrorCodes.AllTenantsDisabled)
             .ValidateAsync();
         if (tenantStatusResult != null)
@@ -64,12 +64,9 @@ public class LoginTenantProcessor
         _ctx.Roles = await _ctx.Dep.RedisOperation.GetSystemRolesByIdsAsync(roleIds);
         var roleResult = await _ctx.Dep.GuardChecker
             .Check(() => _ctx.Roles.Count == 0,
-                LogEventType.UserLoginFailure, LogReasons.RoleListNotFound,
+                LogEventType.LoginFailure, LogReasons.RoleListNotFound,
                 ErrorCodes.InternalServerError)
             .ValidateAsync();
-        if (roleResult != null)
-            return roleResult.To<LoginResponse>();
-
-        return null;
+        return roleResult?.To<LoginResponse>();
     }
 }

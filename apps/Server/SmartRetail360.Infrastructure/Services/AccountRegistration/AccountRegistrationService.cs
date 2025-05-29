@@ -8,7 +8,6 @@ using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Messaging.Factories;
-using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
 
@@ -39,9 +38,7 @@ public class AccountRegistrationService : IAccountRegistrationService
             traceId = TraceIdGenerator.Generate(TraceIdPrefix.Get(TraceModule.Auth), slug);
         }
 
-        var lockKey = RedisKeys.RegisterAccountLock(request.Email.ToLower());
-        var lockAcquired = await _dep.RedisOperation.AcquireLockAsync(lockKey,
-            TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
+        var lockAcquired = await _dep.RedisOperation.AcquireRegistrationLockAsync(request.Email.ToLower());
         var lockCheck = await _dep.GuardChecker
             .Check(() => !lockAcquired, LogEventType.RegisterUserFailure, LogReasons.LockNotAcquired,
                 ErrorCodes.DuplicateRegisterAttempt)
@@ -66,17 +63,18 @@ public class AccountRegistrationService : IAccountRegistrationService
                 .Check(() => existingUser is { IsEmailVerified: false }, LogEventType.RegisterUserFailure,
                     LogReasons.AccountExistsButNotActivated, ErrorCodes.AccountExistsButNotActivated)
                 .ValidateAsync();
-
             if (guardResult != null)
                 return guardResult.To<AccountRegisterResponse>();
 
             var role = await _dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Admin);
-            if (role == null)
-                return ApiResponse<AccountRegisterResponse>.Fail(
-                    ErrorCodes.DatabaseUnavailable,
-                    _dep.Localizer.GetErrorMessage(ErrorCodes.DatabaseUnavailable), traceId);
+            var roleCheckResult = await _dep.GuardChecker
+                .Check(() => role == null, LogEventType.RegisterUserFailure,
+                    LogReasons.RoleListNotFound, ErrorCodes.InternalServerError)
+                .ValidateAsync();
+            if (roleCheckResult != null)
+                return roleCheckResult.To<AccountRegisterResponse>();
 
-            var roleId = role.Id;
+            var roleId = role!.Id;
             var roleName = role.Name;
             var passwordHash = PasswordHelper.HashPassword(request.Password);
             var emailVerificationToken = TokenHelper.GenerateActivateAccountToken();
@@ -123,7 +121,8 @@ public class AccountRegistrationService : IAccountRegistrationService
                 TenantId = tenant.Id,
                 UserId = user.Id,
                 RoleId = tenantUser.RoleId,
-                RoleName = RoleHelper.ToPascalCaseName(roleName)
+                RoleName = RoleHelper.ToPascalCaseName(roleName),
+                UserName = user.Name
             });
 
             var saveResult = await _dep.SafeExecutor.ExecuteAsync(
@@ -134,10 +133,9 @@ public class AccountRegistrationService : IAccountRegistrationService
                     _dep.Db.TenantUsers.Add(tenantUser);
                     _dep.Db.AccountActivationTokens.Add(accountActivationToken);
                     await _dep.Db.SaveChangesAsync();
-                    await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken,
-                        TimeSpan.FromMinutes(_dep.AppOptions.ActivationTokenLimitMinutes));
+                    await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken);
                 },
-                LogEventType.RegisterUserFailure,
+                LogEventType.DatabaseError,
                 LogReasons.DatabaseSaveFailed,
                 ErrorCodes.DatabaseUnavailable
             );
@@ -174,7 +172,7 @@ public class AccountRegistrationService : IAccountRegistrationService
         }
         finally
         {
-            await _dep.RedisOperation.ReleaseLockAsync(lockKey);
+            await _dep.RedisOperation.ReleaseRegistrationLockAsync(request.Email.ToLower());
         }
     }
 }

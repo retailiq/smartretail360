@@ -15,6 +15,7 @@ public interface IPlatformContextService
     Task<(Tenant?, ApiResponse<object>?)> GetTenantAsync(Guid tenantId);
     Task<(List<Tenant>?, ApiResponse<object>?)> GetTenantsByIdsAsync(List<Guid> tenantIds);
     Task<(OAuthAccount?, ApiResponse<object>?)> GetOAuthAccountAsync(string email, OAuthProvider provider);
+    Task<(RefreshToken?, ApiResponse<object>?)> GetRefreshTokenAsync(string token);
 
     Task<ApiResponse<object>?> SendRegistrationInvitationEmailAsync(string token, ActivationEmailPayload payload);
 }

@@ -8,4 +8,5 @@ public class ConfirmTenantLoginResponse
     public string TokenType { get; set; } = GeneralConstants.Bearer;
     public int ExpiresIn { get; set; } // in seconds
     public AuthUserInfo User { get; set; } = new();
+    public TenantLoginCandidate Tenant { get; set; } = new();
 }

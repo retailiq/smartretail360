@@ -92,10 +92,10 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
 
         #endregion
 
-        #region UserLogin - Success & Failures
+        #region Login - Success & Failures
 
         {
-            (LogEventType.UserLoginFailure, LogReasons.LockNotAcquired),
+            (LogEventType.LoginFailure, LogReasons.LockNotAcquired),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -107,7 +107,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.AccountLockedDueToLoginFailures),
+            (LogEventType.LoginFailure, LogReasons.AccountLockedDueToLoginFailures),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -119,31 +119,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.AccountNotFound),
-            new LogWriteRule
-            {
-                WriteAudit = false,
-                SendToSentry = false,
-                IsSuccess = false,
-                LogLevel = LogLevel.Information,
-                LogAction = LogActions.UserLogin,
-                LogCategories = [LogCategory.Security]
-            }
-        },
-        {
-            (LogEventType.UserLoginFailure, LogReasons.PasswordEmailMismatch),
-            new LogWriteRule
-            {
-                WriteAudit = true,
-                SendToSentry = false,
-                IsSuccess = false,
-                LogLevel = LogLevel.Warning,
-                LogAction = LogActions.UserLogin,
-                LogCategories = [LogCategory.Security, LogCategory.Behavior]
-            }
-        },
-        {
-            (LogEventType.UserLoginFailure, LogReasons.AccountNotActivated),
+            (LogEventType.LoginFailure, LogReasons.AccountNotActivated),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -155,7 +131,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.TokenNotFound),
+            (LogEventType.LoginFailure, LogReasons.TokenNotFound),
             new LogWriteRule
             {
                 WriteAudit = false,
@@ -167,7 +143,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.AccountLocked),
+            (LogEventType.LoginFailure, LogReasons.AccountLocked),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -179,7 +155,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.AccountSuspended),
+            (LogEventType.LoginFailure, LogReasons.AccountSuspended),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -191,7 +167,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.AccountDeleted),
+            (LogEventType.LoginFailure, LogReasons.AccountDeleted),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -203,7 +179,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.AccountBanned),
+            (LogEventType.LoginFailure, LogReasons.AccountBanned),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -215,7 +191,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.TenantUserRecordNotFound),
+            (LogEventType.LoginFailure, LogReasons.TenantUserRecordNotFound),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -227,7 +203,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.TenantNotFound),
+            (LogEventType.LoginFailure, LogReasons.TenantNotFound),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -239,7 +215,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.AllTenantsDisabled),
+            (LogEventType.LoginFailure, LogReasons.AllTenantsDisabled),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -251,7 +227,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginFailure, LogReasons.RoleListNotFound),
+            (LogEventType.LoginFailure, LogReasons.RoleListNotFound),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -263,7 +239,7 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
             }
         },
         {
-            (LogEventType.UserLoginSuccess, null),
+            (LogEventType.LoginSuccess, null),
             new LogWriteRule
             {
                 WriteAudit = true,
@@ -276,9 +252,113 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
         },
 
         #endregion
+        
+        #region CredentialsLogin - Success & Failures
+        {
+            (LogEventType.CredentialsLoginFailure, LogReasons.AccountNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = false,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Information,
+                LogAction = LogActions.CredentialsLogin,
+                LogCategories = [LogCategory.Security]
+            }
+        },
+        {
+            (LogEventType.CredentialsLoginFailure, LogReasons.PasswordEmailMismatch),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.CredentialsLogin,
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },
+        
+        #endregion
+        
+        #region OAuth Login - Success & Failures
+
+        {
+            (LogEventType.OAuthLoginFailure, LogReasons.OAuthHandlerNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogAction = LogActions.OAuthLogin,
+                LogCategories = [LogCategory.Security, LogCategory.Application]
+            }
+        },
+        {
+            (LogEventType.OAuthLoginFailure, LogReasons.OAuthUserProfileFetchFailed),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogAction = LogActions.OAuthLogin,
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },{
+            (LogEventType.OAuthLoginFailure, LogReasons.OAuthUserProfileNotExists),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.OAuthLogin,
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },
+        {
+            (LogEventType.OAuthLoginFailure, LogReasons.TenantUserRecordNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.OAuthLogin,
+                LogCategories = [LogCategory.Security, LogCategory.Application]
+            }
+        },
+        {
+            (LogEventType.CredentialsLoginFailure, LogReasons.RoleListNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Error,
+                LogAction = LogActions.OAuthLogin,
+                LogCategories = [LogCategory.Security, LogCategory.System, LogCategory.Application]
+            }
+        },
+
+        #endregion
 
         #region ConfirmTenantLogin - Success & Failures
-
+    
+        {
+            (LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserRecordNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogAction = LogActions.ConfirmTenantLogin,
+                LogCategories = [LogCategory.Security, LogCategory.Behavior]
+            }
+        },
         {
             (LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserDisabled),
             new LogWriteRule
@@ -674,12 +754,36 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
         },
 
         #endregion
+
+        #region Auth
+        {
+            (LogEventType.RefreshTokenReplayDetected, LogReasons.RefreshTokenReplayDetected),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = true,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.System, LogCategory.Security]
+            }
+        },
+        
+
+        #endregion
     };
 
     public LogWriteRule GetPolicy(LogEventType eventType, string? reason = null)
     {
         return Rules.TryGetValue((eventType, reason), out var rule)
             ? rule
-            : new LogWriteRule { LogCategories = [LogCategory.Application] };
+            : new LogWriteRule
+            {
+                LogCategories = [],
+                LogLevel = LogLevel.None,
+                WriteAudit = false,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogAction = null
+            };
     }
 }

@@ -28,20 +28,13 @@ public class AppOptions
     public string RefreshTokenPath { get; set; } = "/api/v1/auth/refresh";
     public string CookieDomain { get; set; } = "example.com";
 
-    public OAuthUris OAuthUris { get; set; } = new();
     public OAuthAppConfig OAuth { get; set; } = new();
 }
 
 public class OAuthAppConfig
 {
     public string Tenant { get; set; } = string.Empty;
-}
-
-public class OAuthUris
-{
-    public string Google { get; set; } = string.Empty;
-    public string Facebook { get; set; } = string.Empty;
-    public string Microsoft { get; set; } = string.Empty;
+    public List<string> RedirectUriWhitelist { get; set; } = new();
 }
 
 // Always use { get; set; } in options classes — binding requires a public setter, even for read-only values.

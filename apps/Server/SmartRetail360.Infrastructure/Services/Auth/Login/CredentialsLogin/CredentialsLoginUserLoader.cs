@@ -22,14 +22,15 @@ public class CredentialsLoginUserLoader
             return userError.To<LoginResponse>();
 
         var userCheckResult = await _ctx.Dep.GuardChecker
-            .Check(() => user == null, LogEventType.UserLoginFailure,
+            .Check(() => user == null, LogEventType.CredentialsLoginFailure,
                 LogReasons.AccountNotFound, ErrorCodes.AccountNotFound)
             .ValidateAsync();
         if (userCheckResult != null)
             return userCheckResult.To<LoginResponse>();
 
         _ctx.User = user;
-        _ctx.Dep.UserContext.Inject(new UserExecutionContext { UserId = user!.Id, UserName = user.Name });
+        _ctx.Dep.UserContext.Inject(new UserExecutionContext
+            { UserId = user!.Id, UserName = user.Name, Email = user.Email });
 
         return null;
     }

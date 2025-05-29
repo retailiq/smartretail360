@@ -6,6 +6,6 @@ public class OAuthLoginRequest
 {
     public OAuthProvider Provider { get; set; }
     public string Code { get; set; } = string.Empty;
-    public string State { get; set; } = string.Empty;
+    public string OAuthState { get; set; } = string.Empty;
     public string RedirectUri { get; set; } = string.Empty;
 }

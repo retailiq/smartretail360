@@ -3,8 +3,9 @@ using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
+using SmartRetail360.Shared.Utils;
 
-namespace SmartRetail360.Infrastructure.Services.Auth.TenantLogin;
+namespace SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
 
 public class ConfirmTenantLoginResponseBuilder
 {
@@ -61,6 +62,16 @@ public class ConfirmTenantLoginResponseBuilder
                     AvatarUrl = user.AvatarUrl ?? GeneralConstants.Unknown,
                     IsFirstLogin = isFirstLogin,
                     Permissions = new List<string>()
+                },
+                Tenant = new TenantLoginCandidate
+                {
+                    TenantId = _ctx.TenantUser.TenantId.ToString(),
+                    TenantName = _ctx.TenantUser.Tenant!.Name ?? GeneralConstants.NotSet,
+                    LogoUrl = _ctx.TenantUser.Tenant.LogoUrl,
+                    RoleId = _ctx.TenantUser.RoleId.ToString(),
+                    RoleName = RoleHelper.ToPascalCaseName(_ctx.TenantUser.Role!.Name),
+                    IsDefault = _ctx.TenantUser.IsDefault,
+                    IsActive = _ctx.TenantUser.IsActive
                 }
             },
             _ctx._dep.Localizer.GetLocalizedText(LocalizedTextKey.UserLoginSuccess),

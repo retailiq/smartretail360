@@ -2,6 +2,9 @@ namespace SmartRetail360.Application.Interfaces.Redis;
 
 public interface IRedisLimiterService
 {
-    Task<bool> IsLimitedAsync(string key);
-    Task SetLimitAsync(string key, TimeSpan ttl);
+    Task<bool> IsEmailResendLimitedAsync(string email);
+    Task SetEmailResendLimitAsync(string email);
+
+    Task<bool> IsAccountActivationLimitedAsync(string token);
+    Task SetAccountActivationLimitAsync(string token);
 }

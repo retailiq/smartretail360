@@ -17,17 +17,23 @@ public class OAuthUserTenantResolver
         _ctx = ctx;
     }
 
-    public async Task<ApiResponse<LoginResponse>?> ResolveTenantUserAsync()
+    public async Task<ApiResponse<LoginResponse>?> ResolveUserTenantAsync()
     {
-        var userProfile = _ctx.UserProfile;
+        var userProfile = _ctx.UserProfile!;
 
-        var (user, userError) = await _ctx.Dep.PlatformContext.GetUserByEmailAsync(userProfile.Email);
+        var (user, userError) = await _ctx.Dep.PlatformContext.GetUserByEmailAsync(userProfile.Email!);
         if (userError != null)
             return userError.To<LoginResponse>();
 
         if (user != null)
         {
             _ctx.User = user;
+            _ctx.Dep.UserContext.Inject(new UserExecutionContext
+            {
+                UserId = user.Id,
+                UserName = user.Name,
+                Email = user.Email
+            });
         }
 
         if (user == null)
@@ -35,20 +41,20 @@ public class OAuthUserTenantResolver
             var role = await _ctx.Dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Admin);
             var roleCheckResult = await _ctx.Dep.GuardChecker
                 .Check(() => role == null,
-                    LogEventType.UserLoginFailure, LogReasons.TenantUserRecordNotFound,
-                    ErrorCodes.OAuthUserProfileFetchFailed)
+                    LogEventType.CredentialsLoginFailure, LogReasons.RoleListNotFound,
+                    ErrorCodes.InternalServerError)
                 .ValidateAsync();
             if (roleCheckResult != null)
                 return roleCheckResult.To<LoginResponse>();
 
             var roleId = role!.Id;
             _ctx.Dep.UserContext.Inject(
-                new UserExecutionContext { RoleName = role.Name }
+                new UserExecutionContext { RoleName = role.Name, RoleId = roleId }
             );
 
             var newUser = new User
             {
-                Email = userProfile.Email.ToLowerInvariant(),
+                Email = userProfile.Email!.ToLowerInvariant(),
                 Name = userProfile.Name,
                 TraceId = _ctx.TraceId,
                 LastEmailSentAt = DateTime.UtcNow,
@@ -85,7 +91,7 @@ public class OAuthUserTenantResolver
                     _ctx.Dep.Db.TenantUsers.Add(newTenantUser);
                     await _ctx.Dep.Db.SaveChangesAsync();
                 },
-                LogEventType.RegisterUserFailure,
+                LogEventType.DatabaseError,
                 LogReasons.DatabaseSaveFailed,
                 ErrorCodes.DatabaseUnavailable
             );
@@ -93,10 +99,17 @@ public class OAuthUserTenantResolver
                 return saveResult.ToObjectResponse().To<LoginResponse>();
 
             _ctx.User = newUser;
+            _ctx.Dep.UserContext.Inject(new UserExecutionContext
+            {
+                UserId = newUser.Id,
+                UserName = newUser.Name,
+                Email = newUser.Email,
+                TenantId = newTenant.Id
+            });
         }
 
         var (oauthAccount, oauthAccountError) =
-            await _ctx.Dep.PlatformContext.GetOAuthAccountAsync(userProfile.Email, userProfile.Provider);
+            await _ctx.Dep.PlatformContext.GetOAuthAccountAsync(userProfile.Email!, userProfile.Provider);
         if (oauthAccountError != null)
             return oauthAccountError.To<LoginResponse>();
 
@@ -107,10 +120,10 @@ public class OAuthUserTenantResolver
         {
             var newOAuthAccount = new OAuthAccount
             {
-                UserId = _ctx.User.Id,
+                UserId = _ctx.User!.Id,
                 ProviderEnum = userProfile.Provider,
                 ProviderUserId = userProfile.ProviderUserId,
-                Email = userProfile.Email.ToLowerInvariant(),
+                Email = userProfile.Email!.ToLowerInvariant(),
                 Name = userProfile.Name,
                 AvatarUrl = userProfile.AvatarUrl,
                 TraceId = _ctx.TraceId,
@@ -122,7 +135,7 @@ public class OAuthUserTenantResolver
                     _ctx.Dep.Db.OAuthAccounts.Add(newOAuthAccount);
                     await _ctx.Dep.Db.SaveChangesAsync();
                 },
-                LogEventType.RegisterUserFailure,
+                LogEventType.DatabaseError,
                 LogReasons.DatabaseSaveFailed,
                 ErrorCodes.DatabaseUnavailable
             );

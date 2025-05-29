@@ -1,12 +1,13 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Models;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Options;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin.Handlers;
 
@@ -14,54 +15,64 @@ public class FacebookOAuthHandler : IOAuthProviderHandler
 {
     private readonly HttpClient _http;
     private readonly OAuthProviderOptions _options;
-    private readonly ILogger<FacebookOAuthHandler> _logger;
 
-    public FacebookOAuthHandler(IHttpClientFactory factory, IOptions<OAuthOptions> options,
-        ILogger<FacebookOAuthHandler> logger)
+    private readonly List<string> _uriWhitelist;
+
+    public FacebookOAuthHandler(
+        IHttpClientFactory factory,
+        IOptions<OAuthOptions> options,
+        IOptions<AppOptions> appOptions)
     {
         _http = factory.CreateClient(GeneralConstants.FacebookOAuth);
         _options = options.Value.Providers[OAuthProvider.Facebook];
-        _logger = logger;
+        _uriWhitelist = appOptions.Value.OAuth.RedirectUriWhitelist;
     }
 
     public async Task<OAuthUserInfo> GetUserProfileAsync(OAuthLoginRequest request)
     {
         // Step 1: exchange code for access_token
-        var tokenResponse = await _http.GetAsync($"/v18.0/oauth/access_token" +
-                                                 $"?client_id={_options.ClientId}" +
-                                                 $"&client_secret={_options.ClientSecret}" +
-                                                 $"&redirect_uri={Uri.EscapeDataString(request.RedirectUri)}" +
-                                                 $"&code={request.Code}");
+        if (!_uriWhitelist.Contains(request.RedirectUri, StringComparer.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.OAuthRedirectUriUnauthorized}, Requested URI: {request.RedirectUri}");
+        }
+
+        var tokenUrl = _options.TokenEndpoint +
+                       $"?client_id={_options.ClientId}" +
+                       $"&client_secret={_options.ClientSecret}" +
+                       $"&redirect_uri={Uri.EscapeDataString(request.RedirectUri)}" +
+                       $"&code={request.Code}";
+
+        var tokenResponse = await _http.GetAsync(tokenUrl);
 
         if (!tokenResponse.IsSuccessStatusCode)
         {
-            _logger.LogWarning("[OAuth:Facebook] Token exchange failed. Status: {Status}", tokenResponse.StatusCode);
-            throw new InvalidOperationException("Facebook token exchange failed");
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.FacebookTokenExchangeFailed}, Status: {tokenResponse.StatusCode}");
         }
 
         var tokenPayload =
             JsonSerializer.Deserialize<FacebookTokenResponse>(await tokenResponse.Content.ReadAsStringAsync());
         if (tokenPayload == null || string.IsNullOrEmpty(tokenPayload.AccessToken))
         {
-            throw new InvalidOperationException("Invalid Facebook token response");
+            throw new InvalidOperationException($"Reason: {LogReasons.FacebookInvalidTokenResponse}");
         }
 
         // Step 2: use access_token to get profile info
         var profileResponse = await _http.GetAsync(
-            $"/me?fields=id,name,email,picture.width(256)&access_token={tokenPayload.AccessToken}");
+            $"{_options.ProfileEndpoint}&access_token={tokenPayload.AccessToken}");
 
         if (!profileResponse.IsSuccessStatusCode)
         {
-            _logger.LogWarning("[OAuth:Facebook] Failed to get user profile. Status: {Status}",
-                profileResponse.StatusCode);
-            throw new InvalidOperationException("Facebook profile fetch failed");
+            throw new InvalidOperationException(
+                $"Reason: {LogReasons.FacebookProfileFetchFailed}, Status: {profileResponse.StatusCode}");
         }
 
         var profile =
             JsonSerializer.Deserialize<FacebookProfileResponse>(await profileResponse.Content.ReadAsStringAsync());
         if (profile == null || string.IsNullOrEmpty(profile.Email))
         {
-            throw new InvalidOperationException("Invalid Facebook user profile");
+            throw new InvalidOperationException($"Reason: {LogReasons.FacebookInvalidUserProfile}");
         }
 
         return new OAuthUserInfo
@@ -79,6 +90,7 @@ public class FacebookOAuthHandler : IOAuthProviderHandler
         [JsonPropertyName("access_token")] public string AccessToken { get; set; } = string.Empty;
     }
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     private sealed class FacebookProfileResponse
     {
         [JsonPropertyName("id")] public string Id { get; set; } = string.Empty;

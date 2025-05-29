@@ -1,3 +1,5 @@
+using SmartRetail360.Application.Interfaces.Auth;
+
 namespace SmartRetail360.Infrastructure.Common.DependencyInjection;
 
 using SmartRetail360.Application.Common.Execution;
@@ -20,4 +22,5 @@ public class BaseDependencies
     public IUserContextService UserContext { get; set; }
     public AppOptions AppOptions { get; set; }
     public ILogDispatcher LogDispatcher { get; set; }
+    public IRefreshTokenService RefreshTokenService { get; set; }
 }

@@ -1,9 +1,10 @@
+using SmartRetail360.Application.Models;
 using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
 
-namespace SmartRetail360.Infrastructure.Services.Auth.TenantLogin;
+namespace SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
 
 public class ConfirmTenantLoginTokenGenerator
 {
@@ -29,11 +30,18 @@ public class ConfirmTenantLoginTokenGenerator
         );
 
         var refreshTokenResult = await _ctx._dep.SafeExecutor.ExecuteAsync(
-            () => _ctx._dep.RefreshTokenService.CreateRefreshTokenAsync(
-                _ctx.TenantUser.UserId,
-                _ctx.TenantUser.TenantId,
-                _ctx._dep.UserContext.IpAddress,
-                _ctx.RefreshTokenExpiryDays),
+            () => _ctx._dep.RefreshTokenService.CreateRefreshTokenAsync(new RefreshTokenCreationContext
+            {
+                UserId = _ctx.TenantUser.UserId,
+                TenantId = _ctx.TenantUser.TenantId,
+                IpAddress = _ctx._dep.UserContext.IpAddress,
+                ExpiryDays = _ctx.RefreshTokenExpiryDays,
+                Email = user.Email,
+                Name = user.Name,
+                Locale = user.Locale,
+                TraceId = _ctx.TraceId,
+                RoleId = _ctx.TenantUser.RoleId
+            }),
             LogEventType.ConfirmTenantLoginFailure,
             LogReasons.RefreshTokenCreationFailed,
             ErrorCodes.InternalServerError

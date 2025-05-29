@@ -40,6 +40,9 @@
     <data name="InvalidOAuthProvider" xml:space="preserve"><value>无效的 OAuth 登录平台</value></data>
     <data name="OAuthUserProfileFetchFailed" xml:space="preserve"><value>无法获取第三方用户信息</value></data>
     <data name="OAuthUserProfileNotExists" xml:space="preserve"><value>第三方用户信息不存在</value></data>
+    <data name="RefreshTokenNotFound" xml:space="preserve"><value>刷新令牌不存在或已失效</value></data>
+    <data name="RefreshTokenSuccess" xml:space="preserve"><value>刷新令牌成功</value></data>
+    <data name="LogoutSuccess" xml:space="preserve"><value>退出登录成功</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>

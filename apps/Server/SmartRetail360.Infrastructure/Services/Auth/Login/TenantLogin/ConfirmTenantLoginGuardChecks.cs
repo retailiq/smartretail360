@@ -1,11 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
-using Microsoft.EntityFrameworkCore;
 
-namespace SmartRetail360.Infrastructure.Services.Auth.TenantLogin;
+namespace SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
 
 public class ConfirmTenantLoginGuardChecks
 {
@@ -25,8 +25,7 @@ public class ConfirmTenantLoginGuardChecks
                 .Include(tu => tu.User)
                 .FirstOrDefaultAsync(tu =>
                     tu.UserId == _ctx.Request.UserId &&
-                    tu.TenantId == _ctx.Request.TenantId &&
-                    tu.IsActive),
+                    tu.TenantId == _ctx.Request.TenantId),
             LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
@@ -38,14 +37,17 @@ public class ConfirmTenantLoginGuardChecks
 
         var accountCheckResult = await _ctx._dep.GuardChecker
             .Check(() => _ctx.TenantUser == null,
-                LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserDisabled,
-                ErrorCodes.TenantUserDisabled)
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserRecordNotFound,
+                ErrorCodes.TenantUserRecordNotFound)
             .Check(() => _ctx.TenantUser is { User: null },
                 LogEventType.ConfirmTenantLoginFailure, LogReasons.AccountNotFound,
                 ErrorCodes.AccountNotFound)
             .Check(() => _ctx.TenantUser is { Tenant: null },
                 LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantNotFound,
                 ErrorCodes.TenantNotFound)
+            .Check(() => !_ctx.TenantUser!.IsActive,
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserDisabled,
+                ErrorCodes.TenantUserDisabled)
             .Check(() => !_ctx.TenantUser!.Tenant!.IsActive,
                 LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantDisabled,
                 ErrorCodes.TenantDisabled)
@@ -55,10 +57,12 @@ public class ConfirmTenantLoginGuardChecks
 
         _ctx._dep.UserContext.Inject(new UserExecutionContext
         {
-            RoleId = _ctx.TenantUser.Role!.Id,
+            RoleId = _ctx.TenantUser!.Role!.Id,
             RoleName = _ctx.TenantUser.Role.Name,
             Email = _ctx.TenantUser.User!.Email,
             UserName = _ctx.TenantUser.User.Name,
+            UserId = _ctx.TenantUser.UserId,
+            TenantId = _ctx.TenantUser.TenantId
         });
 
         return null;

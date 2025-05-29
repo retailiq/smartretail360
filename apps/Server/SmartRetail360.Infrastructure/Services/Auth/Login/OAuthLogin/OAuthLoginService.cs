@@ -24,14 +24,14 @@ public class OAuthLoginService : IOAuthLoginService
         var context = new OAuthLoginContext(_dep, request);
         var guardChecks = new LoginGuardCheckers(context);
         var profileGetter = new OAuthUserProfileGetter(context);
-        var userResolver = new OAuthUserTenantResolver(context);
+        var userTenantResolver = new OAuthUserTenantResolver(context);
         var tenantProcessor = new LoginTenantProcessor(context);
         var responseBuilder = new LoginResponseBuilder(context);
         
         var result = await profileGetter.GetUserProfileAsync();
         if (result != null) return result;
         
-        result = await userResolver.ResolveTenantUserAsync();
+        result = await userTenantResolver.ResolveUserTenantAsync();
         if (result != null) return result;
         
         result = await guardChecks.CheckAccountStatusAsync();

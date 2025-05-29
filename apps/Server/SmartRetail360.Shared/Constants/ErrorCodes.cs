@@ -3,6 +3,7 @@ namespace SmartRetail360.Shared.Constants;
 public static class ErrorCodes
 {
     // General errors
+    public const int None = 0;
     public const int InternalServerError = 10000;
     public const int DatabaseUnavailable = 10001;
     public const int DuplicateRegisterAttempt = 10002;
@@ -29,6 +30,7 @@ public static class ErrorCodes
     public const int InvalidOAuthProvider = 5018;
     public const int OAuthUserProfileFetchFailed = 5019;
     public const int OAuthUserProfileNotExists = 5020;
+    public const int RefreshTokenNotFound = 5021;
 
     // Account
     public const int AccountNotFound = 6002;

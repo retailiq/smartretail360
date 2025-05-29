@@ -7,7 +7,6 @@ using SmartRetail360.Shared.Utils;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Messaging.Factories;
-using SmartRetail360.Shared.Redis;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications;
 
@@ -55,9 +54,8 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
             UserId = existingUser.Id,
             Action = action
         });
-
-        var redisKey = RedisKeys.ResendAccountActivationEmail(email);
-        var isLimited = await _dep.RedisLimiterService.IsLimitedAsync(redisKey);
+        
+        var isLimited = await _dep.RedisOperation.IsEmailResendLimitedAsync(email);
 
         var guardResult = await _dep.GuardChecker
             .Check(() => existingUser is { IsEmailVerified: true, StatusEnum: AccountStatus.Active },
@@ -109,10 +107,9 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
             {
                 _dep.Db.AccountActivationTokens.Add(accountActivationToken);
                 await _dep.Db.SaveChangesAsync();
-                await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken,
-                    TimeSpan.FromMinutes(_dep.AppOptions.ActivationTokenLimitMinutes));
+                await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken);
             },
-            LogEventType.EmailSendFailure,
+            LogEventType.DatabaseError,
             LogReasons.DatabaseSaveFailed,
             ErrorCodes.DatabaseUnavailable
         );
@@ -138,8 +135,7 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         if (emailError != null)
             return emailError;
 
-        await _dep.RedisOperation.SetLimitAsync(redisKey,
-            TimeSpan.FromMinutes(_dep.AppOptions.EmailSendLimitMinutes));
+        await _dep.RedisOperation.SetEmailResendLimitAsync(email);
         await _dep.LogDispatcher.Dispatch(LogEventType.EmailSendSuccess);
 
         return ApiResponse<object>.Ok(

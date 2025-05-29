@@ -17,18 +17,18 @@ public class LoginGuardCheckers
 
     public async Task<ApiResponse<LoginResponse>?> CheckRedisLocksAsync()
     {
-        var lockAcquired = await _ctx.Dep.RedisOperation.AcquireLockAsync(_ctx.LockKey,
-            TimeSpan.FromSeconds(_ctx.Dep.AppOptions.UserLoginLockTtlSeconds));
+        var lockAcquired = await _ctx.Dep.RedisOperation.AcquireUserLoginLockAsync(_ctx.User!.Email.ToLower());
+        
         var loginLockCheck = await _ctx.Dep.GuardChecker
-            .Check(() => !lockAcquired, LogEventType.UserLoginFailure, LogReasons.LockNotAcquired,
+            .Check(() => !lockAcquired, LogEventType.LoginFailure, LogReasons.LockNotAcquired,
                 ErrorCodes.DuplicateLoginAttempt)
             .ValidateAsync();
         if (loginLockCheck != null)
             return loginLockCheck.To<LoginResponse>();
 
-        var isLoginLocked = await _ctx.Dep.RedisOperation.IsUserLoginLockedAsync(_ctx.SecurityKey);
+        var isLoginLocked = await _ctx.Dep.RedisOperation.IsUserLoginLockedAsync(_ctx.User!.Email);
         var accountStatusLockCheck = await _ctx.Dep.GuardChecker
-            .Check(() => isLoginLocked, LogEventType.UserLoginFailure, LogReasons.AccountLockedDueToLoginFailures,
+            .Check(() => isLoginLocked, LogEventType.LoginFailure, LogReasons.AccountLockedDueToLoginFailures,
                 ErrorCodes.AccountLocked)
             .ValidateAsync();
         if (accountStatusLockCheck != null)
@@ -40,19 +40,19 @@ public class LoginGuardCheckers
     public async Task<ApiResponse<LoginResponse>?> CheckAccountStatusAsync()
     {
         var activationCheck = await _ctx.Dep.GuardChecker
-            .Check(() => _ctx.User.StatusEnum == AccountStatus.PendingVerification,
-                LogEventType.UserLoginFailure, LogReasons.AccountNotActivated,
+            .Check(() => _ctx.User!.StatusEnum == AccountStatus.PendingVerification,
+                LogEventType.LoginFailure, LogReasons.AccountNotActivated,
                 ErrorCodes.AccountNotActivated)
             .ValidateAsync();
         if (activationCheck != null)
         {
-            var (tokenList, tokenListError) = await _ctx.Dep.AccountSupport.GetActivationTokenListAsync(_ctx.User.Id);
+            var (tokenList, tokenListError) = await _ctx.Dep.AccountSupport.GetActivationTokenListAsync(_ctx.User!.Id);
             if (tokenListError != null)
                 return tokenListError.To<LoginResponse>();
 
             var tokenListCheckResult = await _ctx.Dep.GuardChecker
                 .Check(() => tokenList!.Count == 0,
-                    LogEventType.UserLoginFailure, LogReasons.TokenNotFound,
+                    LogEventType.LoginFailure, LogReasons.TokenNotFound,
                     ErrorCodes.TokenNotFound)
                 .ValidateAsync();
             if (tokenListCheckResult != null)
@@ -66,17 +66,17 @@ public class LoginGuardCheckers
         }
 
         var accountStatusResult = await _ctx.Dep.GuardChecker
-            .Check(() => _ctx.User.StatusEnum == AccountStatus.Locked,
-                LogEventType.UserLoginFailure, LogReasons.AccountLocked,
+            .Check(() => _ctx.User!.StatusEnum == AccountStatus.Locked,
+                LogEventType.LoginFailure, LogReasons.AccountLocked,
                 ErrorCodes.AccountLocked)
-            .Check(() => _ctx.User.StatusEnum == AccountStatus.Suspended,
-                LogEventType.UserLoginFailure, LogReasons.AccountSuspended,
+            .Check(() => _ctx.User!.StatusEnum == AccountStatus.Suspended,
+                LogEventType.LoginFailure, LogReasons.AccountSuspended,
                 ErrorCodes.AccountSuspended)
-            .Check(() => _ctx.User.StatusEnum == AccountStatus.Deleted,
-                LogEventType.UserLoginFailure, LogReasons.AccountDeleted,
+            .Check(() => _ctx.User!.StatusEnum == AccountStatus.Deleted,
+                LogEventType.LoginFailure, LogReasons.AccountDeleted,
                 ErrorCodes.AccountDeleted)
-            .Check(() => _ctx.User.StatusEnum == AccountStatus.Banned,
-                LogEventType.UserLoginFailure, LogReasons.AccountBanned,
+            .Check(() => _ctx.User!.StatusEnum == AccountStatus.Banned,
+                LogEventType.LoginFailure, LogReasons.AccountBanned,
                 ErrorCodes.AccountBanned)
             .ValidateAsync();
         if (accountStatusResult != null)

@@ -32,7 +32,8 @@ public static class ErrorCatalog
         { ErrorCodes.InvalidOAuthProvider, "InvalidOAuthProvider" },
         { ErrorCodes.OAuthUserProfileFetchFailed, "OAuthUserProfileFetchFailed" },
         { ErrorCodes.OAuthUserProfileNotExists, "OAuthUserProfileNotExists" },
-
+        { ErrorCodes.RefreshTokenNotFound, "RefreshTokenNotFound" },
+        
         // Account
         { ErrorCodes.AccountNotFound, "AccountNotFound" },
         { ErrorCodes.AccountAlreadyActivated, "AccountAlreadyActivated" },

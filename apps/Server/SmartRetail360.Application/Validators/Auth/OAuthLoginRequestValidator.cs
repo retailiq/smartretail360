@@ -16,7 +16,7 @@ public class OAuthLoginRequestValidator : AbstractValidator<OAuthLoginRequest>
         RuleFor(x => x.Code)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.OAuthCodeIsRequired));
 
-        RuleFor(x => x.State)
+        RuleFor(x => x.OAuthState)
             .NotEmpty().WithMessage(dep.Localizer.GetLocalizedText(LocalizedTextKey.OAuthStateIsRequired));
 
         RuleFor(x => x.RedirectUri)

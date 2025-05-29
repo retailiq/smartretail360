@@ -35,6 +35,25 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .HasMaxLength(256)
             .IsRequired();
 
+        entity.Property(rt => rt.RoleId)
+            .IsRequired();
+
+        entity.Property(rt => rt.Email)
+            .HasMaxLength(256)
+            .IsRequired();
+
+        entity.Property(rt => rt.Name)
+            .HasMaxLength(128)
+            .IsRequired();
+
+        entity.Property(rt => rt.Locale)
+            .HasMaxLength(16)
+            .IsRequired();
+
+        entity.Property(rt => rt.TraceId)
+            .HasMaxLength(64)
+            .IsRequired();
+
         entity.Property(rt => rt.CreatedByIp)
             .HasMaxLength(64)
             .IsRequired();
