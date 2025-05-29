@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Infrastructure.Data.Configurations;
 
 namespace SmartRetail360.Infrastructure.Data;
 
@@ -16,6 +17,8 @@ public class AppDbContext : DbContext
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<AccountActivationToken> AccountActivationTokens => Set<AccountActivationToken>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<OAuthAccount> OAuthAccounts => Set<OAuthAccount>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

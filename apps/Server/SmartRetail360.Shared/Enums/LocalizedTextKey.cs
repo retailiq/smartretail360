@@ -13,6 +13,9 @@ public enum LocalizedTextKey
     AccountActivatedSuccessfully,
     EmailResent,
     AccountActivationValidityNotice,
+    UserLoginSuccess,
+    RefreshTokenSuccess,
+    LogoutSuccess,
     
     // Role descriptions
     RoleOwnerDescription,
@@ -37,5 +40,12 @@ public enum LocalizedTextKey
     InvalidEmailTemplate,
     NameIsRequired,
     NameMustBeAtLeast1Characters,
-    NameMustNotExceed50Characters
+    NameMustNotExceed50Characters,
+    TenantIdIsRequired,
+    UserIdIsRequired,
+    IsStaySignedInIsRequired,
+    InvalidOAuthProvider,
+    OAuthCodeIsRequired,
+    OAuthStateIsRequired,
+    OAuthRedirectUriIsRequired
 }

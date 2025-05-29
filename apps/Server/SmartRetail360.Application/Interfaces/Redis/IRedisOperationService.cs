@@ -5,23 +5,33 @@ namespace SmartRetail360.Application.Interfaces.Redis;
 
 public interface IRedisOperationService
 {
-    // Rate limit
-    Task<bool> IsLimitedAsync(string key);
-    Task SetLimitAsync(string key, TimeSpan window);
+    // Email resend rate limit
+    Task<bool> IsEmailResendLimitedAsync(string email);
+    Task SetEmailResendLimitAsync(string email);
+
+    // Activation token verification rate limit
+    Task<bool> IsAccountActivationLimitedAsync(string token);
+    Task SetAccountActivationLimitAsync(string token);
 
     // Distributed lock
-    Task<bool> AcquireLockAsync(string key, TimeSpan expiry);
-    Task ReleaseLockAsync(string key);
+    Task<bool> AcquireUserLoginLockAsync(string email);
+    Task ReleaseUserLoginLockAsync(string email);
 
-    // Log sampling
-    Task<bool> LogSampleExistsAsync(string key);
-    Task SetLogSampleAsync(string key, string value, TimeSpan? expiry = null);
+    // Registration lock
+    Task<bool> AcquireRegistrationLockAsync(string email);
+    Task ReleaseRegistrationLockAsync(string email);
 
     // Role cache
     Task<Role?> GetSystemRoleAsync(SystemRoleType roleType);
+    Task<List<Role>> GetSystemRolesByIdsAsync(List<Guid> roleIds);
     
     // Token cache
-    Task SetActivationTokenAsync(AccountActivationToken tokenEntity, TimeSpan ttl);
+    Task SetActivationTokenAsync(AccountActivationToken tokenEntity);
     Task<AccountActivationToken?> GetActivationTokenAsync(string token);
     Task InvalidateActivationTokenAsync(string token);
+    
+    // User Login Lock
+    Task<bool> IsUserLoginLockedAsync(string email);
+    Task<int> IncrementUserLoginFailureAsync(string email);
+    Task ResetUserLoginFailuresAsync(string email);
 }

@@ -4,6 +4,8 @@ using SmartRetail360.API.Configuration.Swagger;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using OpenTelemetry.Exporter;
@@ -19,12 +21,17 @@ public static class DependencyInjection
         // Controller
         services.AddControllers().AddJsonOptions(options =>
         {
+            // Ignore null values globally
             options.JsonSerializerOptions.DefaultIgnoreCondition =
                 System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            // Use camelCase and allow integer values for enums
+            options.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true)
+            );
         });
 
         services.AddEndpointsApiExplorer();
-
+        
         // Application Options
         services.Configure<AppOptions>(config.GetSection("App"));
         services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AppOptions>>().Value);
@@ -46,7 +53,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<MessageLocalizer>();
-        
+
         // API Versioning
         services.AddApiVersioning(options =>
         {
@@ -57,7 +64,7 @@ public static class DependencyInjection
                 new UrlSegmentApiVersionReader()
             );
         });
-        
+
         // Swagger API 
         services.AddVersionedApiExplorer(options =>
         {
@@ -93,9 +100,9 @@ public static class DependencyInjection
                 }
             });
         });
-        
+
         services.ConfigureOptions<ConfigureSwaggerOptions>();
-        
+
         // otlp configuration
         var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint")
                            ?? "http://localhost:4317";
@@ -114,8 +121,8 @@ public static class DependencyInjection
                         opt.Protocol = OtlpExportProtocol.Grpc;
                     });
             });
-        
-        
+
+
         return services;
     }
 }

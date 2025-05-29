@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Infrastructure.Data.Configurations;
@@ -34,19 +35,24 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
 
         entity.Property(e => e.PasswordHash)
-            .HasMaxLength(255)
-            .IsRequired();
+            .HasMaxLength(255);
 
         entity.Property(e => e.PhoneNumber)
             .HasMaxLength(32);
 
-        entity.Property(e => e.LogoUrl)
+        entity.Property(e => e.AvatarUrl)
             .HasMaxLength(512);
+
+        entity.Property(e => e.Locale)
+            .IsRequired()
+            .HasMaxLength(10)
+            .IsUnicode(false)
+            .HasDefaultValue(LocaleType.En.GetEnumMemberValue());
 
         entity.Property(e => e.Status)
             .HasMaxLength(64)
             .IsRequired()
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountStatus.PendingVerification)));
+            .HasDefaultValue(AccountStatus.PendingVerification.GetEnumMemberValue());
 
         entity.Property(e => e.IsEmailVerified)
             .IsRequired()
@@ -61,8 +67,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
 
         entity.Property(e => e.DeactivationReason)
+            .IsRequired()
             .HasMaxLength(64)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountBanReason.None)));
+            .HasDefaultValue(AccountBanReason.None.GetEnumMemberValue());
 
         entity.Property(e => e.IsActive)
             .IsRequired()
@@ -85,5 +92,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         entity.Property(e => e.DeletedAt)
             .HasColumnType("timestamp with time zone");
+
+        entity.HasMany(u => u.OAuthAccounts)
+            .WithOne(o => o.User)
+            .HasForeignKey(o => o.UserId)
+            .HasConstraintName("FK_oauth_accounts_users_UserId")
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

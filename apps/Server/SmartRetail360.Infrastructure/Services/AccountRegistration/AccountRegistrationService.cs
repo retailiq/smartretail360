@@ -6,8 +6,8 @@ using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Messaging.Factories;
-using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
 
@@ -38,15 +38,11 @@ public class AccountRegistrationService : IAccountRegistrationService
             traceId = TraceIdGenerator.Generate(TraceIdPrefix.Get(TraceModule.Auth), slug);
         }
 
-        var lockKey = RedisKeys.RegisterAccountLock(request.Email.ToLower());
-        var lockAcquired = await _dep.RedisOperation.AcquireLockAsync(lockKey,
-            TimeSpan.FromSeconds(_dep.AppOptions.RegistrationLockTtlSeconds));
-
+        var lockAcquired = await _dep.RedisOperation.AcquireRegistrationLockAsync(request.Email.ToLower());
         var lockCheck = await _dep.GuardChecker
             .Check(() => !lockAcquired, LogEventType.RegisterUserFailure, LogReasons.LockNotAcquired,
                 ErrorCodes.DuplicateRegisterAttempt)
             .ValidateAsync();
-
         if (lockCheck != null)
             return lockCheck.To<AccountRegisterResponse>();
 
@@ -58,10 +54,7 @@ public class AccountRegistrationService : IAccountRegistrationService
 
             if (existingUser != null)
             {
-                _dep.UserContext.Inject(new UserExecutionContext
-                {
-                    UserId = existingUser.Id
-                });
+                _dep.UserContext.Inject(new UserExecutionContext { UserId = existingUser.Id });
             }
 
             var guardResult = await _dep.GuardChecker
@@ -70,17 +63,18 @@ public class AccountRegistrationService : IAccountRegistrationService
                 .Check(() => existingUser is { IsEmailVerified: false }, LogEventType.RegisterUserFailure,
                     LogReasons.AccountExistsButNotActivated, ErrorCodes.AccountExistsButNotActivated)
                 .ValidateAsync();
-
             if (guardResult != null)
                 return guardResult.To<AccountRegisterResponse>();
 
             var role = await _dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Admin);
-            if (role == null)
-                return ApiResponse<AccountRegisterResponse>.Fail(
-                    ErrorCodes.DatabaseUnavailable,
-                    _dep.Localizer.GetErrorMessage(ErrorCodes.DatabaseUnavailable), traceId);
+            var roleCheckResult = await _dep.GuardChecker
+                .Check(() => role == null, LogEventType.RegisterUserFailure,
+                    LogReasons.RoleListNotFound, ErrorCodes.InternalServerError)
+                .ValidateAsync();
+            if (roleCheckResult != null)
+                return roleCheckResult.To<AccountRegisterResponse>();
 
-            var roleId = role.Id;
+            var roleId = role!.Id;
             var roleName = role.Name;
             var passwordHash = PasswordHelper.HashPassword(request.Password);
             var emailVerificationToken = TokenHelper.GenerateActivateAccountToken();
@@ -91,7 +85,10 @@ public class AccountRegistrationService : IAccountRegistrationService
                 Name = request.Name,
                 PasswordHash = passwordHash,
                 TraceId = traceId,
-                LastEmailSentAt = DateTime.UtcNow
+                LastEmailSentAt = DateTime.UtcNow,
+                Locale = string.IsNullOrWhiteSpace(_dep.UserContext.Locale)
+                    ? LocaleType.En.GetEnumMemberValue()
+                    : _dep.UserContext.Locale.ToEnumFromMemberValue<LocaleType>().GetEnumMemberValue()
             };
 
             var tenant = new Tenant
@@ -112,6 +109,7 @@ public class AccountRegistrationService : IAccountRegistrationService
             var accountActivationToken = new AccountActivationToken
             {
                 UserId = user.Id,
+                TenantId = tenant.Id,
                 Token = emailVerificationToken,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.ActivationTokenLimitMinutes),
                 TraceId = traceId,
@@ -123,7 +121,8 @@ public class AccountRegistrationService : IAccountRegistrationService
                 TenantId = tenant.Id,
                 UserId = user.Id,
                 RoleId = tenantUser.RoleId,
-                RoleName = RoleHelper.ToPascalCaseName(roleName)
+                RoleName = RoleHelper.ToPascalCaseName(roleName),
+                UserName = user.Name
             });
 
             var saveResult = await _dep.SafeExecutor.ExecuteAsync(
@@ -134,10 +133,9 @@ public class AccountRegistrationService : IAccountRegistrationService
                     _dep.Db.TenantUsers.Add(tenantUser);
                     _dep.Db.AccountActivationTokens.Add(accountActivationToken);
                     await _dep.Db.SaveChangesAsync();
-                    await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken,
-                        TimeSpan.FromMinutes(_dep.AppOptions.ActivationTokenLimitMinutes));
+                    await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken);
                 },
-                LogEventType.RegisterUserFailure,
+                LogEventType.DatabaseError,
                 LogReasons.DatabaseSaveFailed,
                 ErrorCodes.DatabaseUnavailable
             );
@@ -153,7 +151,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                 EmailTemplate.UserRegistrationActivation,
                 _dep.AppOptions.ActivationTokenLimitMinutes
             );
-            
+
             var emailError =
                 await _dep.PlatformContext.SendRegistrationInvitationEmailAsync(emailVerificationToken, payload);
             if (emailError != null)
@@ -174,9 +172,7 @@ public class AccountRegistrationService : IAccountRegistrationService
         }
         finally
         {
-            await _dep.RedisOperation.ReleaseLockAsync(lockKey);
+            await _dep.RedisOperation.ReleaseRegistrationLockAsync(request.Email.ToLower());
         }
     }
 }
-
-// TODO: 初始化权限组/角色/默认设置

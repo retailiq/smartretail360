@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Infrastructure.Data.Configurations;
@@ -40,12 +41,12 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
 
         entity.Property(e => e.Status)
             .HasMaxLength(64)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountStatus.PendingVerification)))
+            .HasDefaultValue(AccountStatus.PendingVerification.GetEnumMemberValue())
             .IsRequired();
 
         entity.Property(e => e.Plan)
             .HasMaxLength(64)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountPlan.Free)))
+            .HasDefaultValue(AccountPlan.Free.GetEnumMemberValue())
             .IsRequired();
 
         entity.Property(e => e.TraceId)
@@ -70,10 +71,10 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
 
         entity.Property(e => e.DeactivatedAt)
             .HasColumnType("timestamp with time zone");
-
+        
         entity.Property(e => e.DeactivationReason)
+            .IsRequired()
             .HasMaxLength(64)
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(AccountBanReason.None)))
-            .IsRequired();
+            .HasDefaultValue(AccountBanReason.None.GetEnumMemberValue());
     }
 }

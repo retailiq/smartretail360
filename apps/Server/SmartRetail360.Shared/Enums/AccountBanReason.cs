@@ -1,26 +1,35 @@
+using System.Runtime.Serialization;
+
 namespace SmartRetail360.Shared.Enums;
 
 public enum AccountBanReason
 {
+    [EnumMember(Value = "none")]
     None = 0,
 
-    // Common reasons
-    ManualDeactivation,         // Manually deactivated (by admin/operator)
-    ViolationOfTerms,           // Violation of terms of service
-    SecurityRisk,               // Security risk detected (e.g., account compromise)
-    SuspiciousBehavior,         // Suspicious behavior (e.g., API abuse, attack attempts)
-    AbuseOrSpam,                // System abuse or spam activities
-    InactiveTooLong,            // Prolonged inactivity
+    // ✅ General reasons
+    [EnumMember(Value = "manual")]
+    ManualDeactivation,         // Manually deactivated by admin or operator
 
-    // User-specific reasons
+    [EnumMember(Value = "terms_violation")]
+    ViolationOfTerms,           // Violation of terms of service (e.g., abuse, attack attempts)
+
+    [EnumMember(Value = "security_risk")]
+    SecurityRisk,               // Security risk detected (e.g., account compromise, suspicious access)
+
+    [EnumMember(Value = "inactive")]
+    InactiveTooLong,            // Prolonged inactivity without login or usage
+
+    // ✅ User-related reasons
+    [EnumMember(Value = "invalid_email")]
     InvalidEmailOrUnverified,   // Invalid or unverified email address
-    DuplicateAccountDetected,   // Duplicate account detected
-    ManualRequestByUser,        // Deactivation requested by the user
 
-    // Tenant-specific reasons
-    SubscriptionExpired,        // Subscription expired without renewal
-    PaymentFailure,             // Billing/payment failure
-    ExceededQuotaLimit,         // Quota limit exceeded
-    OrganizationShutdown,       // Organization closed or merged
-    UnderInvestigation,         // Under compliance or security investigation
+    [EnumMember(Value = "duplicate")]
+    DuplicateAccountDetected,   // Duplicate account detected (e.g., same email or device)
+
+    [EnumMember(Value = "user_requested")]
+    ManualRequestByUser,         // Deactivation requested by the user
+    
+    [EnumMember(Value = "login_failure_limit")]
+    LoginFailureLimit // Too many failed login attempts
 }

@@ -1,3 +1,5 @@
+using SmartRetail360.Shared.Enums;
+
 namespace SmartRetail360.Shared.Context;
 
 public class UserExecutionContext
@@ -15,4 +17,5 @@ public class UserExecutionContext
     public string? RoleName { get; init; }
     public string? LogId { get; init; }
     public string? UserName { get; init; }
+    public LogEventType? LogEventType { get; init; }
 }

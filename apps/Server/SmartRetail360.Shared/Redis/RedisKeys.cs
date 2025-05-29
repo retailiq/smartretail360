@@ -16,6 +16,15 @@ public static class RedisKeys
     public static string RegisterAccountLock(string email)
         => $"lock:register:{email}";
     
+    public static string UserLoginLock(string email)
+        => $"lock:login:{email}";
+    
+    public static string UserLoginSecurityLock(string email)
+        => $"lock:login:security:{email}";
+    
+    public static string UserLoginFailures(string email)
+        => $"lock:login:failures{email}";
+    
     public static string SystemRole(string roleName)
         => $"role:{roleName}";
     

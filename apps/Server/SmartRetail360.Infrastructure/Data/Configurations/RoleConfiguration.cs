@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Infrastructure.Data.Configurations;
@@ -22,9 +23,9 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
 
         // Properties
         entity.Property(e => e.Name)
-            .HasMaxLength(64)
             .IsRequired()
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(SystemRoleType.Member)));
+            .HasMaxLength(32)
+            .HasDefaultValue(SystemRoleType.Member.GetEnumMemberValue());
         
         entity.Property(e => e.IsSystemRole)
             .IsRequired()

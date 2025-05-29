@@ -6,11 +6,21 @@ public enum LogEventType
     RegisterUserFailure,
     InviteUserSuccess,
     InviteUserFailure,
+    CredentialsLoginFailure,
     LoginSuccess,
     LoginFailure,
+    OAuthLoginFailure,
     AccountActivateSuccess,
     AccountActivateFailure,
     EmailSendSuccess,
     EmailSendFailure,
-    WriteLogFailure
+    WriteLogFailure,
+    RedisError,
+    SqsError,
+    RefreshTokenFailure,
+    DatabaseError,
+    LogoutFailed,
+    ConfirmTenantLoginFailure,
+    ConfirmTenantLoginSuccess,
+    RefreshTokenReplayDetected
 }

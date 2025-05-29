@@ -9,41 +9,57 @@ public class RedisOperationService : IRedisOperationService
 {
     private readonly IRedisLimiterService _limiter;
     private readonly IRedisLockService _locker;
-    private readonly IRedisLogSamplingService _logSampler;
     private readonly IRoleCacheService _roleCache;
     private readonly IActivationTokenCacheService _tokenCache;
+    private readonly ILoginFailureLimiter _loginFailureLimiter;
 
     public RedisOperationService(
         IRedisLimiterService limiter,
         IRedisLockService locker,
-        IRedisLogSamplingService logSampler,
         IRoleCacheService roleCache,
-        IActivationTokenCacheService tokenCache)
+        IActivationTokenCacheService tokenCache,
+        ILoginFailureLimiter loginFailureLimiter)
     {
         _limiter = limiter;
         _locker = locker;
-        _logSampler = logSampler;
         _roleCache = roleCache;
         _tokenCache = tokenCache;
+        _loginFailureLimiter = loginFailureLimiter;
     }
+    
+    // Email resend rate limit
+    public Task<bool> IsEmailResendLimitedAsync(string email) => _limiter.IsEmailResendLimitedAsync(email);
+    public Task SetEmailResendLimitAsync(string email) => _limiter.SetEmailResendLimitAsync(email);
 
-    // Limit methods
-    public Task<bool> IsLimitedAsync(string key) => _limiter.IsLimitedAsync(key);
-    public Task SetLimitAsync(string key, TimeSpan window) => _limiter.SetLimitAsync(key, window);
+    // Activation verify rate limit
+    public Task<bool> IsAccountActivationLimitedAsync(string token) => _limiter.IsAccountActivationLimitedAsync(token);
+    public Task SetAccountActivationLimitAsync(string token) => _limiter.SetAccountActivationLimitAsync(token);
 
     // Lock methods
-    public Task<bool> AcquireLockAsync(string key, TimeSpan expiry) => _locker.AcquireLockAsync(key, expiry);
-    public Task ReleaseLockAsync(string key) => _locker.ReleaseLockAsync(key);
+    public Task<bool> AcquireUserLoginLockAsync(string email) => _locker.AcquireUserLoginLockAsync(email);
+    public Task ReleaseUserLoginLockAsync(string email) => _locker.ReleaseUserLoginLockAsync(email);
 
-    // Log sampling
-    public Task<bool> LogSampleExistsAsync(string key) => _logSampler.ExistsAsync(key);
-    public Task SetLogSampleAsync(string key, string value, TimeSpan? expiry = null) => _logSampler.SetStringAsync(key, value, expiry);
+    public Task<bool> AcquireRegistrationLockAsync(string email) => _locker.AcquireRegistrationLockAsync(email);
+    public Task ReleaseRegistrationLockAsync(string email) => _locker.ReleaseRegistrationLockAsync(email);
 
     // Role cache
     public Task<Role?> GetSystemRoleAsync(SystemRoleType roleType) => _roleCache.GetSystemRoleAsync(roleType);
 
+    public Task<List<Role>> GetSystemRolesByIdsAsync(List<Guid> roleIds) =>
+        _roleCache.GetSystemRolesByIdsAsync(roleIds);
+
     // Activation token cache
-    public Task SetActivationTokenAsync(AccountActivationToken tokenEntity, TimeSpan ttl) => _tokenCache.SetTokenAsync(tokenEntity, ttl);
+    public Task SetActivationTokenAsync(AccountActivationToken tokenEntity) => _tokenCache.SetTokenAsync(tokenEntity);
     public Task<AccountActivationToken?> GetActivationTokenAsync(string token) => _tokenCache.GetTokenAsync(token);
     public Task InvalidateActivationTokenAsync(string token) => _tokenCache.InvalidateTokenAsync(token);
+
+    // User Login Lock
+    public Task<bool> IsUserLoginLockedAsync(string email) =>
+        _loginFailureLimiter.IsLockedAsync(email);
+
+    public Task<int> IncrementUserLoginFailureAsync(string email) =>
+        _loginFailureLimiter.IncrementFailureAsync(email);
+
+    public Task ResetUserLoginFailuresAsync(string email) =>
+        _loginFailureLimiter.ResetFailuresAsync(email);
 }

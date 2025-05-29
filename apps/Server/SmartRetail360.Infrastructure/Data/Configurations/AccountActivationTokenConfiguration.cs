@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Infrastructure.Data.Configurations;
@@ -15,6 +16,7 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
         entity.HasKey(e => e.Id);
 
         entity.HasIndex(e => e.UserId);
+        entity.HasIndex(e => e.TenantId);
         entity.HasIndex(e => e.Token).IsUnique();
         entity.HasIndex(e => e.Status);
         entity.HasIndex(e => e.ExpiresAt);
@@ -24,6 +26,9 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
         
         entity.Property(e => e.UserId)
             .IsRequired();
+        
+        entity.Property(e => e.TenantId)
+            .IsRequired();
 
         entity.Property(e => e.Token)
             .HasMaxLength(128)
@@ -32,7 +37,7 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
         entity.Property(e => e.Status)
             .HasMaxLength(32)
             .IsRequired()
-            .HasDefaultValue(StringCaseConverter.ToSnakeCase(nameof(ActivationTokenStatus.Pending)));
+            .HasDefaultValue(ActivationTokenStatus.Pending.GetEnumMemberValue());
 
         entity.Property(e => e.ExpiresAt)
             .HasColumnType("timestamp with time zone")
@@ -46,6 +51,7 @@ public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<Acco
             .IsRequired();
 
         entity.Property(e => e.Source)
-            .IsRequired();
+            .IsRequired()
+            .HasDefaultValue(ActivationSource.None.GetEnumMemberValue());
     }
 }

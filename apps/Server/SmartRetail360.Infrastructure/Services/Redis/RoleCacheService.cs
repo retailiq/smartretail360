@@ -77,4 +77,60 @@ public class RoleCacheService : IRoleCacheService
         await _redis.StringSetAsync(cacheKey, JsonSerializer.Serialize(role), TimeSpan.FromHours(24));
         return role;
     }
+
+    public async Task<List<Role>> GetSystemRolesByIdsAsync(List<Guid> roleIds)
+    {
+        var roles = new List<Role>();
+        var missedIds = new List<Guid>();
+
+        foreach (var roleId in roleIds)
+        {
+            var cacheKey = RedisKeys.SystemRole(roleId.ToString());
+            var cached = await _redis.StringGetAsync(cacheKey);
+
+            if (cached.HasValue)
+            {
+                try
+                {
+                    var role = JsonSerializer.Deserialize<Role>(cached!);
+                    if (role != null)
+                    {
+                        roles.Add(role);
+                        continue;
+                    }
+                }
+                catch
+                {
+                    // ignore and fallback to DB
+                }
+            }
+
+            missedIds.Add(roleId); // cache miss or deserialization fail
+        }
+
+        // fallback to the database for missed roles
+        if (missedIds.Count > 0)
+        {
+            var dbResult = await _safeExecutor.ExecuteAsync(
+                () => _db.Roles.AsNoTracking().Where(r => missedIds.Contains(r.Id)).ToListAsync(),
+                LogEventType.RegisterUserFailure,
+                LogReasons.DatabaseRetrievalFailed,
+                ErrorCodes.DatabaseUnavailable
+            );
+
+            if (dbResult.IsSuccess && dbResult.Response.Data is { Count: > 0 } dbRoles)
+            {
+                roles.AddRange(dbRoles);
+
+                // cache the roles fetched from the database
+                foreach (var role in dbRoles)
+                {
+                    var key = RedisKeys.SystemRole(role.Id.ToString());
+                    await _redis.StringSetAsync(key, JsonSerializer.Serialize(role), TimeSpan.FromHours(24));
+                }
+            }
+        }
+
+        return roles;
+    }
 }

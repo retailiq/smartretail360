@@ -16,7 +16,6 @@
     <!-- General -->
     <data name="InternalServerError" xml:space="preserve"><value>服务器内部错误</value></data>
     <data name="DatabaseUnavailable" xml:space="preserve"><value>数据库暂时不可用</value></data>
-    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试</value></data>
 
     <!-- Auth-->
     <data name="InvalidPassword" xml:space="preserve"><value>密码错误</value></data>
@@ -25,15 +24,36 @@
     <data name="TokenAlreadyUsed" xml:space="preserve"><value>令牌已被使用</value></data>
     <data name="TokenRevoked" xml:space="preserve"><value>激活链接已被撤销</value></data>
     <data name="HasPendingActivationEmail" xml:space="preserve"><value>已有激活邮件正在等待确认，请检查您的邮箱</value></data>
+    <data name="DuplicateLoginAttempt" xml:space="preserve"><value>您的登录请求已在处理中，请稍后再试</value></data>
+    <data name="PasswordEmailMismatch" xml:space="preserve"><value>您输入的邮箱和密码不匹配，请重试</value></data>
+    <data name="AccountNotActivated" xml:space="preserve"><value>您的账户尚未激活，请检查您的邮箱完成激活操作</value></data>
+    <data name="UserLoginSuccess" xml:space="preserve"><value>您已成功登录</value></data>
+    <data name="AccountLocked" xml:space="preserve"><value>您的账户已被锁定，请联系支持人员</value></data>
+    <data name="AllTenantsDisabled" xml:space="preserve"><value>您的账户关联的所有租户均已被禁用，请联系平台管理员</value></data>
+    <data name="TenantUserDisabled" xml:space="preserve"><value>您在该租户下的账户已被禁用，请联系租户管理员</value></data>
+    <data name="TenantDisabled" xml:space="preserve"><value>该租户已被禁用，请联系平台管理员</value></data>
+    <data name="AccountSuspended" xml:space="preserve"><value>您的账号已被临时停用，请联系平台客服</value></data>
+    <data name="AccountDeleted" xml:space="preserve"><value>该账号已被删除，无法继续访问</value></data>
+    <data name="AccountBanned" xml:space="preserve"><value>您的账号因违反政策已被永久封禁</value></data>
+    <data name="TenantUserRecordNotFound" xml:space="preserve"><value>未找到该用户在当前租户中的记录，请确认账号信息</value></data>
+    <data name="TokenNotFound" xml:space="preserve"><value>令牌未找到</value></data>
+    <data name="InvalidOAuthProvider" xml:space="preserve"><value>无效的 OAuth 登录平台</value></data>
+    <data name="OAuthUserProfileFetchFailed" xml:space="preserve"><value>无法获取第三方用户信息</value></data>
+    <data name="OAuthUserProfileNotExists" xml:space="preserve"><value>第三方用户信息不存在</value></data>
+    <data name="RefreshTokenNotFound" xml:space="preserve"><value>刷新令牌不存在或已失效</value></data>
+    <data name="RefreshTokenSuccess" xml:space="preserve"><value>刷新令牌成功</value></data>
+    <data name="LogoutSuccess" xml:space="preserve"><value>退出登录成功</value></data>
     
     <!-- Account-related -->
-    <data name="AccountLocked" xml:space="preserve"><value>账户已锁定</value></data>
     <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>
     <data name="AccountExistsButNotActivated" xml:space="preserve"><value>该账户已存在但尚未激活。请检查您的邮箱或重新发送激活链接</value></data>
     <data name="AccountAlreadyActivated" xml:space="preserve"><value>该账户已激活，请直接登录</value></data>
     <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>您激活账户的频率过高，请稍后再试</value></data>
     <data name="AccountRegistered" xml:space="preserve"><value>租户注册成功，已向您的邮箱发送激活链接，请尽快验证以完成注册，该链接有效期为{0}分钟</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>账户激活成功，您现在可以安全登录平台</value></data>
+    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试</value></data>
+    <data name="TenantNotFound" xml:space="preserve"><value>未找到指定的租户，请确认您的选择或联系平台支持</value></data>
+    <data name="IsStaySignedInIsRequired" xml:space="preserve"><value>必须指定是否保持登录状态</value></data>
     
     <!-- Email & Notification -->
     <data name="TooFrequentEmailRequest" xml:space="preserve"><value>邮件发送请求过于频繁，请稍后再试</value></data>
@@ -68,6 +88,11 @@
     <data name="NameIsRequired" xml:space="preserve"><value>姓名不能为空</value></data>
     <data name="NameMustBeAtLeast1Characters" xml:space="preserve"><value>姓名至少需要 1 个字符</value></data>
     <data name="NameMustNotExceed50Characters" xml:space="preserve"><value>姓名不能超过 50 个字符</value></data>
+    <data name="TenantIdIsRequired" xml:space="preserve"><value>租户 ID 是必填项</value></data>
+    <data name="UserIdIsRequired" xml:space="preserve"><value>用户 ID 是必填项</value></data>
+    <data name="OAuthCodeIsRequired" xml:space="preserve"><value>授权码是必填项</value></data>
+    <data name="OAuthStateIsRequired" xml:space="preserve"><value>状态标识是必填项</value></data>
+    <data name="OAuthRedirectUriIsRequired" xml:space="preserve"><value>回调地址是必填项</value></data>
     
     <!-- Role Description -->
     <data name="RoleOwnerDescription" xml:space="preserve"><value>租户所有者</value></data>

@@ -16,6 +16,11 @@ public static class ModuleResolver
             var p when p.Contains("/api/v1/users/register") => LogSourceModules.UserRegistrationService,
             var p when p.Contains("/api/v1/users/invite") => LogSourceModules.UserInvitationService,
             var p when p.Contains("/api/v1/notifications") => LogSourceModules.NotificationService,
+            var p when p.Contains("/api/v1/auth/login") => LogSourceModules.UserLoginService,
+            var p when p.Contains("/api/v1/auth/login/tenant") => LogSourceModules.ConfirmTenantLoginService,
+            var p when p.Contains("/api/v1/auth/refresh") => LogSourceModules.RefreshTokenService,
+            var p when p.Contains("/api/v1/auth/logout") => LogSourceModules.LogoutService,
+            var p when p.Contains("/api/v1/auth/oauth/login") => LogSourceModules.OAuthLoginService,
             var p when p.Contains("/api/v1/auth") => LogSourceModules.AuthService,
             _ => LogSourceModules.CommonApi
         };

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Exceptions;

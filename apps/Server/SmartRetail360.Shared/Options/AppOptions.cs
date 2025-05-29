@@ -19,6 +19,22 @@ public class AppOptions
     public List<string> SensitiveFields { get; set; } = new() { "password", "token", "apiKey" };
     public double AccountActivationLimitMinutes { get; set; } = 1;
     public int ActivationTokenLimitMinutes { get; set; } = 15;
+    public double UserLoginLockTtlSeconds { get; set; } = 10;
+    public string JwtSecret { get; set; } = string.Empty;
+    public int UserLoginFailureThreshold { get; set; } = 3;
+    public int RefreshTokenExpiryDaysWhenStaySignedIn { get; set; } = 30;
+    public int RefreshTokenExpiryDaysDefault { get; set; } = 7;
+    public int AccessTokenExpirySeconds { get; set; } = 1200; // 20 minutes
+    public string RefreshTokenPath { get; set; } = "/api/v1/auth/refresh";
+    public string CookieDomain { get; set; } = "example.com";
+
+    public OAuthAppConfig OAuth { get; set; } = new();
+}
+
+public class OAuthAppConfig
+{
+    public string Tenant { get; set; } = string.Empty;
+    public List<string> RedirectUriWhitelist { get; set; } = new();
 }
 
 // Always use { get; set; } in options classes — binding requires a public setter, even for read-only values.

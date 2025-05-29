@@ -18,14 +18,29 @@ public static class ErrorCatalog
         { ErrorCodes.TokenAlreadyUsed, "TokenAlreadyUsed" },
         { ErrorCodes.TokenRevoked, "TokenRevoked" },
         { ErrorCodes.HasPendingActivationEmail, "HasPendingActivationEmail" },
-
-        // Account
+        { ErrorCodes.PasswordEmailMismatch, "PasswordEmailMismatch" },
+        { ErrorCodes.AccountNotActivated, "AccountNotActivated" },
         { ErrorCodes.AccountLocked, "AccountLocked" },
+        { ErrorCodes.AllTenantsDisabled, "AllTenantsDisabled" },
+        { ErrorCodes.TenantDisabled, "TenantDisabled" },
+        { ErrorCodes.TenantUserDisabled, "TenantUserDisabled" },
+        { ErrorCodes.AccountSuspended, "AccountSuspended" },
+        { ErrorCodes.AccountDeleted, "AccountDeleted" },
+        { ErrorCodes.AccountBanned, "AccountBanned" },
+        { ErrorCodes.TenantUserRecordNotFound, "TenantUserRecordNotFound" },
+        { ErrorCodes.TokenNotFound, "TokenNotFound" },
+        { ErrorCodes.InvalidOAuthProvider, "InvalidOAuthProvider" },
+        { ErrorCodes.OAuthUserProfileFetchFailed, "OAuthUserProfileFetchFailed" },
+        { ErrorCodes.OAuthUserProfileNotExists, "OAuthUserProfileNotExists" },
+        { ErrorCodes.RefreshTokenNotFound, "RefreshTokenNotFound" },
+        
+        // Account
         { ErrorCodes.AccountNotFound, "AccountNotFound" },
         { ErrorCodes.AccountAlreadyActivated, "AccountAlreadyActivated" },
         { ErrorCodes.AccountExistsButNotActivated, "AccountExistsButNotActivated" },
         { ErrorCodes.TooFrequentActivationAttempt, "TooFrequentActivationAttempt" },
-
+        { ErrorCodes.TenantNotFound, "TenantNotFound" },
+        
         // Email & Notification
         { ErrorCodes.EmailExists, "EmailExists" },
         { ErrorCodes.TooFrequentEmailRequest, "TooFrequentEmailRequest" },

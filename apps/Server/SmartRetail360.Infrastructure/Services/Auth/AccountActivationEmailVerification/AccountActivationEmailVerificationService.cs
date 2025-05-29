@@ -4,17 +4,16 @@ using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Context;
 using SmartRetail360.Shared.Enums;
-using SmartRetail360.Shared.Redis;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
 
-namespace SmartRetail360.Infrastructure.Services.Auth;
+namespace SmartRetail360.Infrastructure.Services.Auth.AccountActivationEmailVerification;
 
 public class AccountActivationEmailVerificationService : IAccountEmailVerificationService
 {
-    private readonly AuthDependencies _dep;
+    private readonly AccountActivationEmailVerificationDependencies _dep;
 
-    public AccountActivationEmailVerificationService(AuthDependencies dep)
+    public AccountActivationEmailVerificationService(AccountActivationEmailVerificationDependencies dep)
     {
         _dep = dep;
     }
@@ -65,26 +64,27 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         var (user, userError) = await _dep.PlatformContext.GetUserByIdAsync(tokenEntity.UserId);
         if (userError != null) return (null, null, null, null, userError);
 
-        var (tenantUser, tenantUserError) = await _dep.PlatformContext.GetTenantUserAsync(tokenEntity.UserId);
+        var (tenantUser, tenantUserError) =
+            await _dep.PlatformContext.GetTenantUserByTenantAndUserIdAsync(tokenEntity.UserId, tokenEntity.TenantId);
         if (tenantUserError != null) return (null, null, null, null, tenantUserError);
 
         Tenant? tenant = null;
         if (tenantUser != null)
         {
-            var (tenantEntity, tenantError) = await _dep.PlatformContext.GetTenantAsync(tenantUser.TenantId);
+            var (tenantEntity, tenantError) = await _dep.PlatformContext.GetTenantAsync(tokenEntity.TenantId);
             if (tenantError != null) return (null, null, null, null, tenantError);
             tenant = tenantEntity;
         }
-
+        
         _dep.UserContext.Inject(new UserExecutionContext
         {
             UserId = user?.Id,
             Email = user?.Email,
             TenantId = tenant?.Id,
-            RoleId = tenantUser?.RoleId
+            RoleId = tenantUser?[0].RoleId
         });
 
-        return (tokenEntity, user, tenant, tenantUser, null);
+        return (tokenEntity, user, tenant, tenantUser?[0], null);
     }
 
     private async Task<ApiResponse<object>?> CheckIdempotencyAsync(User? user)
@@ -123,8 +123,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
 
     private async Task<ApiResponse<object>?> RunValidationGuards(AccountActivationToken token, string tokenStr)
     {
-        var redisKey = RedisKeys.VerifyEmailRateLimit(tokenStr);
-        var isLimited = await _dep.RedisOperation.IsLimitedAsync(redisKey);
+        var isLimited = await _dep.RedisOperation.IsAccountActivationLimitedAsync(tokenStr);
 
         return await _dep.GuardChecker
             .Check(() => token.StatusEnum == ActivationTokenStatus.Used, LogEventType.AccountActivateFailure,
@@ -163,10 +162,8 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         );
 
         if (!result.IsSuccess) return result.ToObjectResponse();
-
-        var redisKey = RedisKeys.VerifyEmailRateLimit(tokenStr);
-        await _dep.RedisOperation.SetLimitAsync(redisKey,
-            TimeSpan.FromMinutes(_dep.AppOptions.AccountActivationLimitMinutes));
+        
+        await _dep.RedisOperation.SetAccountActivationLimitAsync(tokenStr);
         await _dep.LogDispatcher.Dispatch(LogEventType.AccountActivateSuccess);
 
         return ApiResponse<object>.Ok(null,

@@ -36,7 +36,9 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
 
                     b.Property<string>("Source")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("none");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -44,6 +46,9 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)")
                         .HasDefaultValue("pending");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -67,6 +72,8 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.HasIndex("Source");
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("Token")
                         .IsUnique();
@@ -127,6 +134,177 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.ToTable("audit_logs", (string)null);
                 });
 
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.OAuthAccount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeactivatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeactivatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DeactivationReason")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("none");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasDefaultValue("none");
+
+                    b.Property<string>("ProviderUserId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("active");
+
+                    b.Property<string>("TraceId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("Provider");
+
+                    b.HasIndex("ProviderUserId");
+
+                    b.HasIndex("TraceId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Email", "Provider");
+
+                    b.ToTable("oauth_accounts", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedByIp")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("ReasonRevoked")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("none");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RevokedByIp")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("TraceId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("TenantId", "UserId");
+
+                    b.ToTable("refresh_tokens", (string)null);
+                });
+
             modelBuilder.Entity("SmartRetail360.Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -144,8 +322,8 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
                         .HasDefaultValue("member");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -291,6 +469,11 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -324,9 +507,13 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
 
                     b.HasIndex("IsActive");
 
+                    b.HasIndex("IsDefault");
+
                     b.HasIndex("RoleId");
 
                     b.HasIndex("TraceId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("TenantId", "UserId")
                         .IsUnique();
@@ -339,6 +526,10 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -388,9 +579,13 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.Property<Guid?>("LastUpdatedBy")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("LogoUrl")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(10)")
+                        .HasDefaultValue("en");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -398,7 +593,6 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -441,6 +635,53 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.HasIndex("IsEmailVerified", "Status");
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.OAuthAccount", b =>
+                {
+                    b.HasOne("SmartRetail360.Domain.Entities.User", "User")
+                        .WithMany("OAuthAccounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_oauth_accounts_users_UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.TenantUser", b =>
+                {
+                    b.HasOne("SmartRetail360.Domain.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_tenant_users_roles_RoleId");
+
+                    b.HasOne("SmartRetail360.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_tenant_users_tenants_TenantId");
+
+                    b.HasOne("SmartRetail360.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_tenant_users_users_UserId");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.User", b =>
+                {
+                    b.Navigation("OAuthAccounts");
                 });
 #pragma warning restore 612, 618
         }

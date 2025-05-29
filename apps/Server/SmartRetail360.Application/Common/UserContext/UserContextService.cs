@@ -26,12 +26,12 @@ public class UserContextService : IUserContextService
             UserName = Get("UserName");
             IpAddress = ResolveIpAddress();
         }
-        
+
         if (string.IsNullOrWhiteSpace(TraceId))
         {
             TraceId = TraceIdGenerator.Generate(TraceIdPrefix.Get(TraceModule.General), GeneralConstants.Autogen);
         }
-        
+
         LogId = Guid.NewGuid().ToString();
     }
 
@@ -72,6 +72,7 @@ public class UserContextService : IUserContextService
     public string? RoleName { get; set; }
     public string? LogId { get; set; }
     public string? UserName { get; set; }
+    public LogEventType? LogEventType { get; set; }
 
     public void Inject(UserExecutionContext context)
     {
@@ -88,5 +89,6 @@ public class UserContextService : IUserContextService
         if (!string.IsNullOrWhiteSpace(context.RoleName)) RoleName = context.RoleName;
         if (!string.IsNullOrWhiteSpace(context.LogId)) LogId = context.LogId;
         if (!string.IsNullOrWhiteSpace(context.UserName)) UserName = context.UserName;
+        if (context.LogEventType != null) LogEventType = context.LogEventType;
     }
 }
