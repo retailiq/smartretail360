@@ -8,6 +8,8 @@ using SmartRetail360.Shared.Exceptions;
 using SmartRetail360.Shared.Options;
 using Serilog;
 using Sentry;
+using SmartRetail360.Application.Common.AccessControl;
+using SmartRetail360.Shared.Enums.AccessControl;
 
 namespace SmartRetail360.API.Controllers.Dev;
 
@@ -17,7 +19,7 @@ public class DevController : ControllerBase
 {
     private readonly AppDbContext _dbContext;
     private readonly AppOptions _appOptions;
-    
+
     private static readonly ActivitySource ActivitySource = new("SmartRetail360.API");
 
     public DevController(AppDbContext dbContext, AppOptions appOptions)
@@ -25,28 +27,42 @@ public class DevController : ControllerBase
         _dbContext = dbContext;
         _appOptions = appOptions;
     }
-    
+
+    [HttpGet("user/{id}")]
+    [AccessControl(DefaultResourceType.User, DefaultActionType.View)]
+    public IActionResult GetUserById(Guid id)
+    {
+        return Ok($"✅ ABAC allowed: you can view user {id}");
+    }
+
+    [HttpGet("test-abac-edit-product/{id}")]
+    [AccessControl(DefaultResourceType.Product, DefaultActionType.Edit)]
+    public IActionResult TestAbacAllowed(string id)
+    {
+        return Ok($"✅ ABAC allowed: you can view product {id}");
+    }
+
     [HttpGet("test-exception")]
     public IActionResult TestException()
     {
         // throw new CommonException(ErrorCodes.AccountAlreadyActivated, HttpStatusCode.AlreadyReported);
         throw new SecurityException(ErrorCodes.AccountLocked, HttpStatusCode.Forbidden);
     }
-    
+
     [HttpGet("test-sentry")]
     public IActionResult TestSentry()
     {
         SentrySdk.CaptureMessage("Hello Sentry from SmartRetail360");
         return Ok("Sentry message sent.");
     }
-    
+
     [HttpGet("test-serilog")]
     public IActionResult TestSerilog()
     {
         Log.Warning("🔥 Test warning to Loki from SmartRetail360 @ {Time}", DateTime.UtcNow);
         return Ok("Log sent!");
     }
-    
+
     [HttpGet("test-trace")]
     public async Task<IActionResult> TraceTest()
     {

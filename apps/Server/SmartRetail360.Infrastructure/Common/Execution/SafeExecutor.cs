@@ -3,7 +3,7 @@ using Npgsql;
 using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Logging;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
 

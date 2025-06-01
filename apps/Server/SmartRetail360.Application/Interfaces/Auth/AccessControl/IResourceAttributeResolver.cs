@@ -1,4 +1,4 @@
-namespace SmartRetail360.Application.Interfaces.Auth.Resource;
+namespace SmartRetail360.Application.Interfaces.Auth.AccessControl;
 
 public interface IResourceAttributeResolver
 {

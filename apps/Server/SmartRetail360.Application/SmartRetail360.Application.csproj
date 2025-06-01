@@ -19,7 +19,8 @@
     <ItemGroup>
         <ProjectReference Include="..\SmartRetail360.Contracts\SmartRetail360.Contracts.csproj" />
         <ProjectReference Include="..\SmartRetail360.Domain\SmartRetail360.Domain.csproj"/>
-        <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj"/>
+        <ProjectReference Include="..\SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj" />
+        <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
         <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj"/>
     </ItemGroup>
 

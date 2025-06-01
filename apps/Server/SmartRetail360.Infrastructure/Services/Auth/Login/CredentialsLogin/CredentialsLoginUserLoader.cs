@@ -1,6 +1,6 @@
 using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
 

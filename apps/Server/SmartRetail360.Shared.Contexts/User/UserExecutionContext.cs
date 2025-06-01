@@ -1,6 +1,7 @@
+using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Enums;
 
-namespace SmartRetail360.Shared.Context;
+namespace SmartRetail360.Shared.Contexts.User;
 
 public class UserExecutionContext
 {
@@ -18,4 +19,9 @@ public class UserExecutionContext
     public string? LogId { get; init; }
     public string? UserName { get; init; }
     public LogEventType? LogEventType { get; init; }
+    
+    public Domain.Entities.User? UserEntity { get; set; }
+    public TenantUser? TenantUserEntity { get; set; }
+    public Tenant? TenantEntity { get; set; }
+    public Role? RoleEntity { get; set; }
 }

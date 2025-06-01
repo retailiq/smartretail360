@@ -9,5 +9,6 @@ public interface IAccessTokenGenerator
         string tenantId,
         string roleId,
         string locale,
-        string traceId);
+        string traceId,
+        string env);
 }

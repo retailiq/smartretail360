@@ -1,9 +1,9 @@
-using System.Diagnostics;
 using Serilog;
 using Serilog.Enrichers.Span;
 using SmartRetail360.API;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Data.Seed;
+using SmartRetail360.Infrastructure.Data.Seed.AccessControl;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,10 +44,13 @@ if (app.Environment.IsProduction())
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var redis = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
-    
+
     await SystemRoleDbRunner.RunAsync(db);
     await SystemRoleCacheRunner.RunAsync(db, redis);
-    Console.WriteLine("[Startup] System role seeding completed.");
+
+    await AbacSeedRunner.RunAsync(db, redis);
+
+    Console.WriteLine("[Startup] System role + ABAC seeding completed.");
 }
 else
 {
@@ -64,11 +67,14 @@ else
             {
                 await SystemRoleDbRunner.RunAsync(db);
                 await SystemRoleCacheRunner.RunAsync(db, redis);
+
+                await AbacSeedRunner.RunAsync(db, redis);
+
                 Console.WriteLine("[Startup] System role seeding completed.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Startup] System role seeding failed: {ex.Message}");
+                Console.WriteLine($"[Startup] Seeding failed: {ex.Message}");
             }
         });
     });

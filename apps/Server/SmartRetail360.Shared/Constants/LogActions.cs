@@ -18,6 +18,7 @@ public static class LogActions
     public const string OAuthLogin = "OAUTH_LOGIN";
     public const string CredentialsLogin = "CREDENTIALS_LOGIN";
     public const string ConfirmTenantLogin = "CONFIRM_TENANT_LOGIN";
+    public const string AbacAccessAttempt = "ABAC_ACCESS_ATTEMPT";
     
     // ===== Email & Notification =====
     public const string MatchEmailStrategy = "MATCH_EMAIL_STRATEGY";

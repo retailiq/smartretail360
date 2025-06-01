@@ -1,4 +1,5 @@
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Domain.Entities.AccessControl;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Messaging.Payloads;
 using SmartRetail360.Shared.Responses;
@@ -16,6 +17,7 @@ public interface IPlatformContextService
     Task<(List<Tenant>?, ApiResponse<object>?)> GetTenantsByIdsAsync(List<Guid> tenantIds);
     Task<(OAuthAccount?, ApiResponse<object>?)> GetOAuthAccountAsync(string email, OAuthProvider provider);
     Task<(RefreshToken?, ApiResponse<object>?)> GetRefreshTokenAsync(string token);
-
+    Task<(List<AbacPolicy>?, ApiResponse<object>?)> GetAbacPoliciesByTenantIdAsync(Guid tenantId);
+    
     Task<ApiResponse<object>?> SendRegistrationInvitationEmailAsync(string token, ActivationEmailPayload payload);
 }

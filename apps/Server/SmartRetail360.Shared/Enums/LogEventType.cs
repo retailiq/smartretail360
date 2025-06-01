@@ -22,5 +22,7 @@ public enum LogEventType
     LogoutFailed,
     ConfirmTenantLoginFailure,
     ConfirmTenantLoginSuccess,
-    RefreshTokenReplayDetected
+    RefreshTokenReplayDetected,
+    AuthorizationFailure,
+    UpdateAbacPolicyFailure
 }

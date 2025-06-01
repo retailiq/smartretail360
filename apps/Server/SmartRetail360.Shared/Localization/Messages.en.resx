@@ -43,6 +43,12 @@
     <data name="RefreshTokenNotFound" xml:space="preserve"><value>Refresh token not found or has expired</value></data>
     <data name="RefreshTokenSuccess" xml:space="preserve"><value>Refresh token successful</value></data>
     <data name="LogoutSuccess" xml:space="preserve"><value>Logout successful</value></data>
+    <data name="AuthorizationFailure" xml:space="preserve"><value>You do not have permission to perform this action</value></data>
+    <data name="AbacPolicyUpdatedSuccessfully" xml:space="preserve"><value>ABAC policy updated successfully</value></data>
+    <data name="AbacPolicyNotFound" xml:space="preserve"><value>ABAC policy not found</value></data>
+    <data name="AbacPolicyUnchanged" xml:space="preserve"><value>Policy unchanged, no update performed</value></data>
+    <data name="InvalidAbacPolicyRule" xml:space="preserve"><value>Invalid or unsafe ABAC policy rule</value></data>
+    <data name="AbacPoliciesRetrieved" xml:space="preserve"><value>ABAC policies retrieved successfully.</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>

@@ -22,6 +22,240 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("none");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("abac_actions", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacEnvironment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("default");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("abac_environments", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacPolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("AppliesToRole")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("BasePolicyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EnvironmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("ResourceTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("RuleJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasMaxLength(64)
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActionId");
+
+                    b.HasIndex("BasePolicyId");
+
+                    b.HasIndex("EnvironmentId");
+
+                    b.HasIndex("ResourceTypeId");
+
+                    b.ToTable("abac_policies", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacPolicyTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Environment")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ResourceType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("RuleJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("abac_policy_templates", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacResourceGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("abac_resource_groups", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacResourceType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("none");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("abac_resource_types", (string)null);
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacResourceTypeGroupMap", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ResourceTypeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("ResourceTypeId");
+
+                    b.ToTable("abac_resource_type_group_map", (string)null);
+                });
+
             modelBuilder.Entity("SmartRetail360.Domain.Entities.AccountActivationToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -637,6 +871,68 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacPolicy", b =>
+                {
+                    b.HasOne("SmartRetail360.Domain.Entities.AccessControl.AbacAction", "Action")
+                        .WithMany("Policies")
+                        .HasForeignKey("ActionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartRetail360.Domain.Entities.AccessControl.AbacPolicy", "BasePolicy")
+                        .WithMany()
+                        .HasForeignKey("BasePolicyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("SmartRetail360.Domain.Entities.AccessControl.AbacEnvironment", "Environment")
+                        .WithMany("Policies")
+                        .HasForeignKey("EnvironmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartRetail360.Domain.Entities.AccessControl.AbacResourceType", "ResourceType")
+                        .WithMany()
+                        .HasForeignKey("ResourceTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Action");
+
+                    b.Navigation("BasePolicy");
+
+                    b.Navigation("Environment");
+
+                    b.Navigation("ResourceType");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacResourceType", b =>
+                {
+                    b.HasOne("SmartRetail360.Domain.Entities.AccessControl.AbacResourceGroup", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacResourceTypeGroupMap", b =>
+                {
+                    b.HasOne("SmartRetail360.Domain.Entities.AccessControl.AbacResourceGroup", "Group")
+                        .WithMany("ResourceTypes")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartRetail360.Domain.Entities.AccessControl.AbacResourceType", "ResourceType")
+                        .WithMany("Groups")
+                        .HasForeignKey("ResourceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("ResourceType");
+                });
+
             modelBuilder.Entity("SmartRetail360.Domain.Entities.OAuthAccount", b =>
                 {
                     b.HasOne("SmartRetail360.Domain.Entities.User", "User")
@@ -677,6 +973,26 @@ namespace SmartRetail360.Infrastructure.Data.Migrations
                     b.Navigation("Tenant");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacAction", b =>
+                {
+                    b.Navigation("Policies");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacEnvironment", b =>
+                {
+                    b.Navigation("Policies");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacResourceGroup", b =>
+                {
+                    b.Navigation("ResourceTypes");
+                });
+
+            modelBuilder.Entity("SmartRetail360.Domain.Entities.AccessControl.AbacResourceType", b =>
+                {
+                    b.Navigation("Groups");
                 });
 
             modelBuilder.Entity("SmartRetail360.Domain.Entities.User", b =>

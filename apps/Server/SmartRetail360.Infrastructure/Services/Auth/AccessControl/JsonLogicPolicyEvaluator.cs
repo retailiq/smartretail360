@@ -9,33 +9,44 @@ namespace SmartRetail360.Infrastructure.Services.Auth.AccessControl;
 public class JsonLogicPolicyEvaluator : IPolicyEvaluator
 {
     private readonly ILogger<JsonLogicPolicyEvaluator> _logger;
+    private readonly IPolicyRepo _policyRepo;
 
-    public JsonLogicPolicyEvaluator(ILogger<JsonLogicPolicyEvaluator> logger)
+    public JsonLogicPolicyEvaluator(
+        ILogger<JsonLogicPolicyEvaluator> logger,
+        IPolicyRepo policyRepo)
     {
         _logger = logger;
+        _policyRepo = policyRepo;
     }
 
-    public async Task<bool> EvaluateAsync(string resourceType, string action, object context)
+    public async Task<bool> EvaluateAsync(Guid tenantId, string resourceType, string action, object context)
     {
-        // 示例策略规则，可根据实际需求从数据库或配置文件加载
-        var ruleJson = """
-                       {
-                           "==": [ { "var": "user.tenant_id" }, "tenant-001" ]
-                       }
-                       """;
+        var envElement = JsonSerializer.SerializeToElement(context);
+        var envName = envElement.GetProperty("environment").GetProperty("name").GetString() ?? "default";
+        var ruleJson = await _policyRepo.GetPolicyJsonAsync(tenantId, resourceType, action, envName);
 
-        // 将规则和上下文数据解析为 JsonNode
-        var ruleNode = JsonNode.Parse(ruleJson);
-        var dataNode = JsonSerializer.SerializeToNode(context);
+        if (string.IsNullOrWhiteSpace(ruleJson))
+        {
+            _logger.LogWarning("[ABAC] No policy found for {Resource}:{Action}", resourceType, action);
+            return false;
+        }
 
-        // 应用规则
-        var result = JsonLogic.Apply(ruleNode!, dataNode!);
+        try
+        {
+            var ruleNode = JsonNode.Parse(ruleJson);
+            var dataNode = JsonSerializer.SerializeToNode(context);
 
-        var isAllowed = result?.GetValue<bool>() ?? false;
+            var result = JsonLogic.Apply(ruleNode!, dataNode!);
+            var isAllowed = result?.GetValue<bool>() ?? false;
 
-        _logger.LogInformation("[ABAC] Evaluated policy for resource '{Resource}' and action '{Action}', result: {Result}",
-            resourceType, action, isAllowed);
-
-        return isAllowed;
+            _logger.LogInformation("[ABAC] Evaluated policy {Resource}:{Action} => {Result}", resourceType, action,
+                isAllowed);
+            return isAllowed;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[ABAC] Failed to evaluate policy for {Resource}:{Action}", resourceType, action);
+            return false;
+        }
     }
 }

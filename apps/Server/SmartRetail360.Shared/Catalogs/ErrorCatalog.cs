@@ -33,6 +33,9 @@ public static class ErrorCatalog
         { ErrorCodes.OAuthUserProfileFetchFailed, "OAuthUserProfileFetchFailed" },
         { ErrorCodes.OAuthUserProfileNotExists, "OAuthUserProfileNotExists" },
         { ErrorCodes.RefreshTokenNotFound, "RefreshTokenNotFound" },
+        { ErrorCodes.AuthorizationFailure, "AuthorizationFailure" },
+        { ErrorCodes.AbacPolicyNotFound, "AbacPolicyNotFound" },
+        { ErrorCodes.InvalidAbacPolicyRule, "InvalidAbacPolicyRule" },
         
         // Account
         { ErrorCodes.AccountNotFound, "AccountNotFound" },

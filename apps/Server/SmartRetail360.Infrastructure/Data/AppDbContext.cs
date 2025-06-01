@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Domain.Entities.AccessControl;
 using SmartRetail360.Infrastructure.Data.Configurations;
 
 namespace SmartRetail360.Infrastructure.Data;
@@ -19,6 +20,13 @@ public class AppDbContext : DbContext
     public DbSet<AccountActivationToken> AccountActivationTokens => Set<AccountActivationToken>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<OAuthAccount> OAuthAccounts => Set<OAuthAccount>();
+    public DbSet<AbacPolicy> AbacPolicies => Set<AbacPolicy>();
+    public DbSet<AbacResourceType> AbacResourceTypes => Set<AbacResourceType>();
+    public DbSet<AbacAction> AbacActions => Set<AbacAction>();
+    public DbSet<AbacEnvironment> AbacEnvironments => Set<AbacEnvironment>();
+    public DbSet<AbacPolicyTemplate> AbacPolicyTemplates => Set<AbacPolicyTemplate>();
+    public DbSet<AbacResourceGroup> AbacResourceGroups => Set<AbacResourceGroup>();
+    public DbSet<AbacResourceTypeGroupMap> AbacResourceTypeGroupMaps => Set<AbacResourceTypeGroupMap>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,8 +34,9 @@ public class AppDbContext : DbContext
 
         // Apply configurations from the assembly automatically
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-        
+
         // Global filters
         modelBuilder.Entity<Role>().HasQueryFilter(r => r.IsSystemRole);
+        modelBuilder.Entity<AbacPolicy>().Ignore(x => x.Version);
     }
 }

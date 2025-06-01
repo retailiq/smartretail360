@@ -5,6 +5,7 @@ using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Infrastructure.Services.Auth;
@@ -51,7 +52,8 @@ public class AuthService : IAuthService
             tenantId: tokenEntity.TenantId.ToString(),
             roleId: tokenEntity.RoleId.ToString(),
             locale: tokenEntity.Locale,
-            traceId: _dep.UserContext.TraceId
+            traceId: _dep.UserContext.TraceId,
+            env: _dep.UserContext.Env.GetEnumMemberValue()
         );
 
         _dep.HttpContext.Response.Cookies.Append(GeneralConstants.Sr360RefreshToken, newToken!,

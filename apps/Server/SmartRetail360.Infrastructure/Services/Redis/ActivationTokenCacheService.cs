@@ -9,7 +9,7 @@ using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Options;
 using SmartRetail360.Shared.Redis;

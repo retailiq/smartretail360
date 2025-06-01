@@ -24,11 +24,13 @@ public class ContextHeaderMiddleware
         Set("UserId", "X-User-Id");
         Set("TenantId", "X-Tenant-Id");
         Set("RoleId", "X-Role-Id");
+        Set("RoleName", "X-Role-Name");
         Set("TraceId", "X-Trace-Id");
         Set("Locale", "X-Locale");
         Set("Email", "X-Email");
         Set("AccountType", "X-Account-Type");
         Set("UserName", "X-User-Name");
+        Set("Env", "X-Env");
         
         // Add TraceId to response headers
         context.Response.OnStarting(() =>

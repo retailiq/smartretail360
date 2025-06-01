@@ -4,6 +4,7 @@ using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Extensions;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Domain.Entities.AccessControl;
 using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Infrastructure.Services.Messaging;
 using SmartRetail360.Shared.Constants;
@@ -71,6 +72,17 @@ public class PlatformContextService : IPlatformContextService
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.TenantUsers.Where(tu => tu.UserId == userId).ToListAsync(),
+            LogEventType.DatabaseError,
+            LogReasons.DatabaseRetrievalFailed,
+            ErrorCodes.DatabaseUnavailable
+        );
+        return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
+    }
+    
+    public async Task<(List<AbacPolicy>?, ApiResponse<object>?)> GetAbacPoliciesByTenantIdAsync(Guid tenantId)
+    {
+        var result = await _safeExecutor.ExecuteAsync(
+            () => _db.AbacPolicies.Where(p => p.TenantId == tenantId).ToListAsync(),
             LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable

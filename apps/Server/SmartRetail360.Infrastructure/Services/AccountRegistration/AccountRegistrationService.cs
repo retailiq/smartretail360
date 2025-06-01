@@ -4,7 +4,7 @@ using SmartRetail360.Contracts.AccountRegistration.Responses;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Messaging.Factories;
@@ -133,6 +133,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                     _dep.Db.TenantUsers.Add(tenantUser);
                     _dep.Db.AccountActivationTokens.Add(accountActivationToken);
                     await _dep.Db.SaveChangesAsync();
+                    await _dep.AbacPolicyService.CreateDefaultPoliciesForTenantAsync(tenant.Id);
                     await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken);
                 },
                 LogEventType.DatabaseError,

@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using SmartRetail360.Application.Common.AccessControl;
 using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Models;
 using SmartRetail360.Application.Validators.AccountRegistration;
@@ -17,6 +18,8 @@ public static class DependencyInjection
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped<IUserContextService, UserContextService>();
 
+        services.AddScoped<AbacAuthorizationFilter>();
+        
         // FluentValidation 注册
         services.AddValidatorsFromAssemblyContaining<AccountRegisterRequestValidator>();
         services.AddFluentValidationAutoValidation();

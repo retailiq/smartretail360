@@ -17,6 +17,7 @@ using SmartRetail360.Infrastructure.Services.Notifications.Strategies;
 using SmartRetail360.Infrastructure.Services.Notifications.Templates;
 using StackExchange.Redis;
 using SmartRetail360.Application.Common.Execution;
+using SmartRetail360.Application.Interfaces.Auth.AccessControl;
 using SmartRetail360.Application.Interfaces.Caching;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
@@ -30,6 +31,8 @@ using SmartRetail360.Infrastructure.Logging.Loggers;
 using SmartRetail360.Infrastructure.Logging.Policies;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Infrastructure.Services.Auth;
+using SmartRetail360.Infrastructure.Services.Auth.AccessControl;
+using SmartRetail360.Infrastructure.Services.Auth.AccessControl.Resolvers;
 using SmartRetail360.Infrastructure.Services.Auth.AccountActivationEmailVerification;
 using SmartRetail360.Infrastructure.Services.Auth.Login.CredentialsLogin;
 using SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin;
@@ -83,6 +86,12 @@ public static class DependencyInjection
         // Register the Tenant Registration Service
         services.AddScoped<IAccountRegistrationService, AccountRegistrationService>();
 
+        services.Scan(scan => scan
+            .FromAssemblyOf<UserResourceResolver>()
+            .AddClasses(classes => classes.AssignableTo<ICustomResourceResolver>())
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        
         // Auth Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<ILoginService, CredentialsLoginService>();
@@ -95,6 +104,10 @@ public static class DependencyInjection
         services.AddScoped<FacebookOAuthHandler>();
         services.AddScoped<MicrosoftOAuthHandler>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IPolicyRepo, PolicyRepo>();
+        services.AddScoped<IPolicyEvaluator, JsonLogicPolicyEvaluator>();
+        services.AddScoped<IResourceAttributeResolver, CompositeResourceAttributeResolver>();
+        services.AddScoped<IAbacPolicyService, AbacPolicyService>();
 
         // Redis Service
         var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]!);
@@ -114,6 +127,7 @@ public static class DependencyInjection
                 deps.EmailContext = sp.GetRequiredService<EmailContext>();
                 deps.AuditLogger = sp.GetRequiredService<IAuditLogger>();
                 deps.EmailQueueProducer = sp.GetRequiredService<IEmailQueueProducer>();
+                deps.AbacPolicyService = sp.GetRequiredService<IAbacPolicyService>();
             }));
         services.AddScoped<AccountActivationEmailVerificationDependencies>(sp =>
             DependencyBuilder.Build<AccountActivationEmailVerificationDependencies>(sp, deps => { }));
@@ -129,6 +143,7 @@ public static class DependencyInjection
             {
                 deps.AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>();
                 deps.AccountSupport = sp.GetRequiredService<IAccountSupportService>();
+                deps.AbacPolicyService = sp.GetRequiredService<IAbacPolicyService>();
             }));
         services.AddScoped<OAuthLoginDependencies>(sp =>
             DependencyBuilder.Build<OAuthLoginDependencies>(sp, deps =>

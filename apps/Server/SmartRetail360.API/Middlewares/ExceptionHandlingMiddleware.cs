@@ -3,11 +3,11 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Exceptions;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Responses;
-using SmartRetail360.Application.Common.UserContext;
 
 namespace SmartRetail360.API.Middlewares;
 

@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Http;
+using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Enums.AccessControl;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Application.Common.UserContext;
@@ -25,6 +28,10 @@ public class UserContextService : IUserContextService
             Email = Get("Email");
             UserName = Get("UserName");
             IpAddress = ResolveIpAddress();
+            RoleName = Get("RoleName");
+            Env = Enum.TryParse<DefaultEnvironmentType>(Get("Env"), ignoreCase: true, out var parsedEnv)
+                ? parsedEnv
+                : DefaultEnvironmentType.Default;
         }
 
         if (string.IsNullOrWhiteSpace(TraceId))
@@ -72,7 +79,12 @@ public class UserContextService : IUserContextService
     public string? RoleName { get; set; }
     public string? LogId { get; set; }
     public string? UserName { get; set; }
+    public DefaultEnvironmentType Env { get; set; } = DefaultEnvironmentType.Default;
     public LogEventType? LogEventType { get; set; }
+    public User? UserEntity { get; set; }
+    public Tenant? TenantEntity { get; set; }
+    public TenantUser? TenantUserEntity { get; set; }
+    public Role? RoleEntity { get; set; }
 
     public void Inject(UserExecutionContext context)
     {
@@ -90,5 +102,34 @@ public class UserContextService : IUserContextService
         if (!string.IsNullOrWhiteSpace(context.LogId)) LogId = context.LogId;
         if (!string.IsNullOrWhiteSpace(context.UserName)) UserName = context.UserName;
         if (context.LogEventType != null) LogEventType = context.LogEventType;
+        if (context.UserEntity != null) UserEntity = context.UserEntity;
+        if (context.TenantEntity != null) TenantEntity = context.TenantEntity;
+        if (context.TenantUserEntity != null) TenantUserEntity = context.TenantUserEntity;
+        if (context.RoleEntity != null) RoleEntity = context.RoleEntity;
+    }
+
+    public UserExecutionContext ToExecutionContext()
+    {
+        return new UserExecutionContext
+        {
+            UserId = UserId,
+            TenantId = TenantId,
+            RoleId = RoleId,
+            TraceId = TraceId,
+            Locale = Locale,
+            Module = Module,
+            Email = Email,
+            ErrorStack = ErrorStack,
+            IpAddress = IpAddress,
+            Action = Action,
+            RoleName = RoleName,
+            LogId = LogId,
+            UserName = UserName,
+            LogEventType = LogEventType,
+            UserEntity = UserEntity,
+            TenantEntity = TenantEntity,
+            TenantUserEntity = TenantUserEntity,
+            RoleEntity = RoleEntity
+        };
     }
 }

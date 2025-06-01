@@ -24,7 +24,8 @@ public class AccessTokenGenerator : IAccessTokenGenerator
         string tenantId,
         string roleId,
         string locale,
-        string traceId)
+        string traceId,
+        string env)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.JwtSecret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -42,6 +43,7 @@ public class AccessTokenGenerator : IAccessTokenGenerator
             new Claim("role_id", roleId),
             new Claim("locale", locale),
             new Claim("trace_id", traceId),
+            new Claim("env", env),
             new Claim(JwtRegisteredClaimNames.Iat,
                 new DateTimeOffset(now).ToUnixTimeSeconds().ToString(),
                 ClaimValueTypes.Integer64)

@@ -31,6 +31,9 @@ public static class ErrorCodes
     public const int OAuthUserProfileFetchFailed = 5019;
     public const int OAuthUserProfileNotExists = 5020;
     public const int RefreshTokenNotFound = 5021;
+    public const int AuthorizationFailure = 5022;
+    public const int AbacPolicyNotFound = 5023;
+    public const int InvalidAbacPolicyRule = 5024;
 
     // Account
     public const int AccountNotFound = 6002;

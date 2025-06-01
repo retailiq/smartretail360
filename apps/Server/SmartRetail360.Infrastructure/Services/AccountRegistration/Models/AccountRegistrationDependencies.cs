@@ -1,3 +1,4 @@
+using SmartRetail360.Application.Interfaces.Auth.AccessControl;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Messaging;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
@@ -10,4 +11,5 @@ public class AccountRegistrationDependencies : BaseDependencies
     public EmailContext EmailContext { get; set; }
     public IEmailQueueProducer EmailQueueProducer { get; set; }
     public IAuditLogger AuditLogger { get; set; }
+    public IAbacPolicyService AbacPolicyService { get; set; }
 }

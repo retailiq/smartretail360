@@ -13,7 +13,7 @@ using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Messaging.Payloads;
 using System.Text.Json;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 
 namespace EmailWorker;
 

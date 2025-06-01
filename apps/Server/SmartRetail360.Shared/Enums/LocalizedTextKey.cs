@@ -16,6 +16,9 @@ public enum LocalizedTextKey
     UserLoginSuccess,
     RefreshTokenSuccess,
     LogoutSuccess,
+    AbacPolicyUpdatedSuccessfully,
+    AbacPolicyUnchanged,
+    AbacPoliciesRetrieved,
     
     // Role descriptions
     RoleOwnerDescription,

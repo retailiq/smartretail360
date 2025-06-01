@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.WorkerBootst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Contracts", "SmartRetail360.Contracts\SmartRetail360.Contracts.csproj", "{61C6E3AD-7E16-4778-954E-B6D54326DBA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartRetail360.Shared.Contexts", "SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj", "{813B5BBA-0226-4745-9C69-636F6E1C89E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,5 +51,9 @@ Global
 		{61C6E3AD-7E16-4778-954E-B6D54326DBA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61C6E3AD-7E16-4778-954E-B6D54326DBA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61C6E3AD-7E16-4778-954E-B6D54326DBA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{813B5BBA-0226-4745-9C69-636F6E1C89E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{813B5BBA-0226-4745-9C69-636F6E1C89E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{813B5BBA-0226-4745-9C69-636F6E1C89E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{813B5BBA-0226-4745-9C69-636F6E1C89E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

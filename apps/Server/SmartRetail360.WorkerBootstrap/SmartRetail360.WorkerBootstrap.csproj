@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj" />
     <ProjectReference Include="..\SmartRetail360.Application\SmartRetail360.Application.csproj" />
     <ProjectReference Include="..\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj" />
   </ItemGroup>

@@ -43,6 +43,12 @@
     <data name="RefreshTokenNotFound" xml:space="preserve"><value>刷新令牌不存在或已失效</value></data>
     <data name="RefreshTokenSuccess" xml:space="preserve"><value>刷新令牌成功</value></data>
     <data name="LogoutSuccess" xml:space="preserve"><value>退出登录成功</value></data>
+    <data name="AuthorizationFailure" xml:space="preserve"><value>您没有权限执行此操作</value></data>
+    <data name="AbacPolicyUpdatedSuccessfully" xml:space="preserve"><value>ABAC 策略更新成功</value></data>
+    <data name="AbacPolicyNotFound" xml:space="preserve"><value>未找到对应的 ABAC 策略</value></data>
+    <data name="AbacPolicyUnchanged" xml:space="preserve"><value>策略未发生变更，无需更新</value></data>
+    <data name="InvalidAbacPolicyRule" xml:space="preserve"><value>无效或不安全的 ABAC 策略规则</value></data>
+    <data name="AbacPoliciesRetrieved" xml:space="preserve"><value>成功获取 ABAC 策略列表。</value></data>
     
     <!-- Account-related -->
     <data name="AccountNotFound" xml:space="preserve"><value>账户不存在</value></data>

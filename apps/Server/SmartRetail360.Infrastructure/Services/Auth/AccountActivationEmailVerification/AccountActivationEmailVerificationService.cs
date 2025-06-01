@@ -2,7 +2,7 @@ using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;

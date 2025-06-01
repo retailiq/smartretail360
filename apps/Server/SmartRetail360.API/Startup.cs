@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using SmartRetail360.API.Extensions;
 using SmartRetail360.Application;
+using SmartRetail360.Application.Common.AccessControl;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Infrastructure;
 using SmartRetail360.Infrastructure.Logging.Context;
@@ -27,6 +28,12 @@ public class Startup
         services.AddApplicationLayer();
         services.AddInfrastructureLayer(Configuration);
         services.AddApiLayer(Configuration);
+        
+        // ABAC Authorization Filter
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<AbacAuthorizationFilter>();
+        });
         
         // Http Context Accessor(Should be in Startup.cs)
         services.AddHttpContextAccessor();

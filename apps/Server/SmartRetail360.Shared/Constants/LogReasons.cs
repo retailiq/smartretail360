@@ -32,7 +32,10 @@ public static class LogReasons
     public const string OAuthUserProfileNotExists = "OAUTH_USER_PROFILE_NOT_EXISTS";
     public const string RefreshTokenNotFound = "REFRESH_TOKEN_NOT_FOUND";
     public const string RefreshTokenReplayDetected = "REFRESH_TOKEN_REPLAY_DETECTED";
-
+    public const string AccessDeniedByPolicy = "ACCESS_DENIED_BY_POLICY";
+    public const string AbacPolicyNotFound = "ABAC_POLICY_NOT_FOUND";
+    public const string InvalidAbacPolicyRule = "INVALID_ABAC_POLICY_RULE";
+    
     // Account
     public const string AccountAlreadyExists = "ACCOUNT_ALREADY_EXISTS";
     public const string AccountAlreadyActivated = "ACCOUNT_ALREADY_ACTIVATED";

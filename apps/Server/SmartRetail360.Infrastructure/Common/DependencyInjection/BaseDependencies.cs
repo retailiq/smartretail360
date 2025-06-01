@@ -1,9 +1,9 @@
+using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Auth;
 
 namespace SmartRetail360.Infrastructure.Common.DependencyInjection;
 
 using SmartRetail360.Application.Common.Execution;
-using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Common;
 using SmartRetail360.Application.Interfaces.Logging;
 using SmartRetail360.Application.Interfaces.Redis;
