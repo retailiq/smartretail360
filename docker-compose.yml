@@ -14,6 +14,7 @@ services:
   alloy:
     image: grafana/alloy:latest
     container_name: alloy
+    restart: unless-stopped
     env_file:
       - .env.dev
     volumes:
@@ -28,6 +29,7 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgres-local
+    restart: unless-stopped
     environment:
       POSTGRES_USER: danieltate
       POSTGRES_PASSWORD: danieltate123
@@ -39,24 +41,9 @@ services:
     networks:
       - smartretail360-net
 
-  localstack:
-    image: localstack/localstack:latest
-    container_name: localstack
-    ports:
-      - "4566:4566"  # All AWS services port
-    environment:
-      - SERVICES=sqs
-      - DEBUG=1
-    volumes:
-      - localstack_data:/tmp/localstack
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - smartretail360-net
-
 volumes:
   redis-data:
   postgres_data:
-  localstack_data:
 
 networks:
   smartretail360-net:
