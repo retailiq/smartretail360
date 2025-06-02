@@ -41,5 +41,10 @@ public class AbacPolicyConfiguration : IEntityTypeConfiguration<AbacPolicy>
             .WithMany()
             .HasForeignKey(e => e.BasePolicyId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        entity.HasOne(e => e.Template)
+            .WithMany()
+            .HasForeignKey(e => e.TemplateId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

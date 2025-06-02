@@ -12,4 +12,5 @@ public interface IAbacPolicyService
     Task<int> ApplyPolicyTemplatesToTenantAsync(Guid tenantId);
     Task CreatePoliciesFromTemplateAsync(Guid tenantId, string templateName);
     Task<ApiResponse<object>> DerivePolicyFromTemplateAsync(DeriveAbacPolicyRequest request);
+    Task<int> SyncPolicyFromTemplateAsync(Guid templateId, string newRuleJson);
 }

@@ -24,8 +24,11 @@ public class AbacPolicy : IHasCreatedAt, IHasUpdatedAt
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    public bool AllowTemplateSync { get; set; } = true; 
+    public Guid? TemplateId { get; set; }
     public Guid? BasePolicyId { get; set; } // ✅ 模板继承支持
     public AbacPolicy? BasePolicy { get; set; }
+    public AbacPolicyTemplate? Template { get; set; }
     
     public AbacResourceType ResourceType { get; set; } = default!;
     public AbacAction Action { get; set; } = default!;

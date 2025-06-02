@@ -21,7 +21,7 @@ public static class AbacSeeder
         new AbacPolicyTemplate
         {
             TemplateName = "DataScopedView",
-            ResourceType = "data", // 这是资源组名
+            ResourceType = "data", 
             Action = "view",
             Environment = "client",
             RuleJson = """{ "===": [ { "var": "user.tenant_id" }, { "var": "resource.tenant_id" } ] }""",
