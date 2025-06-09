@@ -1,52 +1,60 @@
-# 开发命令
+# Dev Cmds
 dev-client:
-	cd apps/client && pnpm dev
+    cd apps/client && pnpm dev
 
 dev-nestjs:
-	cd apps/data-gateway && pnpm start:dev
+    cd apps/data-gateway && pnpm start:dev
 
 dev-net:
-	cd apps/server && dotnet watch run
+    cd apps/server && dotnet watch run
 
 dev-ai:
-	cd apps/ai-services && uvicorn app:main --reload
+    cd apps/ai-services && uvicorn app:main --reload
 
-# 构建命令
+# Build Cmds
 build-client:
-	cd apps/client && pnpm build
+    cd apps/client && pnpm build
 
 build-api:
-	cd apps/server && dotnet publish -c Release -o dist
+    cd apps/server && dotnet publish -c Release -o dist
 
 build-ai:
-	cd apps/ai-services && python train.py
+    cd apps/ai-services && python train.py
 
 email-worker:
     cd apps/workers/EmailWorker && dotnet run
 
-# 清理命令
+# Build All
 clean:
-	rm -rf node_modules dist .turbo
+    rm -rf node_modules dist .turbo
 
-# 一键启动
+# Start Server
 dev-all:
-	tmux kill-session -t dev || true
-	tmux new-session -d -s dev -n email 'cd apps/workers/EmailWorker && dotnet watch run'
-	tmux select-window -t dev:0
-	tmux attach-session -t dev
+    tmux kill-session -t dev || true
+    tmux new-session -d -s dev -n email 'cd apps/workers/EmailWorker && dotnet watch run'
+    tmux select-window -t dev:0
+    tmux attach-session -t dev
+
 #	tmux new-session -d -s dev -n client 'cd apps/client && pnpm dev'
 #	tmux new-window -t dev:1 -n nestjs 'cd apps/data-gateway && pnpm start:dev'
 #	tmux new-window -t dev:2 -n .net 'cd apps/server/SmartRetail360.API && dotnet watch run'
 #	tmux new-window -t dev:3 -n ai 'cd apps/ai-services && uvicorn app:main --reload'
 
-
-# 一键关闭
+# Kill Dev Session
 kill-dev:
-	tmux kill-session -t dev || echo "Session already closed."
+    tmux kill-session -t dev || echo "Session already closed."
+
+# Add Dependencies
 
 # just add-client "-D openapi-typescript"
 add-client dep:
-    pnpm add {{dep}} -F client
+    pnpm add {{ dep }} -F client
 
 add-nestjs dep:
-    pnpm add {{dep}} -F data-gateway
+    pnpm add {{ dep }} -F data-gateway
+
+add-client-dev dep:
+    pnpm add -D {{ dep }} -F client
+
+add-nestjs-dev dep:
+    pnpm add -D {{ dep }} -F data-gateway
