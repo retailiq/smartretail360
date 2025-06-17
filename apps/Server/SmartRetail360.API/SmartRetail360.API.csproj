@@ -15,8 +15,8 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.15" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
@@ -46,6 +46,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.ABAC\SmartRetail360.ABAC.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Notifications\SmartRetail360.Notifications.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Caching\SmartRetail360.Caching.csproj"/>
     </ItemGroup>
 
 </Project>

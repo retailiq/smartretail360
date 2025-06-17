@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+    </resheader>
+
+    <!-- General -->
+    <data name="InternalServerError" xml:space="preserve"><value>Internal server error</value></data>
+    <data name="DatabaseUnavailable" xml:space="preserve"><value>Database unavailable</value></data>
+    
+    <!-- Auth -->
+    <data name="InvalidToken" xml:space="preserve"><value>Invalid token</value></data>
+    <data name="TokenExpired" xml:space="preserve"><value>Token has expired</value></data>
+    <data name="TokenMissing" xml:space="preserve"><value>Authorization token is missing</value></data>
+    <data name="TokenValid" xml:space="preserve"><value>Authorization token is valid</value></data>
+    <data name="InvalidPassword" xml:space="preserve"><value>Invalid password</value></data>
+    <data name="TokenAlreadyUsed" xml:space="preserve"><value>The token has already been used</value></data>
+    <data name="TokenRevoked" xml:space="preserve"><value>The token has been revoked</value></data>
+    <data name="HasPendingActivationEmail" xml:space="preserve"><value>An activation email is already pending. Please check your inbox</value></data>
+    <data name="DuplicateLoginAttempt" xml:space="preserve"><value>Your login is already in progress. Please try again later</value></data>
+    <data name="PasswordEmailMismatch" xml:space="preserve"><value>The email and password you entered do not match. Please try again.</value></data>
+    <data name="AccountNotActivated" xml:space="preserve"><value>Your account is not activated yet. Please check your email to complete the activation.</value></data>
+    <data name="UserLoginSuccess" xml:space="preserve"><value>You have successfully logged in</value></data>
+    <data name="AccountLocked" xml:space="preserve"><value>Your account has been locked, please contact support</value></data>
+    <data name="AllTenantsDisabled" xml:space="preserve"><value>Your account is associated with tenants that are all currently disabled. Please contact support</value></data>
+    <data name="TenantUserDisabled" xml:space="preserve"><value>Your access to this tenant has been disabled. Please contact the tenant administrator</value></data>
+    <data name="TenantDisabled" xml:space="preserve"><value>This tenant has been disabled. Please contact the platform administrator</value></data>
+    <data name="AccountSuspended" xml:space="preserve"><value>Your account has been temporarily suspended. Please contact support</value></data>
+    <data name="AccountDeleted" xml:space="preserve"><value>This account has been deleted. Access is no longer available</value></data>
+    <data name="AccountBanned" xml:space="preserve"><value>Your account has been permanently banned due to policy violations</value></data>
+    <data name="TenantUserRecordNotFound" xml:space="preserve"><value>User record not found in the current tenant. Please verify your account</value></data>
+    <data name="TokenNotFound" xml:space="preserve"><value>The token was not found</value></data>
+    <data name="InvalidOAuthProvider" xml:space="preserve"><value>Invalid OAuth provider</value></data>
+    <data name="OAuthUserProfileFetchFailed" xml:space="preserve"><value>Failed to fetch user profile from provider</value></data>
+    <data name="OAuthUserProfileNotExists" xml:space="preserve"><value>OAuth user profile does not exist</value></data>
+    <data name="RefreshTokenMissing" xml:space="preserve"><value>Refresh token is missing</value></data>
+    <data name="RefreshTokenSuccess" xml:space="preserve"><value>Refresh token successful</value></data>
+    <data name="LogoutSuccess" xml:space="preserve"><value>Logout successful</value></data>
+    <data name="AuthorizationFailure" xml:space="preserve"><value>You do not have permission to perform this action</value></data>
+    <data name="AbacPolicyUpdatedSuccessfully" xml:space="preserve"><value>ABAC policy updated successfully</value></data>
+    <data name="AbacPolicyNotFound" xml:space="preserve"><value>ABAC policy not found</value></data>
+    <data name="AbacPolicyUnchanged" xml:space="preserve"><value>Policy unchanged, no update performed</value></data>
+    <data name="InvalidAbacPolicyRule" xml:space="preserve"><value>Invalid or unsafe ABAC policy rule</value></data>
+    <data name="AbacPoliciesRetrieved" xml:space="preserve"><value>ABAC policies retrieved successfully.</value></data>
+    <data name="RefreshTokenExpired" xml:space="preserve"><value>Your session has expired. Please log in again</value></data>
+    <data name="RefreshTokenReplayDetected" xml:space="preserve"><value>Refresh token replay detected</value></data>
+    <data name="RefreshTokenRevoked" xml:space="preserve"><value>Refresh token revoked</value></data>
+    <data name="TokenValidationFailed" xml:space="preserve"><value>Token validation failed</value></data>
+    <data name="AccountNotActivatedOrInvitationPending" xml:space="preserve"><value>Your account is not activated or the invitation has not been confirmed</value></data>
+    <data name="AbacPolicyDisabled" xml:space="preserve"><value>The policy is currently disabled. Please enable it before making changes</value></data>
+    <data name="AbacPolicyEnableSuccessfully" xml:space="preserve"><value>The policy has been successfully enabled</value></data>
+    <data name="AbacPolicyDisableSuccessfully" xml:space="preserve"><value>The policy has been disabled</value></data>
+    <data name="AbacPolicyHasBeenReplaced" xml:space="preserve"><value>This policy has been replaced by a newer version and cannot be re-enabled or edit</value></data>
+    
+    <!-- Account-related -->
+    <data name="AccountNotFound" xml:space="preserve"><value>Account not found</value></data>
+    <data name="AccountExistsButNotActivated" xml:space="preserve"><value>This account already exists but has not been activated yet. Please check your email or resend the activation link</value></data>
+    <data name="AccountAlreadyActivated" xml:space="preserve"><value>This account has already been activated. Please log in directly</value></data>
+    <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>You are trying to activate your account too frequently. Please try again later</value></data>
+    <data name="AccountRegistered" xml:space="preserve"><value>Tenant registered successfully, an activation link has been sent to your email, please verify to complete registration, the link is valid for {0} minutes</value></data>
+    <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>Your account has been successfully activated. You may now log in securely</value></data>
+    <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>Your registration is already in progress. Please try again later</value></data>
+    <data name="TenantNotFound" xml:space="preserve"><value>The specified tenant could not be found. Please verify your selection or contact support</value></data>
+    
+    <!-- Email & Notification -->
+    <data name="EmailExists" xml:space="preserve"><value>Email already exists</value></data>
+    <data name="EmailResent" xml:space="preserve"><value>Activation email has been resent. The link is valid for {0} minutes</value></data>
+    <data name="EmailSendFailed" xml:space="preserve"><value>Failed to send email</value></data>
+    <data name="TooFrequentEmailRequest" xml:space="preserve"><value>Too many email requests. Please try again later</value></data>
+    <data name="UnsupportedEmailTemplate" xml:space="preserve"><value>Unsupported email template</value></data>
+    
+    <!-- Email Template -->
+    <data name="AccountActivationTitle" xml:space="preserve"><value>Dear {0}:</value></data>
+    <data name="AccountActivationGreeting" xml:space="preserve"><value>Thank you for registering.</value></data>
+    <data name="AccountActivationInstruction" xml:space="preserve"><value>Please click the button below to activate your account.</value></data>
+    <data name="AccountActivationCtaText" xml:space="preserve"><value>Activate Now</value></data>
+    <data name="AccountActivationFooter" xml:space="preserve"><value>This email was sent automatically. Please do not reply.</value></data>
+    <data name="AccountActivationSubject" xml:space="preserve"><value>Activate Your Account</value></data>
+    <data name="AccountActivationValidityNotice" xml:space="preserve"><value>This link is valid for {0} minutes.</value></data>
+    
+    <!-- Field Validation -->
+    <data name="TokenIsRequired" xml:space="preserve"><value>Token is required</value></data>
+    <data name="InvalidTokenFormat" xml:space="preserve"><value>Invalid token format</value></data>
+    <data name="EmailIsRequired" xml:space="preserve"><value>Email is required</value></data>
+    <data name="InvalidEmailFormat" xml:space="preserve"><value>Invalid email format</value></data>
+    <data name="PasswordIsRequired" xml:space="preserve"><value>Password is required</value></data>
+    <data name="PasswordMustBeAtLeast8Characters" xml:space="preserve"><value>Password must be at least 8 characters</value></data>
+    <data name="PasswordMustContainUppercase" xml:space="preserve"><value>Password must contain an uppercase letter</value></data>
+    <data name="PasswordMustContainLowercase" xml:space="preserve"><value>Password must contain a lowercase letter</value></data>
+    <data name="PasswordMustContainDigit" xml:space="preserve"><value>Password must contain a digit</value></data>
+    <data name="PasswordMustContainSpecialCharacter" xml:space="preserve"><value>Password must contain a special character</value></data>
+    <data name="InvalidEmailTemplate" xml:space="preserve"><value>Invalid email template</value></data>
+    <data name="PasswordConfirmationIsRequired" xml:space="preserve"><value>Password confirmation is required</value></data>
+    <data name="PasswordsDoNotMatch" xml:space="preserve"><value>Passwords do not match</value></data>
+    <data name="NameIsRequired" xml:space="preserve"><value>Name is required</value></data>
+    <data name="NameMustBeAtLeast1Characters" xml:space="preserve"><value>Name must be at least 1 character long</value></data>
+    <data name="NameMustNotExceed50Characters" xml:space="preserve"><value>Name must not exceed 50 characters</value></data>
+    <data name="TenantIdIsRequired" xml:space="preserve"><value>Tenant ID is required</value></data>
+    <data name="UserIdIsRequired" xml:space="preserve"><value>User ID is required</value></data>
+    <data name="IsStaySignedInIsRequired" xml:space="preserve"><value>The stay signed in option must be specified</value></data>
+    <data name="OAuthCodeIsRequired" xml:space="preserve"><value>Authorization code is required</value></data>
+    <data name="OAuthStateIsRequired" xml:space="preserve"><value>State is required</value></data>
+    <data name="OAuthRedirectUriIsRequired" xml:space="preserve"><value>Redirect URI is required</value></data>
+    <data name="AbacPolicyStatusRequired" xml:space="preserve"><value>Policy status flag is required</value></data>
+    <data name="AbacPolicyRuleJsonRequired" xml:space="preserve"><value>Rule JSON must not be empty</value></data>
+    
+    <!-- Role Description -->
+    <data name="RoleOwnerDescription" xml:space="preserve"><value>Tenant owner</value></data>
+    <data name="RoleAdminDescription" xml:space="preserve"><value>Full access administrator</value></data>
+    <data name="RoleAnalystDescription" xml:space="preserve"><value>Data analyst</value></data>
+    <data name="RoleMemberDescription" xml:space="preserve"><value>Regular member with standard access</value></data>
+    <data name="RoleGuestDescription" xml:space="preserve"><value>Limited access guest</value></data>
+    
+</root>

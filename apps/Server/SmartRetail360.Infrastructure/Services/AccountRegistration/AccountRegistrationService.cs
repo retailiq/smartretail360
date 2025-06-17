@@ -4,7 +4,7 @@ using SmartRetail360.Contracts.AccountRegistration.Responses;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Messaging.Factories;
@@ -31,13 +31,8 @@ public class AccountRegistrationService : IAccountRegistrationService
         });
 
         var slug = SlugGenerator.GenerateSlug(request.Email);
-
         var traceId = _dep.UserContext.TraceId;
-        if (string.IsNullOrWhiteSpace(traceId))
-        {
-            traceId = TraceIdGenerator.Generate(TraceIdPrefix.Get(TraceModule.Auth), slug);
-        }
-
+        
         var lockAcquired = await _dep.RedisOperation.AcquireRegistrationLockAsync(request.Email.ToLower());
         var lockCheck = await _dep.GuardChecker
             .Check(() => !lockAcquired, LogEventType.RegisterUserFailure, LogReasons.LockNotAcquired,
@@ -66,7 +61,7 @@ public class AccountRegistrationService : IAccountRegistrationService
             if (guardResult != null)
                 return guardResult.To<AccountRegisterResponse>();
 
-            var role = await _dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Admin);
+            var role = await _dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Owner);
             var roleCheckResult = await _dep.GuardChecker
                 .Check(() => role == null, LogEventType.RegisterUserFailure,
                     LogReasons.RoleListNotFound, ErrorCodes.InternalServerError)
@@ -95,6 +90,7 @@ public class AccountRegistrationService : IAccountRegistrationService
             {
                 TraceId = traceId,
                 CreatedBy = user.Id,
+                Slug = slug,
             };
 
             var tenantUser = new TenantUser
@@ -111,7 +107,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                 UserId = user.Id,
                 TenantId = tenant.Id,
                 Token = emailVerificationToken,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.ActivationTokenLimitMinutes),
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.AccountActivationLimitMinutes),
                 TraceId = traceId,
                 SourceEnum = ActivationSource.Registration
             };
@@ -133,6 +129,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                     _dep.Db.TenantUsers.Add(tenantUser);
                     _dep.Db.AccountActivationTokens.Add(accountActivationToken);
                     await _dep.Db.SaveChangesAsync();
+                    await _dep.AbacPolicyService.CreateDefaultPoliciesForTenantAsync(tenant.Id);
                     await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken);
                 },
                 LogEventType.DatabaseError,
@@ -149,7 +146,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                 emailVerificationToken,
                 LogActions.UserRegistrationActivationEmailSend,
                 EmailTemplate.UserRegistrationActivation,
-                _dep.AppOptions.ActivationTokenLimitMinutes
+                _dep.AppOptions.AccountActivationLimitMinutes
             );
 
             var emailError =

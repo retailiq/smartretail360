@@ -1,11 +1,18 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.Options;
+using SmartRetail360.ABAC;
 using SmartRetail360.API.Extensions;
 using SmartRetail360.Application;
-using SmartRetail360.Application.Interfaces.Logging;
+using SmartRetail360.Execution;
 using SmartRetail360.Infrastructure;
-using SmartRetail360.Infrastructure.Logging.Context;
+using SmartRetail360.Logging;
+using SmartRetail360.Messaging;
+using SmartRetail360.Notifications;
+using SmartRetail360.Persistence;
+using SmartRetail360.Platform;
+using SmartRetail360.Shared;
+using SmartRetail360.Shared.Contexts;
+using SmartRetail360.Shared.Localization;
+using DependencyInjection = SmartRetail360.Logging.DependencyInjection;
 
 namespace SmartRetail360.API;
 
@@ -23,40 +30,33 @@ public class Startup
     {
         services.AddAuthorization();
 
-        // Register Api, Application, and Infrastructure layers
-        services.AddApplicationLayer();
-        services.AddInfrastructureLayer(Configuration);
-        services.AddApiLayer(Configuration);
-        
+        // Register Layers and Shared Contexts
+        DependencyInjection.AddLogging(services
+            .AddApplicationLayer()
+            .AddInfrastructureLayer(Configuration)
+            .AddApiLayer(Configuration)
+            .AddPersistence(Configuration)
+            .AddMessaging(Configuration)
+            .AddExecution()
+            .AddPlatform()
+            .AddAbac(Configuration)
+            .AddNotifications()
+            .AddSharedContexts()
+            .AddCaching(Configuration)
+            .AddShared(Configuration));
+
+        // Register SmartRetail Localization
+        services.AddSmartRetailLocalization(Configuration);
+
         // Http Context Accessor(Should be in Startup.cs)
         services.AddHttpContextAccessor();
-        services.AddScoped<ILogContextAccessor, LogContextAccessor>();
     }
 
     // Configure middleware pipeline
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // Localization(Should be before exception handling middleware)
-        var locOptions = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
-        app.UseRequestLocalization(locOptions.Value);
-
-        // Read X-Locale header and set culture
-        app.Use(async (context, next) =>
-        {
-            if (context.Request.Headers.TryGetValue("X-Locale", out var cultureValues))
-            {
-                var culture = cultureValues.ToString();
-                if (!string.IsNullOrEmpty(culture))
-                {
-                    var cultureInfo = new CultureInfo(culture);
-                    CultureInfo.CurrentCulture = cultureInfo;
-                    CultureInfo.CurrentUICulture = cultureInfo;
-                }
-            }
-
-            await next();
-        });
-
+        //Localization Middleware
+        app.UseSmartRetailLocalization();
         // Customized Middleware
         app.UseSmartRetailMiddlewares();
 
@@ -68,11 +68,12 @@ public class Startup
                 var provider = app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>();
                 foreach (var desc in provider.ApiVersionDescriptions)
                 {
-                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json", desc.GroupName.ToUpperInvariant());
+                    options.SwaggerEndpoint($"/swagger/{desc.GroupName}/swagger.json",
+                        desc.GroupName.ToUpperInvariant());
                 }
             });
         }
-        
+
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthorization();

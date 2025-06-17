@@ -19,6 +19,8 @@ public class LoginGuardCheckers
     {
         var lockAcquired = await _ctx.Dep.RedisOperation.AcquireUserLoginLockAsync(_ctx.User!.Email.ToLower());
         
+        await _ctx.Dep.RedisOperation.ResetUserLoginFailuresAsync(_ctx.User.Email);
+        
         var loginLockCheck = await _ctx.Dep.GuardChecker
             .Check(() => !lockAcquired, LogEventType.LoginFailure, LogReasons.LockNotAcquired,
                 ErrorCodes.DuplicateLoginAttempt)

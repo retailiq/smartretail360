@@ -1,7 +1,7 @@
 using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Responses;
@@ -38,7 +38,7 @@ public class OAuthUserTenantResolver
 
         if (user == null)
         {
-            var role = await _ctx.Dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Admin);
+            var role = await _ctx.Dep.RedisOperation.GetSystemRoleAsync(SystemRoleType.Owner);
             var roleCheckResult = await _ctx.Dep.GuardChecker
                 .Check(() => role == null,
                     LogEventType.CredentialsLoginFailure, LogReasons.RoleListNotFound,
@@ -90,6 +90,7 @@ public class OAuthUserTenantResolver
                     _ctx.Dep.Db.Tenants.Add(newTenant);
                     _ctx.Dep.Db.TenantUsers.Add(newTenantUser);
                     await _ctx.Dep.Db.SaveChangesAsync();
+                    await _ctx.Dep.AbacPolicyService.CreateDefaultPoliciesForTenantAsync(newTenant.Id, true);
                 },
                 LogEventType.DatabaseError,
                 LogReasons.DatabaseSaveFailed,

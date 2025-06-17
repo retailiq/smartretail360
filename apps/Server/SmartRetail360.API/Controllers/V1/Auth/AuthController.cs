@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Contracts.Auth.Responses;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.API.Controllers.V1.Auth;
@@ -18,19 +19,25 @@ public class AuthController : ControllerBase
     {
         _authService = authService;
     }
-    
+
+    [HttpGet("validate-token")]
+    public async Task<IActionResult> ValidateToken()
+    {
+        var result = await _authService.ValidateToken();
+        return result.ToHttpResult();
+    }
     
     [HttpPost("refresh")]
-    public async Task<ActionResult<ApiResponse<RefreshTokenResponse>>> RefreshToken([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var result = await _authService.RefreshAsync(request);
-        return StatusCode(200, result);
+        return result.ToHttpResult();
     }
     
     [HttpPost("logout")]
-    public async Task<ActionResult<ApiResponse<object>>> Logout()
+    public async Task<IActionResult> Logout()
     {
         var result = await _authService.LogoutAsync();
-        return StatusCode(200, result);
+        return result.ToHttpResult();
     }
 }

@@ -2,7 +2,7 @@ using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Domain.Entities;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 
 namespace SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
 

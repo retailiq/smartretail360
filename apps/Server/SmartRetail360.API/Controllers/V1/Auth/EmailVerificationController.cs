@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Contracts.Auth.Requests;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.API.Controllers.V1.Auth;
@@ -12,17 +13,18 @@ namespace SmartRetail360.API.Controllers.V1.Auth;
 public class EmailVerificationController : ControllerBase
 {
     private readonly IAccountEmailVerificationService _accountActivationEmailVerification;
-    
+
     public EmailVerificationController(
         IAccountEmailVerificationService accountActivationEmailVerification)
     {
         _accountActivationEmailVerification = accountActivationEmailVerification;
     }
 
+
     [HttpPost("verify")]
-    public async Task<ActionResult<ApiResponse<object>>> VerifyAccountActivationEmail([FromBody] EmailVerificationRequest request)
+    public async Task<IActionResult> VerifyAccountActivationEmail([FromBody] EmailVerificationRequest request)
     {
         var result = await _accountActivationEmailVerification.VerifyEmailAsync(request.Token);
-        return StatusCode(200, result);
+        return result.ToHttpResult();
     }
 }

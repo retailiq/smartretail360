@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Contracts.Auth.Requests;
 using SmartRetail360.Contracts.Auth.Responses;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.API.Controllers.V1.Auth;
@@ -21,9 +22,9 @@ public class OAuthLoginController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse<LoginResponse>>> OAuthLogin([FromBody] OAuthLoginRequest request)
+    public async Task<IActionResult> OAuthLogin([FromBody] OAuthLoginRequest request)
     {
         var result = await _oauthLogin.OAuthLoginAsync(request);
-        return StatusCode(200, result);
+        return result.ToHttpResult();
     }
 }

@@ -1,6 +1,6 @@
-using SmartRetail360.Application.Common.UserContext;
-using SmartRetail360.Application.Interfaces.Logging;
-using SmartRetail360.Infrastructure.Logging.Context;
+using SmartRetail360.Logging.Interfaces;
+using SmartRetail360.Logging.Services.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Logging;
 
 namespace SmartRetail360.API.Middlewares;

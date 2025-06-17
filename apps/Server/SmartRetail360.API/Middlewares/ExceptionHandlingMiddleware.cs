@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Exceptions;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Responses;
-using SmartRetail360.Application.Common.UserContext;
 
 namespace SmartRetail360.API.Middlewares;
 
@@ -47,7 +47,7 @@ public class ExceptionHandlingMiddleware
 
         var userContext = context.RequestServices.GetService<IUserContextService>();
         var localizer = context.RequestServices.GetRequiredService<MessageLocalizer>();
-        
+
         (int statusCode, int errorCode) = ex switch
         {
             CommonException commonEx =>
@@ -55,13 +55,13 @@ public class ExceptionHandlingMiddleware
 
             SecurityException secEx =>
                 (secEx.StatusCode, secEx.ErrorCode),
-            
-            MailKit.Net.Smtp.SmtpCommandException smtpEx => 
+
+            MailKit.Net.Smtp.SmtpCommandException =>
                 ((int)HttpStatusCode.ServiceUnavailable, ErrorCodes.EmailSendFailed),
 
-            MailKit.Net.Smtp.SmtpProtocolException protoEx => 
+            MailKit.Net.Smtp.SmtpProtocolException =>
                 ((int)HttpStatusCode.ServiceUnavailable, ErrorCodes.EmailSendFailed),
-            
+
             Npgsql.NpgsqlException or Npgsql.PostgresException =>
                 ((int)HttpStatusCode.ServiceUnavailable, ErrorCodes.DatabaseUnavailable),
 
@@ -72,13 +72,12 @@ public class ExceptionHandlingMiddleware
         };
 
         context.Response.StatusCode = statusCode;
-        
+
         var traceId = userContext?.TraceId;
         var message = localizer.GetErrorMessage(errorCode);
-        
+
         var response = ApiResponse<object>.Fail(errorCode, message, traceId);
         var json = JsonSerializer.Serialize(response, _jsonOptions);
         await context.Response.WriteAsync(json);
     }
 }
-

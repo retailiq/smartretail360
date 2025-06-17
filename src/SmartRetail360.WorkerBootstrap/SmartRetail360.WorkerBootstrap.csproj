@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+    <ProjectReference Include="..\..\apps\Server\SmartRetail360.Application\SmartRetail360.Application.csproj" />
+    <ProjectReference Include="..\..\apps\Server\SmartRetail360.Infrastructure\SmartRetail360.Infrastructure.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Logging\SmartRetail360.Logging.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Messaging\SmartRetail360.Messaging.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Execution\SmartRetail360.Execution.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Persistence\SmartRetail360.Persistence.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Notifications\SmartRetail360.Notifications.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -18,7 +18,7 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document); // UI 地址: /swagger
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT') || 50002;
+  const port = configService.get<number>('PORT') ?? 50005;
   await app.listen(port);
   console.log(`Server is running on http://localhost:${port}`);
 }

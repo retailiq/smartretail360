@@ -4,7 +4,7 @@ using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Infrastructure.Services.Auth.Login.Shared;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
-using SmartRetail360.Shared.Context;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Infrastructure.Services.Auth.Login.OAuthLogin;

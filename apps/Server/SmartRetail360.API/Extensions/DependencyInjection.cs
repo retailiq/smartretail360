@@ -1,16 +1,11 @@
-using Microsoft.AspNetCore.Localization;
 using Microsoft.OpenApi.Models;
 using SmartRetail360.API.Configuration.Swagger;
-using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
-using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
+using SmartRetail360.Shared.Constants;
 
 namespace SmartRetail360.API.Extensions;
 
@@ -23,36 +18,21 @@ public static class DependencyInjection
         {
             // Ignore null values globally
             options.JsonSerializerOptions.DefaultIgnoreCondition =
-                System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                JsonIgnoreCondition.WhenWritingNull;
             // Use camelCase and allow integer values for enums
             options.JsonSerializerOptions.Converters.Add(
                 new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true)
             );
+            
+            // Ignore case for property names
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
 
         services.AddEndpointsApiExplorer();
         
         // Application Options
-        services.Configure<AppOptions>(config.GetSection("App"));
+        services.Configure<AppOptions>(config.GetSection(GeneralConstants.App));
         services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<AppOptions>>().Value);
-
-        // Register MultiLanguage Resources
-        services.AddLocalization(options => { options.ResourcesPath = "Localization"; });
-
-        // Internationalization
-        var appOptions = config.GetSection("App").Get<AppOptions>();
-        var supportedCultures = appOptions.SupportedCultures?.Any() == true
-            ? appOptions.SupportedCultures
-            : new List<string> { "en", "zh-CN" }; // fallback
-
-        services.Configure<RequestLocalizationOptions>(options =>
-        {
-            options.DefaultRequestCulture = new RequestCulture(appOptions.DefaultCulture ?? "en");
-            options.SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
-            options.SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
-        });
-
-        services.AddScoped<MessageLocalizer>();
 
         // API Versioning
         services.AddApiVersioning(options =>
@@ -77,10 +57,10 @@ public static class DependencyInjection
         {
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Name = "Authorization",
+                Name = GeneralConstants.Authorization,
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
+                Scheme = GeneralConstants.Bearer,
+                BearerFormat = GeneralConstants.Jwt,
                 In = ParameterLocation.Header,
                 Description = "Enter: **Bearer {your JWT token}**"
             });
@@ -102,27 +82,7 @@ public static class DependencyInjection
         });
 
         services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-        // otlp configuration
-        var otlpEndpoint = config.GetValue<string>("OpenTelemetry:Otlp:Endpoint")
-                           ?? "http://localhost:4317";
-        services.AddOpenTelemetry()
-            .ConfigureResource(r => r.AddService("SmartRetail360.API"))
-            .WithTracing(tracing =>
-            {
-                tracing
-                    .SetSampler(new TraceIdRatioBasedSampler(0.2)) // ✅ Sample 20% of traces
-                    .AddSource("SmartRetail360.API")
-                    .AddHttpClientInstrumentation()
-                    .AddAspNetCoreInstrumentation()
-                    .AddOtlpExporter(opt =>
-                    {
-                        opt.Endpoint = new Uri(otlpEndpoint);
-                        opt.Protocol = OtlpExportProtocol.Grpc;
-                    });
-            });
-
-
+        
         return services;
     }
 }

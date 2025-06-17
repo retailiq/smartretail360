@@ -49,7 +49,7 @@ public class OAuthUserProfileGetter
                 LogEventType.OAuthLoginFailure, LogReasons.OAuthUserProfileNotExists,
                 ErrorCodes.OAuthUserProfileFetchFailed)
             .Check(() => profile!.Email == null,
-                LogEventType.OAuthLoginFailure, LogReasons.TenantUserRecordNotFound,
+                LogEventType.OAuthLoginFailure, LogReasons.AbacTenantUserRecordNotFound,
                 ErrorCodes.OAuthUserProfileNotExists)
             .ValidateAsync();
         if (profileCheckResult != null)
