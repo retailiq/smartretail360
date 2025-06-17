@@ -32,8 +32,8 @@ public class RequestLoggingMiddleware
                                  context.Request.ContentLength > 0 &&
                                  (context.Request.Method == "POST" || context.Request.Method == "PUT") &&
                                  context.Request.Path.StartsWithSegments("/api") &&
-                                 !context.Request.ContentType?.StartsWith("multipart/form-data",
-                                     StringComparison.OrdinalIgnoreCase) == true;
+                                 !(context.Request.ContentType?.StartsWith("multipart/form-data",
+                                     StringComparison.OrdinalIgnoreCase) ?? false);
 
             if (shouldReadBody)
             {

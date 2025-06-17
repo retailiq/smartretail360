@@ -15,10 +15,14 @@ namespace SmartRetail360.API.Controllers.V1.Auth.AccessControl;
 public class AbacPolicyController : ControllerBase
 {
     private readonly IAbacPolicyService _abacPolicyService;
+    private readonly ILogger<AbacPolicyController> _logger;
 
-    public AbacPolicyController(IAbacPolicyService abacPolicyService)
+    public AbacPolicyController(
+        IAbacPolicyService abacPolicyService,
+        ILogger<AbacPolicyController> logger)
     {
         _abacPolicyService = abacPolicyService;
+        _logger = logger;
     }
 
     [HttpPut("{policyId:guid}/edit/rule")]
@@ -49,7 +53,7 @@ public class AbacPolicyController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("[ABAC] PreviewPolicyEvaluation failed. Invalid input: " + ex.Message);
+            _logger.LogError(ex, "PreviewPolicyEvaluation failed. Invalid input: {Message}", ex.Message);
             return BadRequest("Invalid rule or context format.");
         }
     }
