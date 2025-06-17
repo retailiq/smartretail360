@@ -62,6 +62,7 @@ loki.process "serilog_log_processor" {
       action = "Properties.Action",
       account_type = "Properties.AccountType",
       is_success = "Properties.IsSuccess",
+      env = "Properties.Env",
     }
   }
 
@@ -85,6 +86,7 @@ loki.process "serilog_log_processor" {
       action     = "action",
       account_type = "account_type",
       is_success = "is_success",
+      env        = "env",
     }
   }
 

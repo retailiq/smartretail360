@@ -1,4 +1,4 @@
-using SmartRetail360.Application.Interfaces.Logging;
+using SmartRetail360.Logging.Interfaces;
 using SmartRetail360.Shared.Constants;
 
 namespace SmartRetail360.API.Middlewares;
@@ -38,6 +38,7 @@ public class SentryContextMiddleware
             scope.SetTag("RoleName", logContext.RoleName ?? GeneralConstants.Unknown);
             scope.SetTag("Action", logContext.Action ?? GeneralConstants.Unknown);
             scope.SetTag("LogId", logContext.LogId ?? GeneralConstants.Unknown);
+            scope.SetTag("Env", logContext.Env ?? GeneralConstants.Unknown);
         });
 
         await _next(context);

@@ -1,14 +1,13 @@
 using System.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using SmartRetail360.Infrastructure.Data;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Exceptions;
 using SmartRetail360.Shared.Options;
 using Serilog;
-using Sentry;
-using SmartRetail360.Application.Common.AccessControl;
+using SmartRetail360.ABAC.Common;
+using SmartRetail360.Persistence;
+using SmartRetail360.Persistence.Data;
 using SmartRetail360.Shared.Enums.AccessControl;
 
 namespace SmartRetail360.API.Controllers.Dev;
@@ -17,36 +16,63 @@ namespace SmartRetail360.API.Controllers.Dev;
 [Route("api/[Controller]")]
 public class DevController : ControllerBase
 {
-    private readonly AppDbContext _dbContext;
-    private readonly AppOptions _appOptions;
-
     private static readonly ActivitySource ActivitySource = new("SmartRetail360.API");
 
-    public DevController(AppDbContext dbContext, AppOptions appOptions)
+    public DevController()
     {
-        _dbContext = dbContext;
-        _appOptions = appOptions;
     }
 
-    [HttpGet("user/{id}")]
-    [AccessControl(DefaultResourceType.User, DefaultActionType.View)]
+    [HttpGet("debug/protocol")]
+    public IActionResult GetProtocol()
+    {
+        var protocol = HttpContext.Request.Protocol;
+        return Ok(new { protocol });
+    }
+
+    [HttpGet("headers")]
+    public IActionResult GetHeaders()
+    {
+        var headers = Request.Headers.ToDictionary(
+            h => h.Key,
+            h => h.Value.ToString()
+        );
+        return Ok(headers);
+    }
+
+    [HttpGet("user/{id}/view")]
     public IActionResult GetUserById(Guid id)
     {
         return Ok($"✅ ABAC allowed: you can view user {id}");
     }
 
-    [HttpGet("test-abac-edit-product/{id}")]
-    [AccessControl(DefaultResourceType.Product, DefaultActionType.Edit)]
-    public IActionResult TestAbacAllowed(string id)
+    [HttpGet("user/{id}/edit")]
+    public IActionResult EditUserById(Guid id)
     {
-        return Ok($"✅ ABAC allowed: you can view product {id}");
+        return Ok($"✅ ABAC allowed: you can edit user {id}");
+    }
+
+    [HttpGet("user/{id}/delete")]
+    public IActionResult DeleteUserById(Guid id)
+    {
+        return Ok($"✅ ABAC allowed: you can delete user {id}");
+    }
+
+    [HttpGet("user/{id}/remove")]
+    public IActionResult RemoveUserById(Guid id)
+    {
+        return Ok($"✅ ABAC allowed: you can remove user {id}");
+    }
+
+    [HttpGet("user/{id}/leave")]
+    public IActionResult LeaveUserById(Guid id)
+    {
+        return Ok($"✅ ABAC allowed: you can leave from tenant of user {id}");
     }
 
     [HttpGet("test-exception")]
     public IActionResult TestException()
     {
-        // throw new CommonException(ErrorCodes.AccountAlreadyActivated, HttpStatusCode.AlreadyReported);
-        throw new SecurityException(ErrorCodes.AccountLocked, HttpStatusCode.Forbidden);
+        throw new SecurityException(ErrorCodes.AccountLocked);
     }
 
     [HttpGet("test-sentry")]

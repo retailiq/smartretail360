@@ -1,12 +1,12 @@
 using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Infrastructure.Services.Notifications.Models;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Messaging.Factories;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Utils;
-using SmartRetail360.Infrastructure.Services.Notifications.Models;
-using SmartRetail360.Shared.Contexts.User;
-using SmartRetail360.Shared.Messaging.Factories;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications;
 
@@ -54,7 +54,7 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
             UserId = existingUser.Id,
             Action = action
         });
-        
+
         var isLimited = await _dep.RedisOperation.IsEmailResendLimitedAsync(email);
 
         var guardResult = await _dep.GuardChecker
@@ -73,12 +73,22 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
             .ToList();
 
         var latestPendingToken = pendingTokens.FirstOrDefault();
+        var fallbackToken = tokenList!
+            .Where(t => t.StatusEnum is ActivationTokenStatus.Expired or ActivationTokenStatus.Revoked)
+            .OrderByDescending(t => t.CreatedAt)
+            .FirstOrDefault();
+
+        var tenantIdToUse = latestPendingToken?.TenantId ?? fallbackToken?.TenantId;
 
         var checkResult = await _dep.GuardChecker
             .Check(() => pendingTokens.Count > 0 && latestPendingToken?.ExpiresAt > DateTime.UtcNow,
-                LogEventType.AccountActivateFailure,
+                LogEventType.EmailSendFailure,
                 LogReasons.HasPendingActivationEmail,
                 ErrorCodes.HasPendingActivationEmail)
+            .Check(() => tenantIdToUse == null,
+                LogEventType.EmailSendFailure,
+                LogReasons.TokenNotFound,
+                ErrorCodes.TokenNotFound)
             .ValidateAsync();
 
         if (checkResult != null)
@@ -94,9 +104,9 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         var accountActivationToken = new AccountActivationToken
         {
             UserId = existingUser.Id,
-            TenantId = latestPendingToken!.TenantId,
+            TenantId = tenantIdToUse!.Value,
             Token = emailVerificationToken,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.ActivationTokenLimitMinutes),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.AccountActivationLimitMinutes),
             TraceId = _dep.UserContext.TraceId,
             SourceEnum = latestSource
         };
@@ -127,7 +137,7 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
             emailVerificationToken,
             action,
             emailTemplate,
-            _dep.AppOptions.ActivationTokenLimitMinutes
+            _dep.AppOptions.AccountActivationLimitMinutes
         );
 
         var emailError =

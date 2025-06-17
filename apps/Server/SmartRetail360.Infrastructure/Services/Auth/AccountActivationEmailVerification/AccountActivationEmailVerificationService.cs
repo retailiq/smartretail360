@@ -1,5 +1,6 @@
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Domain.Entities;
+using SmartRetail360.Domain.Entities.AccessControl;
 using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Contexts.User;
@@ -22,7 +23,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
     {
         var traceId = _dep.UserContext.TraceId;
 
-        var (tokenEntity, user, tenant, tenantUser, error) = await LoadEntitiesAsync(token);
+        var (tokenEntity, user, tenant, tenantUser, policies, error) = await LoadEntitiesAsync(token);
         if (error != null)
             return error;
 
@@ -41,50 +42,53 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         {
             RoleName = RoleHelper.ToPascalCaseName(role?.Name ?? GeneralConstants.Unknown)
         });
-        return await ActivateEntities(tokenEntity!, user!, tenant!, tenantUser!, token, traceId);
+        return await ActivateEntities(tokenEntity!, user!, tenant!, tenantUser!, token, traceId, policies);
     }
 
-    private async Task<(AccountActivationToken?, User?, Tenant?, TenantUser?, ApiResponse<object>?)>
+    private async Task<(AccountActivationToken?, User?, Tenant?, TenantUser?, List<AbacPolicy>?, ApiResponse<object>?)>
         LoadEntitiesAsync(string token)
     {
-        var tokenEntity = await _dep.RedisOperation.GetActivationTokenAsync(token);
-        _dep.UserContext.Inject(new UserExecutionContext { UserId = tokenEntity?.UserId });
+        var tokenCheckEntity = await _dep.RedisOperation.GetActivationTokenAsync(token);
+        _dep.UserContext.Inject(new UserExecutionContext { UserId = tokenCheckEntity?.UserId });
         var checkResult = await _dep.GuardChecker
-            .Check(() => tokenEntity == null,
+            .Check(() => tokenCheckEntity == null,
                 LogEventType.AccountActivateFailure,
                 LogReasons.InvalidToken,
                 ErrorCodes.InvalidToken)
             .ValidateAsync();
-        if (checkResult != null) return (null, null, null, null, checkResult);
-        var action = tokenEntity!.SourceEnum == ActivationSource.Registration
+        if (checkResult != null) return (null, null, null, null, null, checkResult);
+        var action = tokenCheckEntity!.SourceEnum == ActivationSource.Registration
             ? LogActions.UserRegistrationActivate
             : LogActions.UserInvitationActivate;
         _dep.UserContext.Inject(new UserExecutionContext { Action = action });
-
-        var (user, userError) = await _dep.PlatformContext.GetUserByIdAsync(tokenEntity.UserId);
-        if (userError != null) return (null, null, null, null, userError);
-
-        var (tenantUser, tenantUserError) =
-            await _dep.PlatformContext.GetTenantUserByTenantAndUserIdAsync(tokenEntity.UserId, tokenEntity.TenantId);
-        if (tenantUserError != null) return (null, null, null, null, tenantUserError);
-
-        Tenant? tenant = null;
-        if (tenantUser != null)
-        {
-            var (tenantEntity, tenantError) = await _dep.PlatformContext.GetTenantAsync(tokenEntity.TenantId);
-            if (tenantError != null) return (null, null, null, null, tenantError);
-            tenant = tenantEntity;
-        }
         
+        var (tenantUser, tenantUserError) =
+            await _dep.PlatformContext.GetTenantUserRolesAsync(tenantId: tokenCheckEntity.TenantId,
+                userId: tokenCheckEntity.UserId);
+
+        if (tenantUserError != null) return (null, null, null, null, null, tenantUserError);
+        
+        if (tenantUser?.User == null || tenantUser.Tenant == null || tenantUser.Role == null)
+        {
+            return (null, null, null, null, null,
+                ApiResponse<object>.Fail(ErrorCodes.TenantUserRecordNotFound,
+                    _dep.Localizer.GetErrorMessage(ErrorCodes.TenantUserRecordNotFound), _dep.UserContext.TraceId));
+        }
+
+        var (policies, error) =
+            await _dep.PlatformContext.GetAbacPoliciesByTenantIdAsync(tenantUser.TenantId);
+        if (error != null)
+            return (null, null, null, null, null, error);
+
         _dep.UserContext.Inject(new UserExecutionContext
         {
-            UserId = user?.Id,
-            Email = user?.Email,
-            TenantId = tenant?.Id,
-            RoleId = tenantUser?[0].RoleId
+            UserId = tenantUser.User.Id,
+            Email = tenantUser.User.Email,
+            TenantId = tenantUser.Tenant.Id,
+            RoleId = tenantUser.RoleId,
         });
 
-        return (tokenEntity, user, tenant, tenantUser?[0], null);
+        return (tokenCheckEntity, tenantUser.User, tenantUser.Tenant, tenantUser, policies, null);
     }
 
     private async Task<ApiResponse<object>?> CheckIdempotencyAsync(User? user)
@@ -138,7 +142,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
     }
 
     private async Task<ApiResponse<object>> ActivateEntities(AccountActivationToken token, User user, Tenant tenant,
-        TenantUser tenantUser, string tokenStr, string traceId)
+        TenantUser tenantUser, string tokenStr, string traceId, List<AbacPolicy>? policies)
     {
         user.IsEmailVerified = true;
         user.TraceId = traceId;
@@ -153,6 +157,12 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
             async () =>
             {
                 _dep.Db.Entry(token).Property(e => e.Status).IsModified = true;
+
+                foreach (var policy in policies ?? Enumerable.Empty<AbacPolicy>())
+                {
+                    policy.IsEnabled = true;
+                }
+
                 await _dep.Db.SaveChangesAsync();
                 await _dep.RedisOperation.InvalidateActivationTokenAsync(tokenStr);
             },
@@ -162,7 +172,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         );
 
         if (!result.IsSuccess) return result.ToObjectResponse();
-        
+
         await _dep.RedisOperation.SetAccountActivationLimitAsync(tokenStr);
         await _dep.LogDispatcher.Dispatch(LogEventType.AccountActivateSuccess);
 

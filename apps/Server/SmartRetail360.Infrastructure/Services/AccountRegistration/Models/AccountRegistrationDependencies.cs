@@ -1,8 +1,9 @@
-using SmartRetail360.Application.Interfaces.Auth.AccessControl;
-using SmartRetail360.Application.Interfaces.Logging;
-using SmartRetail360.Application.Interfaces.Messaging;
+using SmartRetail360.ABAC.Interfaces;
+using SmartRetail360.ABAC.Interfaces.AbacPolicyService;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
-using SmartRetail360.Infrastructure.Services.Notifications.Configuration;
+using SmartRetail360.Logging.Interfaces;
+using SmartRetail360.Messaging.Interfaces;
+using SmartRetail360.Notifications.Services.Configuration;
 
 namespace SmartRetail360.Infrastructure.Services.AccountRegistration.Models;
 

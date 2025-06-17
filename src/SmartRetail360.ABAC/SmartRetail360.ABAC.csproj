@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JsonLogic" Version="5.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+    <PackageReference Include="Scrutor" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Logging\SmartRetail360.Logging.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Domain\SmartRetail360.Domain.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Contracts\SmartRetail360.Contracts.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Execution\SmartRetail360.Execution.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Persistence\SmartRetail360.Persistence.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Platform\SmartRetail360.Platform.csproj" />
+  </ItemGroup>
+
+</Project>

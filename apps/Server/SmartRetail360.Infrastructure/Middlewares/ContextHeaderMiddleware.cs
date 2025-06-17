@@ -31,6 +31,7 @@ public class ContextHeaderMiddleware
         Set("AccountType", "X-Account-Type");
         Set("UserName", "X-User-Name");
         Set("Env", "X-Env");
+        Set("IsSystemAccount", "X-Is-System-Account");
         
         // Add TraceId to response headers
         context.Response.OnStarting(() =>

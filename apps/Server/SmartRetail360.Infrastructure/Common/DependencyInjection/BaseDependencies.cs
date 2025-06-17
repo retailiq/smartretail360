@@ -1,16 +1,16 @@
-using SmartRetail360.Application.Common.UserContext;
 using SmartRetail360.Application.Interfaces.Auth;
-
-namespace SmartRetail360.Infrastructure.Common.DependencyInjection;
-
-using SmartRetail360.Application.Common.Execution;
-using SmartRetail360.Application.Interfaces.Common;
-using SmartRetail360.Application.Interfaces.Logging;
-using SmartRetail360.Application.Interfaces.Redis;
-using SmartRetail360.Infrastructure.Data;
+using SmartRetail360.Caching.Interfaces;
+using SmartRetail360.Execution;
+using SmartRetail360.Logging.Abstractions;
+using SmartRetail360.Logging.Interfaces;
+using SmartRetail360.Persistence;
+using SmartRetail360.Persistence.Data;
+using SmartRetail360.Platform.Interfaces;
+using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.Shared.Options;
 
+namespace SmartRetail360.Infrastructure.Common.DependencyInjection;
 public class BaseDependencies
 {
     public IPlatformContextService PlatformContext { get; set; }

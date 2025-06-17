@@ -1,0 +1,32 @@
+[
+  {
+    "pattern": "/server/api/dev/user/[0-9a-fA-F-]+/delete$",
+    "resource": "user",
+    "action": "delete"
+  },
+  {
+    "pattern": "/server/api/dev/user/[0-9a-fA-F-]+/view$",
+    "resource": "user",
+    "action": "view"
+  },
+  {
+    "pattern": "/server/api/dev/user/[0-9a-fA-F-]+/edit$",
+    "resource": "user",
+    "action": "edit"
+  },
+  {
+    "pattern": "/server/api/dev/user/[0-9a-fA-F-]+/remove$",
+    "resource": "user",
+    "action": "remove"
+  },
+  {
+    "pattern": "/server/api/v1/tenants/[0-9a-fA-F-]+/abac-policies/view$",
+    "resource": "tenant",
+    "action": "view"
+  },
+  {
+    "pattern": "/server/api/v1/abac-policies/[0-9a-fA-F-]+/edit(?:/[^/]*)?$",
+    "resource": "abac-policy",
+    "action": "edit"
+  }
+]

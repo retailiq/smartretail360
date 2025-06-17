@@ -1,7 +1,7 @@
-using SmartRetail360.Application.Interfaces.Common;
-using SmartRetail360.Application.Interfaces.Messaging;
-using SmartRetail360.Application.Interfaces.Redis;
+using SmartRetail360.Caching.Interfaces;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
+using SmartRetail360.Messaging.Interfaces;
+using SmartRetail360.Platform.Interfaces;
 
 namespace SmartRetail360.Infrastructure.Services.Notifications.Models;
 

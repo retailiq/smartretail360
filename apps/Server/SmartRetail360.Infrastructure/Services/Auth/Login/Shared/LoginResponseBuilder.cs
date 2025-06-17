@@ -29,14 +29,28 @@ public class LoginResponseBuilder
             IsActive = tu.IsActive
         }).ToList();
 
-        var shouldChooseTenant = !candidates.Any(c => c.IsDefault);
-
+        var shouldChooseTenant = !candidates.Any(c => c.IsDefault) && candidates.Count > 1;
+        
+        List<TenantLoginCandidate> finalOptions;
+        if (shouldChooseTenant)
+        {
+            finalOptions = candidates;
+        }
+        else if (candidates.Count == 1)
+        {
+            finalOptions = candidates;
+        }
+        else
+        {
+            finalOptions = candidates.Where(c => c.IsDefault).ToList();
+        }
+        
         var loginResponse = new LoginResponse
         {
             UserId = _ctx.User!.Id.ToString(),
             Email = _ctx.User.Email,
             ShouldChooseTenant = shouldChooseTenant,
-            TenantOptions = candidates
+            TenantOptions = finalOptions,
         };
 
         await _ctx.Dep.SafeExecutor.ExecuteAsync(

@@ -2,10 +2,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Json.Logic;
 using Microsoft.AspNetCore.Mvc;
-using SmartRetail360.Application.Interfaces.Auth.AccessControl;
+using SmartRetail360.ABAC.Interfaces.AbacPolicyService;
 using SmartRetail360.Contracts.Auth.Requests;
-using SmartRetail360.Domain.Entities.AccessControl;
-using SmartRetail360.Shared.Responses;
+using SmartRetail360.Shared.Extensions;
 
 namespace SmartRetail360.API.Controllers.V1.Auth.AccessControl;
 
@@ -22,22 +21,19 @@ public class AbacPolicyController : ControllerBase
         _abacPolicyService = abacPolicyService;
     }
 
-    [HttpGet("{tenantId:guid}")]
-    public async Task<ActionResult<ApiResponse<List<AbacPolicy>>>> GetPolicies(Guid tenantId)
+    [HttpPut("{policyId:guid}/edit/rule")]
+    public async Task<IActionResult> UpdatePolicyRuleJson(Guid policyId,
+        [FromBody] UpdateAbacPolicyRuleJsonRequest ruleJsonRequest)
     {
-        var policies = await _abacPolicyService.GetAllPoliciesForTenantAsync(tenantId);
-        return Ok(policies);
+        var ruleResult = await _abacPolicyService.UpdatePolicyRuleJsonAsync(policyId, ruleJsonRequest);
+        return ruleResult.ToHttpResult();
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult<ApiResponse<object>>> UpdatePolicy(Guid id,
-        [FromBody] UpdateAbacPolicyRequest request)
+    [HttpPut("{policyId:guid}/edit/status")]
+    public async Task<IActionResult> UpdatePolicyStatus(Guid policyId, [FromBody] UpdateAbacPolicyStatusRequest request)
     {
-        if (id != request.Id)
-            return BadRequest("ID mismatch.");
-
-        var result = await _abacPolicyService.UpdatePolicyAsync(request);
-        return Ok(result);
+        var result = await _abacPolicyService.UpdatePolicyStatusAsync(policyId, request);
+        return result.ToHttpResult();
     }
 
     [HttpPost("evaluate-preview")]

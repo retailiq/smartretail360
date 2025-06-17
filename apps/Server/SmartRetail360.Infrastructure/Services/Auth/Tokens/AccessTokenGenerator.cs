@@ -4,6 +4,8 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SmartRetail360.Application.Interfaces.Auth;
+using SmartRetail360.Application.Models;
+using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Infrastructure.Services.Auth.Tokens;
@@ -17,15 +19,7 @@ public class AccessTokenGenerator : IAccessTokenGenerator
         _options = options.Value;
     }
 
-    public string GenerateToken(
-        string userId,
-        string email,
-        string name,
-        string tenantId,
-        string roleId,
-        string locale,
-        string traceId,
-        string env)
+    public string GenerateToken(AccessTokenCreationContext payload)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.JwtSecret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -35,23 +29,23 @@ public class AccessTokenGenerator : IAccessTokenGenerator
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId),
+            new Claim("user_id", payload.UserId),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("email", email),
-            new Claim("name", name),
-            new Claim("tenant_id", tenantId),
-            new Claim("role_id", roleId),
-            new Claim("locale", locale),
-            new Claim("trace_id", traceId),
-            new Claim("env", env),
+            new Claim("user_email", payload.Email),
+            new Claim("user_name", payload.UserName),
+            new Claim("tenant_id", payload.TenantId),
+            new Claim("role_id", payload.RoleId),
+            new Claim("trace_id", payload.TraceId),
+            new Claim("env", payload.Environment),
+            new Claim("role_name", payload.RoleName),
             new Claim(JwtRegisteredClaimNames.Iat,
                 new DateTimeOffset(now).ToUnixTimeSeconds().ToString(),
                 ClaimValueTypes.Integer64)
         };
 
         var token = new JwtSecurityToken(
-            issuer: "SmartRetail360",
-            audience: "SmartRetail360Client",
+            issuer: _options.ProductName,
+            audience: GeneralConstants.Sr360Client,
             claims: claims,
             notBefore: now,
             expires: expires,

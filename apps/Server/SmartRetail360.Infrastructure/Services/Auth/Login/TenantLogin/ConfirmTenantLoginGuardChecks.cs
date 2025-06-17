@@ -3,6 +3,7 @@ using SmartRetail360.Contracts.Auth.Responses;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Extensions;
 using SmartRetail360.Shared.Responses;
 
 namespace SmartRetail360.Infrastructure.Services.Auth.Login.TenantLogin;
@@ -37,7 +38,7 @@ public class ConfirmTenantLoginGuardChecks
 
         var accountCheckResult = await _ctx._dep.GuardChecker
             .Check(() => _ctx.TenantUser == null,
-                LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserRecordNotFound,
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.AbacTenantUserRecordNotFound,
                 ErrorCodes.TenantUserRecordNotFound)
             .Check(() => _ctx.TenantUser is { User: null },
                 LogEventType.ConfirmTenantLoginFailure, LogReasons.AccountNotFound,
@@ -45,7 +46,10 @@ public class ConfirmTenantLoginGuardChecks
             .Check(() => _ctx.TenantUser is { Tenant: null },
                 LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantNotFound,
                 ErrorCodes.TenantNotFound)
-            .Check(() => !_ctx.TenantUser!.IsActive,
+            .Check(() => !_ctx.TenantUser!.IsActive && _ctx.TenantUser!.DeactivationReason == AccountBanReason.None.GetEnumMemberValue(),
+                LogEventType.ConfirmTenantLoginFailure, LogReasons.AccountNotActivatedOrInvitationPending,
+                ErrorCodes.AccountNotActivatedOrInvitationPending)
+            .Check(() => !_ctx.TenantUser!.IsActive && _ctx.TenantUser!.DeactivationReason != AccountBanReason.None.GetEnumMemberValue(),
                 LogEventType.ConfirmTenantLoginFailure, LogReasons.TenantUserDisabled,
                 ErrorCodes.TenantUserDisabled)
             .Check(() => !_ctx.TenantUser!.Tenant!.IsActive,

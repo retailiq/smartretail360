@@ -35,7 +35,7 @@ public class LoginTenantProcessor
 
         var tenantUsersCheckResult = await _ctx.Dep.GuardChecker
             .Check(() => _ctx.TenantUsers.Count == 0,
-                LogEventType.LoginFailure, LogReasons.TenantUserRecordNotFound,
+                LogEventType.LoginFailure, LogReasons.AbacTenantUserRecordNotFound,
                 ErrorCodes.TenantUserRecordNotFound)
             .ValidateAsync();
         if (tenantUsersCheckResult != null)

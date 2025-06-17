@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartRetail360.Domain\SmartRetail360.Domain.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Persistence\SmartRetail360.Persistence.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Execution\SmartRetail360.Execution.csproj" />
+    <ProjectReference Include="..\SmartRetail360.Messaging\SmartRetail360.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>

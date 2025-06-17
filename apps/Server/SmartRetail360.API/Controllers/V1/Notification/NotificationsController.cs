@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using SmartRetail360.Application.Interfaces.Notifications.Configuration;
+using SmartRetail360.Application.Interfaces.Notifications;
 using SmartRetail360.Contracts.Notification.Requests;
+using SmartRetail360.Shared.Extensions;
 
 namespace SmartRetail360.API.Controllers.V1.Notification;
 
@@ -21,6 +22,6 @@ public class NotificationsController : ControllerBase
     public async Task<IActionResult> SendEmail([FromBody] EmailNotificationRequest notificationRequest)
     {
         var result = await _dispatcher.DispatchAsync(notificationRequest.Template, notificationRequest.Email);
-        return Ok(result);
+        return result.ToHttpResult();
     }
 }

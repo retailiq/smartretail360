@@ -1,13 +1,13 @@
-using Microsoft.EntityFrameworkCore;
-using SmartRetail360.Application.Common.Execution;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Models;
 using SmartRetail360.Domain.Entities;
-using SmartRetail360.Infrastructure.Data;
-using SmartRetail360.Infrastructure.Services.Auth.Login.Interfaces;
+using SmartRetail360.Execution;
+using SmartRetail360.Persistence;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Utils;
+using Microsoft.EntityFrameworkCore;
+using SmartRetail360.Persistence.Data;
 
 namespace SmartRetail360.Infrastructure.Services.Auth.Tokens;
 
@@ -27,7 +27,7 @@ public class RefreshTokenService : IRefreshTokenService
         _guardChecker = guardChecker;
     }
 
-    public async Task<string> CreateRefreshTokenAsync(RefreshTokenCreationContext ctx)
+    public async Task<string?> CreateRefreshTokenAsync(RefreshTokenCreationContext ctx)
     {
         var token = TokenHelper.GenerateRefreshToken();
 
@@ -37,16 +37,18 @@ public class RefreshTokenService : IRefreshTokenService
             TenantId = ctx.TenantId,
             RoleId = ctx.RoleId,
             Email = ctx.Email,
-            Name = ctx.Name,
+            UserName = ctx.UserName,
             Locale = ctx.Locale,
             TraceId = ctx.TraceId,
             Token = TokenHelper.HashToken(token),
+            Env = ctx.Env,
+            RoleName = ctx.RoleName,
             CreatedAt = DateTime.UtcNow,
             CreatedByIp = ctx.IpAddress,
             ExpiresAt = DateTime.UtcNow.AddDays(ctx.ExpiryDays)
         };
 
-        await _safeExecutor.ExecuteAsync(
+        var saveResult = await _safeExecutor.ExecuteAsync(
             async () =>
             {
                 await _db.RefreshTokens.AddAsync(entity);
@@ -56,56 +58,41 @@ public class RefreshTokenService : IRefreshTokenService
             LogReasons.DatabaseSaveFailed,
             ErrorCodes.DatabaseUnavailable
         );
+        if (!saveResult.IsSuccess) return null;
 
         return token;
     }
 
     // ✅ Refresh Token Rotation
-    public async Task<(string? Token, RefreshToken? Entity)> RotateRefreshTokenAsync(string oldToken, string ipAddress, int expiryDays)
+    public async Task<string?> RotateRefreshTokenAsync(RefreshToken oldEntity, string ipAddress)
     {
-        var oldHash = TokenHelper.HashToken(oldToken);
-
-        var tokenEntityResult = await _safeExecutor.ExecuteAsync(
-            () =>
-                _db.RefreshTokens.FirstOrDefaultAsync(t => t.Token == oldHash),
-            LogEventType.DatabaseError,
-            LogReasons.DatabaseRetrievalFailed,
-            ErrorCodes.DatabaseUnavailable
-        );
-        var tokenEntity = tokenEntityResult.Response.Data;
-
-        await _guardChecker
-            .Check(() => tokenEntity is { ReplacedByToken: not null },
-                LogEventType.RefreshTokenReplayDetected, LogReasons.RefreshTokenReplayDetected,
-                ErrorCodes.None)
-            .ValidateAsync();
-
-        if (tokenEntity is not { IsActive: true }) return (null, null);
+        var remaining = oldEntity.ExpiresAt - DateTime.UtcNow;
+        if (remaining <= TimeSpan.Zero) return null;
 
         // Generate new token and hash it
         var newToken = TokenHelper.GenerateRefreshToken();
         var newHash = TokenHelper.HashToken(newToken);
 
+        oldEntity.RevokedAt = DateTime.UtcNow;
+        oldEntity.RevokedByIp = ipAddress;
+        oldEntity.ReplacedByToken = newHash;
+        oldEntity.ReasonRevokedEnum = RefreshTokenRevokeReason.TokenRotation;
+
         var newEntity = new RefreshToken
         {
-            UserId = tokenEntity.UserId,
-            TenantId = tokenEntity.TenantId,
+            UserId = oldEntity.UserId,
+            TenantId = oldEntity.TenantId,
+            RoleId = oldEntity.RoleId,
+            Email = oldEntity.Email,
+            UserName = oldEntity.UserName,
+            Locale = oldEntity.Locale,
+            TraceId = oldEntity.TraceId,
             Token = newHash,
-            CreatedAt = DateTime.UtcNow,
+            Env = oldEntity.Env,
             CreatedByIp = ipAddress,
-            ExpiresAt = DateTime.UtcNow.AddDays(expiryDays),
-            RoleId = tokenEntity.RoleId,
-            Email = tokenEntity.Email,
-            Name = tokenEntity.Name,
-            Locale = tokenEntity.Locale,
-            TraceId = tokenEntity.TraceId,
+            CreatedAt = DateTime.UtcNow,
+            ExpiresAt = DateTime.UtcNow.Add(remaining)
         };
-        
-        // Revoke the old token
-        tokenEntity.RevokedAt = DateTime.UtcNow;
-        tokenEntity.RevokedByIp = ipAddress;
-        tokenEntity.ReplacedByToken = newHash;
-        tokenEntity.ReasonRevokedEnum = RefreshTokenRevokeReason.TokenRotation;
 
         await _safeExecutor.ExecuteAsync(
             async () =>
@@ -118,7 +105,7 @@ public class RefreshTokenService : IRefreshTokenService
             ErrorCodes.DatabaseUnavailable
         );
 
-        return (newToken, newEntity);
+        return newToken;
     }
 
     // Logout and Revoke Token
@@ -136,7 +123,7 @@ public class RefreshTokenService : IRefreshTokenService
 
         var checkResult = await _guardChecker
             .Check(() => entity is not { RevokedAt : null },
-                LogEventType.LogoutFailed, LogReasons.RefreshTokenNotFound,
+                LogEventType.LogoutFailed, LogReasons.RefreshTokenMissing,
                 ErrorCodes.None)
             .ValidateAsync();
         if (checkResult != null)

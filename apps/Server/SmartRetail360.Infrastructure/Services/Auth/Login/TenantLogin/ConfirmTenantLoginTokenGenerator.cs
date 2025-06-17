@@ -18,19 +18,20 @@ public class ConfirmTenantLoginTokenGenerator
 
     public async Task<ApiResponse<ConfirmTenantLoginResponse>?> GenerateTokensAsync()
     {
-        var user = _ctx.TenantUser!.User;
+        var user = _ctx.TenantUser!.User!;
 
-        _ctx.AccessToken = _ctx._dep.AccessTokenGenerator.GenerateToken(
-            userId: _ctx.TenantUser.Id.ToString(),
-            email: user!.Email,
-            name: user.Name,
-            tenantId: _ctx.TenantUser.TenantId.ToString(),
-            roleId: _ctx.TenantUser.RoleId.ToString(),
-            locale: user.Locale,
-            traceId: _ctx.TraceId,
-            env: _ctx._dep.UserContext.Env.GetEnumMemberValue()
-        );
-
+        _ctx.AccessToken = _ctx._dep.AccessTokenGenerator.GenerateToken(new AccessTokenCreationContext
+        {
+            UserId = user.Id.ToString(),
+            Email = user.Email,
+            UserName = user.Name,
+            TenantId = _ctx.TenantUser.TenantId.ToString(),
+            RoleId = _ctx.TenantUser.RoleId.ToString(),
+            RoleName = _ctx.TenantUser.Role!.Name,
+            TraceId = _ctx.TraceId,
+            Environment = _ctx._dep.UserContext.Env.GetEnumMemberValue()
+        });
+        
         var refreshTokenResult = await _ctx._dep.SafeExecutor.ExecuteAsync(
             () => _ctx._dep.RefreshTokenService.CreateRefreshTokenAsync(new RefreshTokenCreationContext
             {
@@ -39,10 +40,12 @@ public class ConfirmTenantLoginTokenGenerator
                 IpAddress = _ctx._dep.UserContext.IpAddress,
                 ExpiryDays = _ctx.RefreshTokenExpiryDays,
                 Email = user.Email,
-                Name = user.Name,
+                UserName = user.Name,
                 Locale = user.Locale,
                 TraceId = _ctx.TraceId,
-                RoleId = _ctx.TenantUser.RoleId
+                RoleId = _ctx.TenantUser.RoleId,
+                RoleName = _ctx.TenantUser.Role.Name,
+                Env = _ctx._dep.UserContext.Env.GetEnumMemberValue()
             }),
             LogEventType.ConfirmTenantLoginFailure,
             LogReasons.RefreshTokenCreationFailed,

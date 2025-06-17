@@ -8,19 +8,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AWSSDK.Core" Version="4.0.0.5" />
-        <PackageReference Include="AWSSDK.SQS" Version="4.0.0.4" />
+        <PackageReference Include="AWSSDK.Core" Version="4.0.0.9" />
+        <PackageReference Include="AWSSDK.SQS" Version="4.0.0.8" />
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
         <PackageReference Include="JsonLogic" Version="5.4.0" />
-        <PackageReference Include="MailKit" Version="4.12.0" />
+        <PackageReference Include="MailKit" Version="4.12.1" />
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
         <PackageReference Include="Scrutor" Version="6.0.1" />
         <PackageReference Include="Sentry" Version="5.7.0" />
         <PackageReference Include="Serilog" Version="4.2.0" />
@@ -31,8 +31,14 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SmartRetail360.Application\SmartRetail360.Application.csproj" />
-        <ProjectReference Include="..\SmartRetail360.Domain\SmartRetail360.Domain.csproj" />
-        <ProjectReference Include="..\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Domain\SmartRetail360.Domain.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Execution\SmartRetail360.Execution.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Platform\SmartRetail360.Platform.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.ABAC\SmartRetail360.ABAC.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Auth\SmartRetail360.Auth.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Notifications\SmartRetail360.Notifications.csproj" />
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Caching\SmartRetail360.Caching.csproj" />
     </ItemGroup>
 
     <ItemGroup>

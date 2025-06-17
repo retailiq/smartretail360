@@ -1,14 +1,8 @@
+using SmartRetail360.Application.Models;
+
 namespace SmartRetail360.Application.Interfaces.Auth;
 
 public interface IAccessTokenGenerator
 {
-    string GenerateToken(
-        string userId,
-        string email,
-        string name,
-        string tenantId,
-        string roleId,
-        string locale,
-        string traceId,
-        string env);
+    string GenerateToken(AccessTokenCreationContext payload);
 }
