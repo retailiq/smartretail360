@@ -57,7 +57,7 @@ add-client dep:
     pnpm add {{ dep }} -F client
     
 add-admin-client dep:
-	pnpm add -D {{ dep }} -F client
+	pnpm add -D {{ dep }} -F admin-client
 
 add-traceId dep:
     pnpm add {{ dep }} -F traceId    
