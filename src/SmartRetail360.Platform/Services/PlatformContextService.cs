@@ -55,11 +55,27 @@ public class PlatformContextService : IPlatformContextService
         return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
     }
 
-    public async Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByTenantAndUserIdAsync(Guid userId,
+    public async Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserListByTenantAndUserIdAsync(Guid userId,
         Guid tenantId)
     {
         var result = await _safeExecutor.ExecuteAsync(
             () => _db.TenantUsers.Where(tu => tu.UserId == userId && tu.TenantId == tenantId).ToListAsync(),
+            LogEventType.DatabaseError,
+            LogReasons.DatabaseRetrievalFailed,
+            ErrorCodes.DatabaseUnavailable
+        );
+        return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
+    }
+
+    public async Task<(TenantUser?, ApiResponse<object>?)> GetTenantUserByTenantAndUserIdAsync(Guid userId,
+        Guid tenantId)
+    {
+        var result = await _safeExecutor.ExecuteAsync(
+            () => _db.TenantUsers
+                .Include(tu => tu.User)
+                .Include(tu => tu.Tenant)
+                .Include(tu => tu.Role)
+                .FirstOrDefaultAsync(tu => tu.UserId == userId && tu.TenantId == tenantId),
             LogEventType.DatabaseError,
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
@@ -176,5 +192,16 @@ public class PlatformContextService : IPlatformContextService
             ErrorCodes.DatabaseUnavailable
         );
         return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
+    }
+
+    public async Task<ApiResponse<object>?> SaveChangesAsync()
+    {
+        var result = await _safeExecutor.ExecuteAsync(
+            async () => await _db.SaveChangesAsync(),
+            LogEventType.DatabaseError,
+            LogReasons.DatabaseSaveFailed,
+            ErrorCodes.DatabaseUnavailable
+        );
+        return (result.IsSuccess ? null : result.ToObjectResponse());
     }
 }

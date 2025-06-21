@@ -2,6 +2,9 @@
 dev-client:
     cd apps/client && pnpm dev
 
+dev-admin-client:
+    cd apps/admin-client && pnpm dev
+
 dev-nestjs:
     cd apps/data-gateway && pnpm start:dev
 
@@ -30,15 +33,18 @@ clean:
 
 # Start Server
 dev-all:
-    tmux kill-session -t dev || true
-    tmux new-session -d -s dev -n email 'cd apps/workers/EmailWorker && dotnet watch run'
-    tmux select-window -t dev:0
-    tmux attach-session -t dev
+	tmux kill-session -t dev || true
+	tmux new-session -d -s dev -n client 'cd apps/client && pnpm dev'
+	tmux new-window -t dev:1 -n admin 'cd apps/admin-client && pnpm dev'
+	tmux new-window -t dev:2 -n landing 'cd apps/landing && pnpm dev'
+	tmux select-window -t dev:0
+	tmux attach-session -t dev
 
 #	tmux new-session -d -s dev -n client 'cd apps/client && pnpm dev'
 #	tmux new-window -t dev:1 -n nestjs 'cd apps/data-gateway && pnpm start:dev'
 #	tmux new-window -t dev:2 -n .net 'cd apps/server/SmartRetail360.API && dotnet watch run'
 #	tmux new-window -t dev:3 -n ai 'cd apps/ai-services && uvicorn app:main --reload'
+#   tmux new-session -d -s dev -n email 'cd apps/workers/EmailWorker && dotnet watch run'
 
 # Kill Dev Session
 kill-dev:
@@ -49,6 +55,9 @@ kill-dev:
 # just add-client "-D openapi-typescript"
 add-client dep:
     pnpm add {{ dep }} -F client
+    
+add-admin-client dep:
+	pnpm add -D {{ dep }} -F client
 
 add-traceId dep:
     pnpm add {{ dep }} -F traceId    

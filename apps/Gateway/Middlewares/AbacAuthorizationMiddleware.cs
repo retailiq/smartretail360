@@ -1,13 +1,11 @@
 using SmartRetail360.Shared.Contexts.User;
 using SmartRetail360.ABAC.Interfaces;
-using SmartRetail360.Logging.Interfaces;
 using SmartRetail360.Shared.Responses;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
 using SmartRetail360.ABAC.Services;
 using System.Text.Json;
-using Amazon.Runtime;
 using Microsoft.EntityFrameworkCore;
 using SmartRetail360.Execution;
 using SmartRetail360.Logging.Abstractions;

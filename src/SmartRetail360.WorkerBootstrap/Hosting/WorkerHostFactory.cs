@@ -12,6 +12,7 @@ using SmartRetail360.Logging.Services.Context;
 using SmartRetail360.Messaging;
 using SmartRetail360.Notifications;
 using SmartRetail360.Persistence;
+using SmartRetail360.Platform;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Contexts;
 using DependencyInjection = SmartRetail360.Logging.DependencyInjection;
@@ -52,6 +53,7 @@ public static class WorkerHostFactory
                 services.AddMessaging(configuration);
                 services.AddExecution();
                 services.AddNotifications();
+                services.AddPlatform();
                 services.AddCaching(configuration);
                 services.AddInfrastructureLayer(configuration);
                 services.AddPersistence(configuration);

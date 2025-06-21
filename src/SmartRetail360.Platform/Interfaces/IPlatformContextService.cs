@@ -9,9 +9,11 @@ namespace SmartRetail360.Platform.Interfaces;
 
 public interface IPlatformContextService
 {
+    Task<ApiResponse<object>?> SaveChangesAsync();
     Task<(UserEntity?, ApiResponse<object>?)> GetUserByIdAsync(Guid userId);
     Task<(UserEntity?, ApiResponse<object>?)> GetUserByEmailAsync(string email);
-    Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByTenantAndUserIdAsync(Guid userId, Guid tenantId);
+    Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserListByTenantAndUserIdAsync(Guid userId, Guid tenantId);
+    Task<(TenantUser?, ApiResponse<object>?)> GetTenantUserByTenantAndUserIdAsync(Guid userId, Guid tenantId);
     Task<(List<TenantUser>?, ApiResponse<object>?)> GetTenantUserByUserIdAsync(Guid userId);
     Task<(Tenant?, ApiResponse<object>?)> GetTenantAsync(Guid tenantId);
     Task<(List<Tenant>?, ApiResponse<object>?)> GetTenantsByIdsAsync(List<Guid> tenantIds);

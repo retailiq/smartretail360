@@ -40,6 +40,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         entity.Property(e => e.PhoneNumber)
             .HasMaxLength(32);
 
+        entity.Property(e => e.CountryCode)
+            .HasMaxLength(5);
+
         entity.Property(e => e.AvatarUrl)
             .HasMaxLength(512);
 

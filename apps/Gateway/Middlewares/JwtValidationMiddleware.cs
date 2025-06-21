@@ -103,7 +103,7 @@ public class JwtValidationMiddleware
         }
 
         var claims = principal.Claims.ToDictionary(c => c.Type, c => c.Value);
-
+        
         // Inject claims into headers
         void Inject(string claim, string header)
         {

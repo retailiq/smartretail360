@@ -28,5 +28,20 @@
     "pattern": "/server/api/v1/abac-policies/[0-9a-fA-F-]+/edit(?:/[^/]*)?$",
     "resource": "abac-policy",
     "action": "edit"
+  },
+  {
+    "pattern": "/server/api/v1/users/[0-9a-fA-F-]+/profile/edit(?:/[^/]*)?$",
+    "resource": "user",
+    "action": "edit"
+  },
+  {
+    "pattern": "/server/api/v1/users/[0-9a-fA-F-]+/password/edit(?:/[^/]*)?$",
+    "resource": "user",
+    "action": "edit"
+  },
+  {
+    "pattern": "/server/api/v1/users/[0-9a-fA-F-]+/email/edit(?:/[^/]*)?$",
+    "resource": "user",
+    "action": "edit"
   }
 ]

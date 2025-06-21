@@ -1,5 +1,3 @@
-using SmartRetail360.Shared.Enums;
-
 namespace SmartRetail360.Shared.Messaging.Payloads;
 
 public class ActivationEmailPayload
@@ -17,7 +15,7 @@ public class ActivationEmailPayload
     public required string Action { get; set; }
     public string? RoleName { get; set; }
     public string? LogId { get; set; }
-    public required EmailTemplate EmailTemplate { get; set; }
+    public required string EmailTemplate { get; set; }
     public required string UserName { get; set; }
     public string EmailValidationMinutes { get; set; } = string.Empty;
 }
