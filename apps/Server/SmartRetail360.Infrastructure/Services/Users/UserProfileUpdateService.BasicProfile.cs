@@ -13,12 +13,12 @@ public partial class UserProfileUpdateService
         UpdateUserBasicProfileRequest request, Guid userId)
     {
         var (existingTenantUser, error) =
-            await _platformContextService.GetTenantUserByTenantAndUserIdAsync(userId,
-                _userContext.TenantId ?? Guid.Empty);
+            await _dep.PlatformContext.GetTenantUserByTenantAndUserIdAsync(userId,
+                _dep.UserContext.TenantId ?? Guid.Empty);
         if (error != null)
             return error.To<UpdateUserBasicProfileResponse>();
 
-        var existingUserCheckResult = await _guardChecker
+        var existingUserCheckResult = await _dep.GuardChecker
             .Check(() => existingTenantUser == null, LogEventType.UpdateUserBasicProfileFailure,
                 LogReasons.TenantUserRecordNotFound,
                 ErrorCodes.TenantUserRecordNotFound)
@@ -69,24 +69,29 @@ public partial class UserProfileUpdateService
 
         if (!hasChanges)
         {
+            await _dep.LogDispatcher.Dispatch(LogEventType.UpdateUserBasicProfileFailure,
+                LogReasons.BasicProfileUnchanged);
             return ApiResponse<UpdateUserBasicProfileResponse>.Ok(
                 null,
-                _localizer.GetLocalizedText(LocalizedTextKey.UserProfileUnchanged),
-                _userContext.TraceId
+                _dep.Localizer.GetLocalizedText(LocalizedTextKey.UserProfileUnchanged),
+                _dep.UserContext.TraceId
             );
         }
 
-        var saveResult = await _platformContextService.SaveChangesAsync();
+        existingTenantUser!.User!.TraceId = _dep.UserContext.TraceId;
+        existingTenantUser.User.LastUpdatedBy = _dep.UserContext.UserId;
+
+        var saveResult = await _dep.PlatformContext.SaveChangesAsync();
         if (saveResult != null)
             return saveResult.To<UpdateUserBasicProfileResponse>();
 
-        var oldRefreshToken = _httpContext.HttpContext?.Request.Cookies[GeneralConstants.Sr360RefreshToken];
+        var oldRefreshToken = _dep.HttpContext.Request.Cookies[GeneralConstants.Sr360RefreshToken];
 
-        var tokens = await _tokenGenerator.GenerateTokensAsync(
-            existingTenantUser!,
-            _userContext.TraceId,
-            _userContext.Env.GetEnumMemberValue(),
-            _userContext.IpAddress,
+        var tokens = await _dep.UpdateUserProfileTokenGenerator.GenerateTokensAsync(
+            existingTenantUser,
+            _dep.UserContext.TraceId,
+            _dep.UserContext.Env.GetEnumMemberValue(),
+            _dep.UserContext.IpAddress,
             oldRefreshToken ?? string.Empty
         );
 
@@ -99,10 +104,12 @@ public partial class UserProfileUpdateService
         if (refreshTokenResult != null)
             return refreshTokenResult;
 
+        await _dep.LogDispatcher.Dispatch(LogEventType.UpdateUserBasicProfileSuccess);
+
         return ApiResponse<UpdateUserBasicProfileResponse>.Ok(
             response,
-            _localizer.GetLocalizedText(LocalizedTextKey.UpdateUserBasicProfileSuccessfully),
-            _userContext.TraceId
+            _dep.Localizer.GetLocalizedText(LocalizedTextKey.UpdateUserBasicProfileSuccessfully),
+            _dep.UserContext.TraceId
         );
     }
 }

@@ -61,6 +61,7 @@ public static class LogReasons
     // Users
     public const string UserNotExists = "USER_NOT_EXISTS";
     public const string TenantUserRecordNotFound = "TENANT_USER_RECORD_NOT_FOUND";
+    public const string BasicProfileUnchanged = "BASIC_PROFILE_UNCHANGED";
 
     // Email & Notification
     public const string TooFrequentEmailRequest = "TOO_FREQUENT_EMAIL_REQUEST";

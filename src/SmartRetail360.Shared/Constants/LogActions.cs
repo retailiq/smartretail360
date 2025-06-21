@@ -32,7 +32,10 @@ public static class LogActions
     // ===== Email & Notification =====
     public const string MatchEmailStrategy = "MATCH_EMAIL_STRATEGY";
     public const string MatchEmailTemplate = "MATCH_EMAIL_TEMPLATE";
-
+    
+    // ===== User Profile =====
+    public const string UpdateUserBasicProfile = "UPDATE_USER_BASIC_PROFILE";
+    
     // ===== Log =====
     public const string WriteAuditLog = "WRITE_AUDIT_LOG";
 }
