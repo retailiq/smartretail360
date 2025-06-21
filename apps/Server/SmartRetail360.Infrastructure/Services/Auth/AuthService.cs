@@ -69,7 +69,7 @@ public class AuthService : IAuthService
         });
 
         var newToken = await _dep.RefreshTokenService.RotateRefreshTokenAsync(
-            oldEntity: tokenEntity!,
+            oldEntity: tokenEntity,
             ipAddress: _dep.UserContext.IpAddress
         );
 
@@ -86,7 +86,7 @@ public class AuthService : IAuthService
 
         var newAccessToken = _dep.AccessTokenGenerator.GenerateToken(new AccessTokenCreationContext
         {
-            UserId = tokenEntity!.UserId.ToString(),
+            UserId = tokenEntity.UserId.ToString(),
             Email = tokenEntity.Email,
             UserName = tokenEntity.UserName,
             TenantId = tokenEntity.TenantId.ToString(),

@@ -4,10 +4,10 @@ public static class ErrorCodes
 {
     // General errors
     public const int None = 0;
-    public const int InternalServerError = 10000;
-    public const int DatabaseUnavailable = 10001;
-    public const int DuplicateRegisterAttempt = 10002;
-    public const int DuplicateLoginAttempt = 10003;
+    public const int InternalServerError = 100000;
+    public const int DatabaseUnavailable = 100001;
+    public const int DuplicateRegisterAttempt = 100002;
+    public const int DuplicateLoginAttempt = 100003;
 
     // Auth
     public const int InvalidPassword = 5001;
@@ -56,6 +56,9 @@ public static class ErrorCodes
     public const int TooFrequentEmailRequest = 7003;
     public const int EmailTemplateNotFound = 7004;
     public const int EmailStrategyNotFound = 7005;
+        
+    // Users
+    public const int UserNotExists = 8001;
     
     // Unknown
     public const int UnknownError = 9999;

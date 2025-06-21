@@ -66,10 +66,17 @@
     <data name="AccountExistsButNotActivated" xml:space="preserve"><value>This account already exists but has not been activated yet. Please check your email or resend the activation link</value></data>
     <data name="AccountAlreadyActivated" xml:space="preserve"><value>This account has already been activated. Please log in directly</value></data>
     <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>You are trying to activate your account too frequently. Please try again later</value></data>
-    <data name="AccountRegistered" xml:space="preserve"><value>Tenant registered successfully, an activation link has been sent to your email, please verify to complete registration, the link is valid for {0} minutes</value></data>
+    <data name="AccountRegistered" xml:space="preserve"><value>Account registered successfully, an activation link has been sent to your email, please verify to complete registration, the link is valid for {0} minutes</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>Your account has been successfully activated. You may now log in securely</value></data>
     <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>Your registration is already in progress. Please try again later</value></data>
     <data name="TenantNotFound" xml:space="preserve"><value>The specified tenant could not be found. Please verify your selection or contact support</value></data>
+    
+    <!-- Users-related -->
+    <data name="UserNotExists" xml:space="preserve"><value>User does not exist</value></data>
+    <data name="UpdateUserBasicProfileSuccessfully" xml:space="preserve"><value>User basic profile updated successfully</value></data>
+    <data name="UpdateUserPasswordSuccessfully" xml:space="preserve"><value>User password updated successfully</value></data>
+    <data name="UpdateUserEmailSuccessfully" xml:space="preserve"><value>User email updated successfully</value></data>
+    <data name="UserProfileUnchanged" xml:space="preserve"><value>No changes detected in user profile</value></data>
     
     <!-- Email & Notification -->
     <data name="EmailExists" xml:space="preserve"><value>Email already exists</value></data>
@@ -112,6 +119,17 @@
     <data name="OAuthRedirectUriIsRequired" xml:space="preserve"><value>Redirect URI is required</value></data>
     <data name="AbacPolicyStatusRequired" xml:space="preserve"><value>Policy status flag is required</value></data>
     <data name="AbacPolicyRuleJsonRequired" xml:space="preserve"><value>Rule JSON must not be empty</value></data>
+    <data name="InvalidPhoneNumberFormat" xml:space="preserve"><value>Invalid phone number format</value></data>
+    <data name="InvalidUrlFormat" xml:space="preserve"><value>Invalid URL format</value></data>
+    <data name="InvalidLocale" xml:space="preserve"><value>Unsupported locale</value></data>
+    <data name="CurrentPasswordIsRequired" xml:space="preserve"><value>Current password is required</value></data>
+    <data name="NewPasswordIsRequired" xml:space="preserve"><value>New password is required</value></data>
+    <data name="NewPasswordConfirmationIsRequired" xml:space="preserve"><value>Password confirmation is required</value></data>
+    <data name="CurrentEmailIsRequired" xml:space="preserve"><value>Current email is required</value></data>
+    <data name="NewEmailIsRequired" xml:space="preserve"><value>New email is required</value></data>
+    <data name="PasswordMustBeDifferentFromCurrent" xml:space="preserve"><value>New password must be different from current password</value></data>
+    <data name="PhoneAndCountryCodeMustBeTogether" xml:space="preserve"><value>Phone number and country code must be provided together</value></data>
+    <data name="InvalidCountryCodeFormat" xml:space="preserve"><value>Invalid country code format</value></data>
     
     <!-- Role Description -->
     <data name="RoleOwnerDescription" xml:space="preserve"><value>Tenant owner</value></data>

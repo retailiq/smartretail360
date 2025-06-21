@@ -6,6 +6,8 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using SmartRetail360.Shared.Constants;
+using SmartRetail360.Shared.Enums;
+using SmartRetail360.Shared.Json;
 
 namespace SmartRetail360.API.Extensions;
 
@@ -20,9 +22,12 @@ public static class DependencyInjection
             options.JsonSerializerOptions.DefaultIgnoreCondition =
                 JsonIgnoreCondition.WhenWritingNull;
             // Use camelCase and allow integer values for enums
-            options.JsonSerializerOptions.Converters.Add(
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true)
-            );
+            // options.JsonSerializerOptions.Converters.Add(
+            //     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true)
+            // );
+            
+            options.JsonSerializerOptions.Converters.Add(new JsonEnumConverterFactory());
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             
             // Ignore case for property names
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;

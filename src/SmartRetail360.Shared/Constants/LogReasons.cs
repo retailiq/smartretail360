@@ -58,6 +58,11 @@ public static class LogReasons
     public const string TooFrequentActivationAttempt = "TOO_FREQUENT_ACTIVATION_ATTEMPT";
     public const string TenantNotFound = "TENANT_NOT_FOUND";
 
+    // Users
+    public const string UserNotExists = "USER_NOT_EXISTS";
+    public const string TenantUserRecordNotFound = "TENANT_USER_RECORD_NOT_FOUND";
+    public const string BasicProfileUnchanged = "BASIC_PROFILE_UNCHANGED";
+
     // Email & Notification
     public const string TooFrequentEmailRequest = "TOO_FREQUENT_EMAIL_REQUEST";
     public const string EmailSendFailed = "EMAIL_SEND_FAILED";

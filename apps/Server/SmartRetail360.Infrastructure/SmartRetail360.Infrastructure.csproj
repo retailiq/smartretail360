@@ -41,8 +41,4 @@
         <ProjectReference Include="..\..\..\src\SmartRetail360.Caching\SmartRetail360.Caching.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Data\Migrations\" />
-    </ItemGroup>
-
 </Project>

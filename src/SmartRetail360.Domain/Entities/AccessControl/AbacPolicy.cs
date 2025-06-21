@@ -19,7 +19,7 @@ public class AbacPolicy : IHasCreatedAt, IHasUpdatedAt
     public string RuleJson { get; set; } = string.Empty;
     public bool IsEnabled { get; set; } = true;
     
-    public bool IsReplacedByNewVersion { get; set; } = false;
+    public bool IsReplacedByNewVersion { get; set; } 
 
     public Guid? UpdatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -27,7 +27,7 @@ public class AbacPolicy : IHasCreatedAt, IHasUpdatedAt
 
     public bool AllowTemplateSync { get; set; } = true; 
     public Guid? TemplateId { get; set; }
-    public Guid? BasePolicyId { get; set; } // ✅ 模板继承支持
+    public Guid? BasePolicyId { get; set; }
     public AbacPolicy? BasePolicy { get; set; }
     public AbacPolicyTemplate? Template { get; set; }
     

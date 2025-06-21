@@ -2,17 +2,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 using SmartRetail360.Domain.Interfaces;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Extensions;
-using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Domain.Entities;
 
 public class Tenant : IHasCreatedAt, IHasUpdatedAt
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string? Name { get; set; } = null;
-    public string? Slug { get; set; } = null;
+    public string? Name { get; set; } 
+    public string? Slug { get; set; } 
     public string? Industry { get; set; } = string.Empty;
-    public int? Size { get; set; } = null;
+    public int? Size { get; set; }
     public string? LogoUrl { get; set; } = string.Empty;
     public string Status { get; set; } = AccountStatus.PendingVerification.GetEnumMemberValue();
     [NotMapped]
@@ -30,13 +29,13 @@ public class Tenant : IHasCreatedAt, IHasUpdatedAt
     }
     public string TraceId { get; set; } = string.Empty;
     public Guid CreatedBy { get; set; }
-    public Guid? LastUpdatedBy { get; set; }  = null;
+    public Guid? LastUpdatedBy { get; set; } 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? DeletedAt { get; set; } = null;
+    public DateTime? DeletedAt { get; set; } 
     public bool IsActive { get; set; } = true;
-    public DateTime? DeactivatedAt { get; set; } = null;
-    public Guid? DeactivatedBy { get; set; } = null;
+    public DateTime? DeactivatedAt { get; set; } 
+    public Guid? DeactivatedBy { get; set; } 
     public string DeactivationReason { get; set; } = AccountBanReason.None.GetEnumMemberValue();
     [NotMapped]
     public AccountBanReason DeactivationReasonEnum

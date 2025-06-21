@@ -1064,7 +1064,60 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 LogLevel = LogLevel.Warning,
                 LogCategories = [LogCategory.Security, LogCategory.System]
             }
-        }
+        },
+
+        #endregion
+
+        #region Identity Management - Success & Failures
+
+        {
+            (LogEventType.UpdateUserBasicProfileFailure, LogReasons.TenantUserRecordNotFound),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Security, LogCategory.Application, LogCategory.Behavior],
+                LogAction = LogActions.UpdateUserBasicProfile
+            }
+        },
+        {
+            (LogEventType.UpdateUserBasicProfileFailure, LogReasons.UserNotExists),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Security, LogCategory.Application, LogCategory.Behavior],
+                LogAction = LogActions.UpdateUserBasicProfile
+            }
+        },
+        {
+            (LogEventType.UpdateUserBasicProfileFailure, LogReasons.BasicProfileUnchanged),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories = [LogCategory.Security, LogCategory.Application, LogCategory.Behavior],
+                LogAction = LogActions.UpdateUserBasicProfile
+            }
+        },
+        {
+            (LogEventType.UpdateUserBasicProfileSuccess, null),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = true,
+                LogLevel = LogLevel.Information,
+                LogCategories = [LogCategory.Behavior, LogCategory.Application],
+                LogAction = LogActions.UpdateUserBasicProfile
+            }
+        },
 
         #endregion
     };

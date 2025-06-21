@@ -66,11 +66,18 @@
     <data name="AccountExistsButNotActivated" xml:space="preserve"><value>该账户已存在但尚未激活。请检查您的邮箱或重新发送激活链接</value></data>
     <data name="AccountAlreadyActivated" xml:space="preserve"><value>该账户已激活，请直接登录</value></data>
     <data name="TooFrequentActivationAttempt" xml:space="preserve"><value>您激活账户的频率过高，请稍后再试</value></data>
-    <data name="AccountRegistered" xml:space="preserve"><value>租户注册成功，已向您的邮箱发送激活链接，请尽快验证以完成注册，该链接有效期为{0}分钟</value></data>
+    <data name="AccountRegistered" xml:space="preserve"><value>账户注册成功，已向您的邮箱发送激活链接，请尽快验证以完成注册，该链接有效期为{0}分钟</value></data>
     <data name="AccountActivatedSuccessfully" xml:space="preserve"><value>账户激活成功，您现在可以安全登录平台</value></data>
     <data name="DuplicateRegisterAttempt" xml:space="preserve"><value>系统正在处理您的注册请求，请稍后再试</value></data>
     <data name="TenantNotFound" xml:space="preserve"><value>未找到指定的租户，请确认您的选择或联系平台支持</value></data>
     <data name="IsStaySignedInIsRequired" xml:space="preserve"><value>必须指定是否保持登录状态</value></data>
+    
+    <!-- Users-related -->
+    <data name="UserNotExists" xml:space="preserve"><value>用户不存在</value></data>
+    <data name="UpdateUserBasicProfileSuccessfully" xml:space="preserve"><value>更新用户基本信息成功</value></data>
+    <data name="UpdateUserPasswordSuccessfully" xml:space="preserve"><value>更新用户密码成功</value></data>
+    <data name="UpdateUserEmailSuccessfully" xml:space="preserve"><value>更新用户邮箱成功</value></data>
+    <data name="UserProfileUnchanged" xml:space="preserve"><value>用户资料无变更，无需更新</value></data>
     
     <!-- Email & Notification -->
     <data name="TooFrequentEmailRequest" xml:space="preserve"><value>邮件发送请求过于频繁，请稍后再试</value></data>
@@ -112,6 +119,17 @@
     <data name="OAuthRedirectUriIsRequired" xml:space="preserve"><value>回调地址是必填项</value></data>
     <data name="AbacPolicyStatusRequired" xml:space="preserve"><value>策略状态标志不能为空</value></data>
     <data name="AbacPolicyRuleJsonRequired" xml:space="preserve"><value>规则 JSON 不可为空</value></data>
+    <data name="InvalidPhoneNumberFormat" xml:space="preserve"><value>手机号格式不正确</value></data>
+    <data name="InvalidUrlFormat" xml:space="preserve"><value>URL 格式不正确</value></data>
+    <data name="InvalidLocale" xml:space="preserve"><value>不支持的语言环境</value></data>
+    <data name="CurrentPasswordIsRequired" xml:space="preserve"><value>当前密码为必填项</value></data>
+    <data name="NewPasswordIsRequired" xml:space="preserve"><value>新密码为必填项</value></data>
+    <data name="NewPasswordConfirmationIsRequired" xml:space="preserve"><value>请确认新密码</value></data>
+    <data name="CurrentEmailIsRequired" xml:space="preserve"><value>当前邮箱为必填项</value></data>
+    <data name="NewEmailIsRequired" xml:space="preserve"><value>新邮箱为必填项</value></data>
+    <data name="PasswordMustBeDifferentFromCurrent" xml:space="preserve"><value>新密码不能与当前密码相同</value></data>
+    <data name="PhoneAndCountryCodeMustBeTogether" xml:space="preserve"><value>手机号和国际区号必须同时填写或同时为空</value></data>
+    <data name="InvalidCountryCodeFormat" xml:space="preserve"><value>国家区号格式无效</value></data>
     
     <!-- Role Description -->
     <data name="RoleOwnerDescription" xml:space="preserve"><value>租户所有者</value></data>

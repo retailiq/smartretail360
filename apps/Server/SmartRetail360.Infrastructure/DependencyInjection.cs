@@ -5,6 +5,7 @@ using SmartRetail360.ABAC.Interfaces.AbacPolicyService;
 using SmartRetail360.Application.Interfaces.AccountRegistration;
 using SmartRetail360.Application.Interfaces.Auth;
 using SmartRetail360.Application.Interfaces.Notifications;
+using SmartRetail360.Application.Interfaces.Users;
 using SmartRetail360.Caching.Interfaces;
 using SmartRetail360.Infrastructure.Services.AccountRegistration;
 using SmartRetail360.Infrastructure.Common.DependencyInjection;
@@ -21,6 +22,8 @@ using SmartRetail360.Infrastructure.Services.Auth.Models;
 using SmartRetail360.Infrastructure.Services.Auth.Tokens;
 using SmartRetail360.Infrastructure.Services.Notifications;
 using SmartRetail360.Infrastructure.Services.Notifications.Models;
+using SmartRetail360.Infrastructure.Services.Users;
+using SmartRetail360.Infrastructure.Services.Users.Models;
 using SmartRetail360.Logging.Interfaces;
 using SmartRetail360.Messaging.Interfaces;
 using SmartRetail360.Notifications.Services.Configuration;
@@ -40,6 +43,10 @@ public static class DependencyInjection
 
         services.Configure<OAuthOptions>(config.GetSection(GeneralConstants.OAuth));
 
+        // Users Related Services
+        services.AddScoped<IUserProfileUpdateService, UserProfileUpdateService>();
+        services.AddScoped<UpdateUserProfileTokenGenerator>();
+        
         // Email Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<IAccountActivationEmailResendingService, AccountActivationEmailResendingService>();
@@ -47,7 +54,7 @@ public static class DependencyInjection
 
         // Register the Tenant Registration Service
         services.AddScoped<IAccountRegistrationService, AccountRegistrationService>();
-        
+
         // Auth Related Services
         services.AddScoped<IAccountEmailVerificationService, AccountActivationEmailVerificationService>();
         services.AddScoped<ILoginService, CredentialsLoginService>();
@@ -60,7 +67,7 @@ public static class DependencyInjection
         services.AddScoped<FacebookOAuthHandler>();
         services.AddScoped<MicrosoftOAuthHandler>();
         services.AddScoped<IAuthService, AuthService>();
-        
+
         services.AddScoped<AccountRegistrationDependencies>(sp =>
             DependencyBuilder.Build<AccountRegistrationDependencies>(sp, deps =>
             {
@@ -76,6 +83,12 @@ public static class DependencyInjection
             {
                 deps.AccessTokenGenerator = sp.GetRequiredService<IAccessTokenGenerator>();
                 deps.RefreshTokenService = sp.GetRequiredService<IRefreshTokenService>();
+                deps.HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!;
+            }));
+        services.AddScoped<UsersDependencies>(sp =>
+            DependencyBuilder.Build<UsersDependencies>(sp, deps =>
+            {
+                deps.UpdateUserProfileTokenGenerator = sp.GetRequiredService<UpdateUserProfileTokenGenerator>();
                 deps.HttpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!;
             }));
         services.AddScoped<LoginDependencies>(sp =>

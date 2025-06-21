@@ -31,4 +31,6 @@ public enum LogEventType
     GetAbacResolverFailure,
     GetAbacResourceFailure,
     GetAbacPoliciesSuccess,
+    UpdateUserBasicProfileSuccess,
+    UpdateUserBasicProfileFailure,
 }

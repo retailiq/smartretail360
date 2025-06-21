@@ -21,6 +21,12 @@ public class DevController : ControllerBase
     public DevController()
     {
     }
+    
+    [HttpGet("test")]
+    public IActionResult Test()
+    {
+        return Ok("✅ DevController is working!");
+    }
 
     [HttpGet("debug/protocol")]
     public IActionResult GetProtocol()

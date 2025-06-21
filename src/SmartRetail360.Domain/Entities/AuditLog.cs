@@ -10,7 +10,7 @@ public class AuditLog
     public Guid? UserId { get; set; }
     public Guid? TenantId { get; set; }
     public string Action { get; set; } = string.Empty;
-    public bool IsSuccess { get; set; } = false;
+    public bool IsSuccess { get; set; } 
     public string TraceId { get; set; } = string.Empty;
     public string? DetailsJson { get; set; }
     public DateTime EvaluatedAt { get; set; } = DateTime.UtcNow;

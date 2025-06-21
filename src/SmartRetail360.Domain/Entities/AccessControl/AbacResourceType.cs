@@ -20,8 +20,8 @@ public class AbacResourceType : IHasCreatedAt, IHasUpdatedAt
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public Guid? GroupId { get; set; } // ✅ 新增
-    public AbacResourceGroup? Group { get; set; } // ✅ 导航属性
+    public Guid? GroupId { get; set; } 
+    public AbacResourceGroup? Group { get; set; } 
     
     public ICollection<AbacResourceTypeGroupMap> Groups { get; set; } = new List<AbacResourceTypeGroupMap>();
 }

@@ -11,9 +11,9 @@ using SmartRetail360.Shared.Messaging.Payloads;
 using System.Text.Json;
 using SmartRetail360.Execution;
 using SmartRetail360.Logging.Abstractions;
-using SmartRetail360.Logging.Interfaces;
 using SmartRetail360.Notifications.Services.Configuration;
 using SmartRetail360.Shared.Contexts.User;
+using SmartRetail360.Shared.Extensions;
 
 namespace EmailWorker;
 
@@ -138,13 +138,14 @@ public class EmailConsumerWorker : BackgroundService
             ["userName"] = payload.UserName,
             ["emailValidationMinutes"] = payload.EmailValidationMinutes,
         };
-        
+
         var result = await safeExecutor.ExecuteAsync(
             async () =>
             {
                 await CultureScope.RunWithCultureAsync(payload.Locale, async () =>
                 {
-                    await emailContext.SendAsync(payload.EmailTemplate, payload.Email, variables);
+                    var template = payload.EmailTemplate.ToEnumFromMemberValue<EmailTemplate>();
+                    await emailContext.SendAsync(template, payload.Email, variables);
                 });
             },
             LogEventType.EmailSendFailure,
