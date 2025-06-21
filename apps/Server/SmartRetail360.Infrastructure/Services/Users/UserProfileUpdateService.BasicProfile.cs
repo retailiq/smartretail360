@@ -63,7 +63,7 @@ public partial class UserProfileUpdateService
         if (request.Locale is { } locale && existingTenantUser!.User!.LocaleEnum != locale)
         {
             existingTenantUser.User.LocaleEnum = locale;
-            response.Locale = existingTenantUser.User.Locale;
+            response.Locale = locale.GetEnumMemberValue(); 
             hasChanges = true;
         }
 
