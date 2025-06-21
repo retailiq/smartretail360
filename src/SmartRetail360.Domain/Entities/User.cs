@@ -10,10 +10,10 @@ public class User : IHasCreatedAt, IHasUpdatedAt
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-    public string? PasswordHash { get; set; } = null;
-    public string? CountryCode { get; set; } = string.Empty;
-    public string? PhoneNumber { get; set; } = string.Empty;
-    public string? AvatarUrl { get; set; } = string.Empty;
+    public string? PasswordHash { get; set; }
+    public string? CountryCode { get; set; }
+    public string? PhoneNumber { get; set; }
+    public string? AvatarUrl { get; set; }
     public string Locale { get; set; } = LocaleType.En.GetEnumMemberValue();
 
     [NotMapped]
@@ -32,20 +32,20 @@ public class User : IHasCreatedAt, IHasUpdatedAt
         set => Status = value.GetEnumMemberValue();
     }
 
-    public bool IsEmailVerified { get; set; } = false;
+    public bool IsEmailVerified { get; set; } 
     public bool IsFirstLogin { get; set; } = true;
     public string TraceId { get; set; } = string.Empty;
-    public Guid? LastUpdatedBy { get; set; } = null;
-    public DateTime? LastEmailSentAt { get; set; } = null;
-    public DateTime? LastLoginAt { get; set; } = null;
+    public Guid? LastUpdatedBy { get; set; }
+    public DateTime? LastEmailSentAt { get; set; }
+    public DateTime? LastLoginAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? DeletedAt { get; set; } = null;
+    public DateTime? DeletedAt { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public bool IsSystemAccount { get; set; } = false;
-    public DateTime? DeactivatedAt { get; set; } = null;
-    public Guid? DeactivatedBy { get; set; } = null;
+    public bool IsSystemAccount { get; set; }
+    public DateTime? DeactivatedAt { get; set; }
+    public Guid? DeactivatedBy { get; set; }
     public string DeactivationReason { get; set; } = AccountBanReason.None.GetEnumMemberValue();
 
     [NotMapped]

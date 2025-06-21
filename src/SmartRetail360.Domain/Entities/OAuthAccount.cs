@@ -9,7 +9,7 @@ public class OAuthAccount : IHasCreatedAt, IHasUpdatedAt
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; } = Guid.Empty;
-    public User? User { get; set; } = null;
+    public User? User { get; set; } 
     public string Provider { get; set; } = OAuthProvider.None.GetEnumMemberValue();
 
     [NotMapped]
@@ -36,8 +36,8 @@ public class OAuthAccount : IHasCreatedAt, IHasUpdatedAt
     }
 
     public bool IsActive { get; set; } = true;
-    public DateTime? DeactivatedAt { get; set; } = null;
-    public Guid? DeactivatedBy { get; set; } = null;
+    public DateTime? DeactivatedAt { get; set; } 
+    public Guid? DeactivatedBy { get; set; } 
     public string DeactivationReason { get; set; } = AccountBanReason.None.GetEnumMemberValue();
 
     [NotMapped]

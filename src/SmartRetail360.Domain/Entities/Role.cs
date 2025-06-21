@@ -16,7 +16,7 @@ public class Role : IHasCreatedAt, IHasUpdatedAt
         get => Name.ToEnumFromMemberValue<SystemRoleType>();
         set => Name = value.GetEnumMemberValue();
     }
-    public bool IsSystemRole { get; set; } = false;
+    public bool IsSystemRole { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
