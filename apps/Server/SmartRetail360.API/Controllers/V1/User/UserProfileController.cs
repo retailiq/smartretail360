@@ -3,7 +3,7 @@ using SmartRetail360.Application.Interfaces.Users;
 using SmartRetail360.Contracts.Users.Requests;
 using SmartRetail360.Shared.Extensions;
 
-namespace SmartRetail360.API.Controllers.V1.AccountRegistration;
+namespace SmartRetail360.API.Controllers.V1.User;
 
 [ApiController]
 [ApiVersion("1.0")]

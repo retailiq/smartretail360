@@ -59,6 +59,7 @@ public static class ErrorCodes
         
     // Users
     public const int UserNotExists = 8001;
+    public const int EmailAlreadyUsed = 8002;
     
     // Unknown
     public const int UnknownError = 9999;

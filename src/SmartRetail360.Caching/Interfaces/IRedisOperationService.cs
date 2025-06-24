@@ -26,8 +26,8 @@ public interface IRedisOperationService
     Task<List<Role>> GetSystemRolesByIdsAsync(List<Guid> roleIds);
     
     // Token cache
-    Task SetActivationTokenAsync(AccountActivationToken tokenEntity);
-    Task<AccountActivationToken?> GetActivationTokenAsync(string token);
+    Task SetActivationTokenAsync(AccountToken tokenEntity);
+    Task<AccountToken?> GetActivationTokenAsync(string token);
     Task InvalidateActivationTokenAsync(string token);
     
     // User Login Lock

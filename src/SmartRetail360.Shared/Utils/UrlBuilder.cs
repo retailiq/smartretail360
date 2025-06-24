@@ -13,7 +13,8 @@ public static class UrlBuilder
         if (queryParams == null || queryParams.Count == 0)
             return uri.ToString();
 
-        var query = string.Join("&", queryParams.Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value)}"));
+        var query = string.Join("&", queryParams.Select(kv =>
+            $"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(kv.Value)}"));
         return $"{uri}?{query}";
     }
 }

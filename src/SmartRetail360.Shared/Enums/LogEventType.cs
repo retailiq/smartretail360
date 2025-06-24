@@ -33,4 +33,6 @@ public enum LogEventType
     GetAbacPoliciesSuccess,
     UpdateUserBasicProfileSuccess,
     UpdateUserBasicProfileFailure,
+    UpdateUserEmailFailure,
+    UpdateUserEmailSuccess,
 }

@@ -45,7 +45,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         return await ActivateEntities(tokenEntity!, user!, tenant!, tenantUser!, token, traceId, policies);
     }
 
-    private async Task<(AccountActivationToken?, User?, Tenant?, TenantUser?, List<AbacPolicy>?, ApiResponse<object>?)>
+    private async Task<(AccountToken?, User?, Tenant?, TenantUser?, List<AbacPolicy>?, ApiResponse<object>?)>
         LoadEntitiesAsync(string token)
     {
         var tokenCheckEntity = await _dep.RedisOperation.GetActivationTokenAsync(token);
@@ -101,7 +101,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
             .ValidateAsync();
     }
 
-    private async Task<bool> MarkTokenAsExpiredAsync(AccountActivationToken tokenEntity, string token)
+    private async Task<bool> MarkTokenAsExpiredAsync(AccountToken tokenEntity, string token)
     {
         if (tokenEntity.ExpiresAt < DateTime.UtcNow && (tokenEntity.StatusEnum == ActivationTokenStatus.Pending))
         {
@@ -125,7 +125,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
         return false;
     }
 
-    private async Task<ApiResponse<object>?> RunValidationGuards(AccountActivationToken token, string tokenStr)
+    private async Task<ApiResponse<object>?> RunValidationGuards(AccountToken token, string tokenStr)
     {
         var isLimited = await _dep.RedisOperation.IsAccountActivationLimitedAsync(tokenStr);
 
@@ -141,7 +141,7 @@ public class AccountActivationEmailVerificationService : IAccountEmailVerificati
             .ValidateAsync();
     }
 
-    private async Task<ApiResponse<object>> ActivateEntities(AccountActivationToken token, User user, Tenant tenant,
+    private async Task<ApiResponse<object>> ActivateEntities(AccountToken token, User user, Tenant tenant,
         TenantUser tenantUser, string tokenStr, string traceId, List<AbacPolicy>? policies)
     {
         user.IsEmailVerified = true;

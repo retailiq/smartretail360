@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using SmartRetail360.Application.Interfaces.Users;
 using SmartRetail360.Contracts.Users.Requests;
-using SmartRetail360.Contracts.Users.Responses;
 using SmartRetail360.Infrastructure.Services.Users.Models;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
@@ -20,11 +19,6 @@ public partial class UserProfileUpdateService : IUserProfileUpdateService
     }
 
     public async Task<ApiResponse<object>> UpdateUserPassword(UpdateUserPasswordRequest request, Guid userId)
-    {
-        return null;
-    }
-
-    public async Task<ApiResponse<UpdateUserEmailResponse>> UpdateUserEmail(UpdateUserEmailRequest request, Guid userId)
     {
         return null;
     }

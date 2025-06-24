@@ -21,10 +21,10 @@ public class AccountSupportService : IAccountSupportService
         _safeExecutor = safeExecutor;
     }
 
-    public async Task<(List<AccountActivationToken>?, ApiResponse<object>?)> GetActivationTokenListAsync(Guid userId)
+    public async Task<(List<AccountToken>?, ApiResponse<object>?)> GetActivationTokenListAsync(Guid userId)
     {
         var result = await _safeExecutor.ExecuteAsync(
-            () => _db.AccountActivationTokens
+            () => _db.AccountTokens
                 .Where(t => t.UserId == userId)
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync(),

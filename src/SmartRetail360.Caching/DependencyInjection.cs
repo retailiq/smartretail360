@@ -19,7 +19,7 @@ public static class DependencyInjection
         services.AddScoped<IRedisLockService, RedisRedisLockService>();
         services.AddScoped<IRedisLogSamplingService, RedisLogSamplingService>();
         services.AddScoped<IRoleCacheService, RoleCacheService>();
-        services.AddScoped<IActivationTokenCacheService, ActivationTokenCacheService>();
+        services.AddScoped<IAccountTokenCacheService, AccountTokenCacheService>();
         services.AddScoped<IRedisOperationService, RedisOperationService>();
         services.AddScoped<ILoginFailureLimiter, LoginFailureLimiter>();
 

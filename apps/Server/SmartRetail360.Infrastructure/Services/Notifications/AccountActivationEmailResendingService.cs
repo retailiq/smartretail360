@@ -101,12 +101,12 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         }
 
         var emailVerificationToken = TokenHelper.GenerateActivateAccountToken();
-        var accountActivationToken = new AccountActivationToken
+        var accountActivationToken = new AccountToken
         {
             UserId = existingUser.Id,
             TenantId = tenantIdToUse!.Value,
             Token = emailVerificationToken,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.AccountActivationLimitMinutes),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.EmailValidityPeriodMinutes),
             TraceId = _dep.UserContext.TraceId,
             SourceEnum = latestSource
         };
@@ -115,7 +115,7 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         var saveResult = await _dep.SafeExecutor.ExecuteAsync(
             async () =>
             {
-                _dep.Db.AccountActivationTokens.Add(accountActivationToken);
+                _dep.Db.AccountTokens.Add(accountActivationToken);
                 await _dep.Db.SaveChangesAsync();
                 await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken);
             },
@@ -131,17 +131,17 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
             ? EmailTemplate.UserRegistrationActivation
             : EmailTemplate.UserInvitationActivation;
 
-        var payload = ActivationEmailPayloadFactory.Create(
+        var payload = EmailSendingPayloadFactory.Create(
             existingUser.Email,
             existingUser.Name,
             emailVerificationToken,
             action,
             emailTemplate,
-            _dep.AppOptions.AccountActivationLimitMinutes
+            _dep.AppOptions.EmailValidityPeriodMinutes
         );
 
         var emailError =
-            await _dep.PlatformContext.SendRegistrationInvitationEmailAsync(emailVerificationToken, payload);
+            await _dep.PlatformContext.SendEmailSqsMessageAsync(emailVerificationToken, payload);
         if (emailError != null)
             return emailError;
 
@@ -151,7 +151,7 @@ public class AccountActivationEmailResendingService : IAccountActivationEmailRes
         return ApiResponse<object>.Ok(
             null,
             _dep.Localizer.GetLocalizedText(LocalizedTextKey.EmailResent,
-                _dep.AppOptions.AccountActivationLimitMinutes),
+                _dep.AppOptions.EmailValidityPeriodMinutes),
             traceId: _dep.UserContext.TraceId
         );
     }

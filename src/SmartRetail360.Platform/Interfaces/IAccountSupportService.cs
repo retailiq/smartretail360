@@ -5,5 +5,5 @@ namespace SmartRetail360.Platform.Interfaces;
 
 public interface IAccountSupportService
 {
-    Task<(List<AccountActivationToken>?, ApiResponse<object>?)> GetActivationTokenListAsync(Guid userId);
+    Task<(List<AccountToken>?, ApiResponse<object>?)> GetActivationTokenListAsync(Guid userId);
 }

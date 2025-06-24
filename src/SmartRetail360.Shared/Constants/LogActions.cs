@@ -35,6 +35,7 @@ public static class LogActions
     
     // ===== User Profile =====
     public const string UpdateUserBasicProfile = "UPDATE_USER_BASIC_PROFILE";
+    public const string SendUserEmailUpdateVerificationEmail = "SEND_USER_EMAIL_VERIFICATION_EMAIL";
     
     // ===== Log =====
     public const string WriteAuditLog = "WRITE_AUDIT_LOG";

@@ -4,7 +4,7 @@ using SmartRetail360.Shared.Messaging.Payloads;
 
 namespace SmartRetail360.Shared.Messaging.Factories;
 
-public static class ActivationEmailPayloadFactory
+public static class EmailSendingPayloadFactory
 {
     public static ActivationEmailPayload Create(
         string email,

@@ -86,7 +86,9 @@ public static class TenantAccountDbRunner
         catch (Exception ex)
         {
             Console.WriteLine($"[Seed][Error]  Failed to create System Tenant + User + TenantUser: {ex.Message}");
+            Console.WriteLine($"[Seed][InnerException] {ex.InnerException?.Message}");
             Console.WriteLine(ex.StackTrace);
+            throw;
         }
     }
 }

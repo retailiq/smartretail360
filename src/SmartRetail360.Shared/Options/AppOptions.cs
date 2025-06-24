@@ -17,7 +17,7 @@ public class AppOptions
     public bool EnableRequestBodyLogging { get; set; } = true;
     public bool EnableSensitiveFieldMasking { get; set; } = true;
     public List<string> SensitiveFields { get; set; } = new() { "password", "token", "apiKey" };
-    public int AccountActivationLimitMinutes { get; set; } = 15;
+    public int EmailValidityPeriodMinutes { get; set; } = 15;
     public double UserLoginLockTtlSeconds { get; set; } = 10;
     public string JwtSecret { get; set; } = string.Empty;
     public int UserLoginFailureThreshold { get; set; } = 3;

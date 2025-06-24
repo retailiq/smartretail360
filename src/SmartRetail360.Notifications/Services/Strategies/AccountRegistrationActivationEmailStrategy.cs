@@ -25,6 +25,12 @@ public class AccountRegistrationActivationEmailStrategy : IEmailStrategy
     
     public async Task ExecuteAsync(string toEmail, IDictionary<string, string> data)
     {
+        foreach (var kv in data)
+        {
+            Console.WriteLine($"{kv.Key}: {kv.Value}");
+            Console.WriteLine($"{kv.Key} (hex): {string.Join(" ", kv.Value.Select(c => ((int)c).ToString("X2")))}");
+        }
+        
         var link = UrlBuilder.BuildApiUrl(
             _appOptions.BaseUrl,
             version: 1,
@@ -36,9 +42,17 @@ public class AccountRegistrationActivationEmailStrategy : IEmailStrategy
                 ["traceId"] = data["traceId"],
                 ["timestamp"] = data["timestamp"]
             });
+        
+        Console.WriteLine($"[DEBUG] Final activation link:\n{link}");
 
         var variables = new Dictionary<string, string>(data) { ["activation_link"] = link };
 
+        Console.WriteLine("==== Final template variables ====");
+        foreach (var kv in variables)
+        {
+            Console.WriteLine($"{kv.Key}: {kv.Value}");
+        }
+        
         await _emailSender.SendAsync(toEmail, EmailTemplate.UserRegistrationActivation, variables);
     }
 }

@@ -18,10 +18,5 @@
     <ProjectReference Include="..\SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Redis\Interfaces\Caching\" />
-    <Folder Include="Redis\Services\" />
-  </ItemGroup>
-
 </Project>
 

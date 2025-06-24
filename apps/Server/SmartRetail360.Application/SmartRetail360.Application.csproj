@@ -8,17 +8,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="12.0.0"/>
-        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0"/>
+        <PackageReference Include="FluentValidation" Version="12.0.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\SmartRetail360.Contracts\SmartRetail360.Contracts.csproj" />
-        <ProjectReference Include="..\..\..\src\SmartRetail360.Domain\SmartRetail360.Domain.csproj"/>
+        <ProjectReference Include="..\..\..\src\SmartRetail360.Domain\SmartRetail360.Domain.csproj" />
         <ProjectReference Include="..\..\..\src\SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj" />
         <ProjectReference Include="..\..\..\src\SmartRetail360.Shared\SmartRetail360.Shared.csproj" />
         <ProjectReference Include="..\..\..\src\SmartRetail360.Logging\SmartRetail360.Logging.csproj" />
