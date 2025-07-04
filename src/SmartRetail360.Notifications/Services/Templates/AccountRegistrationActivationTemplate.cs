@@ -1,16 +1,21 @@
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Localization;
-using System.Web;
+using Microsoft.Extensions.Options;
+using SmartRetail360.Shared.Options;
 
 namespace SmartRetail360.Notifications.Services.Templates
 {
     public class AccountRegistrationActivationTemplate
     {
         private readonly MessageLocalizer _localizer;
+        private readonly AppOptions _appOptions;
 
-        public AccountRegistrationActivationTemplate(MessageLocalizer localizer)
+        public AccountRegistrationActivationTemplate(
+            MessageLocalizer localizer,
+            IOptions<AppOptions> appOptions)
         {
             _localizer = localizer;
+            _appOptions = appOptions.Value;
         }
 
         public string GetHtml(Dictionary<string, string> variables)
@@ -27,10 +32,10 @@ namespace SmartRetail360.Notifications.Services.Templates
             var validityNotice =
                 string.Format(_localizer.GetLocalizedText(LocalizedTextKey.AccountActivationValidityNotice), minutes);
             var footer = _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationFooter);
-
+            
+            var manualInstruction = _localizer.GetLocalizedText(LocalizedTextKey.AccountActivationManualLinkInstruction);
             var activationLinkRaw = variables.GetValueOrDefault("activation_link") ?? "#";
-            var activationLink = activationLinkRaw;
-            var activationLinkEncoded = System.Net.WebUtility.HtmlEncode(activationLink);
+            var activationLinkEncoded = System.Net.WebUtility.HtmlEncode(activationLinkRaw);
 
             return $@"
             <!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN"" ""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"">
@@ -49,6 +54,7 @@ namespace SmartRetail360.Notifications.Services.Templates
                         -webkit-text-size-adjust: 100% !important;
                         -ms-text-size-adjust: 100% !important;
                         background-color: #f4f6f7 !important;
+                        font-family: -apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, ""Helvetica Neue"", Helvetica, Arial, sans-serif !important;
                     }}
 
                     table, table td, table tr {{
@@ -144,7 +150,7 @@ namespace SmartRetail360.Notifications.Services.Templates
                                 <tr>
                                     <td class=""email-content"">
                                         <div class=""logo"">
-                                            <img src=""https://raw.githubusercontent.com/retailiq/smartretail360/6acfa8f10c201c066875f6e22833d4df2dcbcca1/apps/client/public/logo_no_bg.png"" alt=""Company Logo"" />
+                                            <img src=""{_appOptions.LogoUrl}"" alt=""Company Logo"" />
                                         </div>
 
                                         <p>{title}</p>
@@ -156,7 +162,7 @@ namespace SmartRetail360.Notifications.Services.Templates
                                             <a class=""button"" href=""{activationLinkEncoded}"" rel=""noopener noreferrer"">{ctaText}</a>
                                         </div>
                                         <div style=""font-size: 14px; color: #888888; font-style: italic; margin: 12px 0;"">
-                                            如果按钮无法点击，请复制以下链接到浏览器中打开：
+                                            <p>{manualInstruction}</p>
                                             <div style=""word-break: break-all; overflow-wrap: break-word;"">
                                                 <a href=""{activationLinkEncoded}"" style=""color:#2f855a;"">{activationLinkEncoded}</a>
                                             </div>

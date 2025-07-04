@@ -2,12 +2,12 @@ namespace SmartRetail360.Shared.Utils;
 
 public static class UrlBuilder
 {
-    public static string BuildApiUrl(string baseUrl, int version, string path, Dictionary<string, string>? queryParams = null)
+    public static string BuildApiUrl(string baseUrl, string path, Dictionary<string, string>? queryParams = null)
     {
         if (!baseUrl.EndsWith('/'))
             baseUrl += "/";
 
-        var versionedPath = $"server/api/v{version}/{path.TrimStart('/')}";
+        var versionedPath = $"{path.TrimStart('/')}";
         var uri = new Uri(new Uri(baseUrl), versionedPath);
 
         if (queryParams == null || queryParams.Count == 0)

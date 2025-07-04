@@ -71,6 +71,7 @@ public static class LogReasons
     public const string EmailSendFailed = "EMAIL_SEND_FAILED";
     public const string EmailStrategyNotFound = "EMAIL_STRATEGY_NOT_FOUND";
     public const string EmailTemplateNotFound = "EMAIL_TEMPLATE_NOT_FOUND";
+    public const string EmailActuallySendFailure = "EMAIL_ACTUALLY_SEND_FAILURE";
 
     // AWS SQS
     public const string SendSqsMessageFailed = "SEND_SQS_MESSAGE_FAILED";

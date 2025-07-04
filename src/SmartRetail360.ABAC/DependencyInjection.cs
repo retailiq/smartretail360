@@ -13,7 +13,7 @@ namespace SmartRetail360.ABAC;
 public static class DependencyInjection
 {
     public static IServiceCollection AddAbac(this IServiceCollection services, IConfiguration configuration)
-    
+
     {
         services.Scan(scan => scan
             .FromAssemblyOf<UserResourceResolver>()

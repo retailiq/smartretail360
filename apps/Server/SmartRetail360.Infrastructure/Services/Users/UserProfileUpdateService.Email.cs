@@ -49,7 +49,7 @@ public partial class UserProfileUpdateService
             );
         }
 
-        existingTenantUser.User.Email = request.NewEmail;
+        existingTenantUser.User.NewEmail = request.NewEmail;
         existingTenantUser.User!.TraceId = _dep.UserContext.TraceId;
         existingTenantUser.User.LastUpdatedBy = _dep.UserContext.UserId;
 
@@ -61,7 +61,8 @@ public partial class UserProfileUpdateService
             Token = emailVerificationToken,
             ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.EmailValidityPeriodMinutes),
             TraceId = _dep.UserContext.TraceId,
-            Email = existingTenantUser.User.Email
+            Email = existingTenantUser.User.Email,
+            NewEmail = request.NewEmail,
         };
 
         var saveResult = await _dep.SafeExecutor.ExecuteAsync(
@@ -80,12 +81,13 @@ public partial class UserProfileUpdateService
             return saveResult.ToObjectResponse().To<UpdateUserEmailResponse>();
 
         var payload = EmailSendingPayloadFactory.Create(
-            existingTenantUser.User.Email,
-            existingTenantUser.User.Name,
-            emailVerificationToken,
-            LogActions.SendUserEmailUpdateVerificationEmail,
-            EmailTemplate.UseEmailUpdate,
-            _dep.AppOptions.EmailValidityPeriodMinutes
+            email: existingTenantUser.User.Email,
+            userName: existingTenantUser.User.Name,
+            token: emailVerificationToken,
+            action: LogActions.SendUserEmailUpdateVerificationEmail,
+            template: EmailTemplate.EmailUpdate,
+            minutes: _dep.AppOptions.EmailValidityPeriodMinutes,
+            newEmail: request.NewEmail
         );
 
         var emailError =
@@ -93,32 +95,13 @@ public partial class UserProfileUpdateService
         if (emailError != null)
             return emailError.To<UpdateUserEmailResponse>();
 
-        var oldRefreshToken = _dep.HttpContext.Request.Cookies[GeneralConstants.Sr360RefreshToken];
-
-        var tokens = await _dep.UpdateUserProfileTokenGenerator.GenerateTokensAsync(
-            existingTenantUser,
-            _dep.UserContext.TraceId,
-            _dep.UserContext.Env.GetEnumMemberValue(),
-            _dep.UserContext.IpAddress,
-            oldRefreshToken ?? string.Empty
-        );
-
-        var refreshTokenResult = await ValidateAndSetRefreshTokenCookieAsync<UpdateUserEmailResponse>(
-            tokens.RefreshToken,
-            tokens.ExpiresAt
-        );
-        if (refreshTokenResult != null)
-            return refreshTokenResult;
-
-        await _dep.LogDispatcher.Dispatch(LogEventType.UpdateUserEmailSuccess);
+        await _dep.LogDispatcher.Dispatch(LogEventType.RegisterUserSuccess);
 
         return ApiResponse<UpdateUserEmailResponse>.Ok(
-            // new UpdateUserEmailResponse
-            // {
-            //     // AccessToken = tokens.AccessToken,
-            //     Email = request.NewEmail
-            // },
-            null,
+            new UpdateUserEmailResponse
+            {
+                NewEmail = request.NewEmail
+            },
             _dep.Localizer.GetLocalizedText(LocalizedTextKey.UserEmailUpdateVerificationLinkSent,
                 _dep.AppOptions.EmailValidityPeriodMinutes),
             _dep.UserContext.TraceId

@@ -27,6 +27,14 @@ public enum LocalizedTextKey
     UserProfileUnchanged,
     UserPasswordUnchanged,
     UserEmailUpdateVerificationLinkSent,
+    AccountActivationManualLinkInstruction,
+    EmailUpdateEmailSendingGreeting,
+    EmailUpdateEmailSendingInstruction,
+    EmailUpdateEmailSendingCtaText,
+    EmailUpdateEmailSendingValidityNotice,
+    EmailUpdateEmailSendingManualLinkInstruction,
+    EmailUpdateEmailSendingFooter,
+    EmailUpdateSubject,
     
     // Role descriptions
     RoleOwnerDescription,

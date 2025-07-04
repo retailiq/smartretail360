@@ -1,6 +1,3 @@
-using SmartRetail360.Shared.Enums;
-using SmartRetail360.Shared.Options;
-
 namespace SmartRetail360.Caching.Abstractions;
 
 public interface IRedisLogSamplingService

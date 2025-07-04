@@ -21,9 +21,5 @@
     <ProjectReference Include="..\SmartRetail360.Logging\SmartRetail360.Logging.csproj" />
     <ProjectReference Include="..\SmartRetail360.Shared.Contexts\SmartRetail360.Shared.Contexts.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
   
 </Project>

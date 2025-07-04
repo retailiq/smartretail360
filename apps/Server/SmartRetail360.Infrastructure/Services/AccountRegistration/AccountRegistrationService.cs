@@ -109,7 +109,8 @@ public class AccountRegistrationService : IAccountRegistrationService
                 Token = emailVerificationToken,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.EmailValidityPeriodMinutes),
                 TraceId = traceId,
-                SourceEnum = ActivationSource.Registration
+                SourceEnum = ActivationSource.Registration,
+                Email = user.Email,
             };
 
             _dep.UserContext.Inject(new UserExecutionContext

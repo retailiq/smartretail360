@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using SmartRetail360.Domain.Interfaces;
 using SmartRetail360.Shared.Enums;
 using SmartRetail360.Shared.Extensions;
-using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Domain.Entities;
 
@@ -13,6 +12,7 @@ public class AccountToken : IHasCreatedAt
     public Guid TenantId { get; set; }
     public string Token { get; set; } = string.Empty;
     public string? Email { get; set; }
+    public string? NewEmail { get; set; }
     public string Status { get; set; } = ActivationTokenStatus.Pending.GetEnumMemberValue();
     [NotMapped]
     public ActivationTokenStatus StatusEnum

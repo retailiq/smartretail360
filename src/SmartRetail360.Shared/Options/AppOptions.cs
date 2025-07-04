@@ -26,6 +26,7 @@ public class AppOptions
     public int AccessTokenExpirySeconds { get; set; } = 1200; // 20 minutes
     public string RefreshTokenPath { get; set; } = "/api/v1/auth/refresh";
     public string CookieDomain { get; set; } = "example.com";
+    public string LogoUrl { get; set; } = "https://example.com/logo.png";
 
     public string ProductName { get; set; } = "SmartRetail360";
 

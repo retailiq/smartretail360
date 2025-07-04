@@ -75,7 +75,7 @@
     <data name="UserNotExists" xml:space="preserve"><value>User does not exist</value></data>
     <data name="UpdateUserBasicProfileSuccessfully" xml:space="preserve"><value>User basic profile updated successfully</value></data>
     <data name="UpdateUserPasswordSuccessfully" xml:space="preserve"><value>User password updated successfully</value></data>
-    <data name="UserEmailUpdateVerificationLinkSent" xml:space="preserve"><value>A verification link has been sent to your new email address, please check your inbox. The link is valid for {0} minutes.</value></data>
+    <data name="UserEmailUpdateVerificationLinkSent" xml:space="preserve"><value>A verification link has been sent to your new email address, please check your inbox. The link is valid for {0} minutes</value></data>
     <data name="UpdateUserEmailSuccessfully" xml:space="preserve"><value>User email updated successfully</value></data>
     <data name="UserProfileUnchanged" xml:space="preserve"><value>No changes detected in user profile</value></data>
     <data name="UserEmailUnchanged" xml:space="preserve"><value>Email has not changed</value></data>
@@ -96,7 +96,15 @@
     <data name="AccountActivationCtaText" xml:space="preserve"><value>Activate Now</value></data>
     <data name="AccountActivationFooter" xml:space="preserve"><value>This email was sent automatically. Please do not reply.</value></data>
     <data name="AccountActivationSubject" xml:space="preserve"><value>Activate Your Account</value></data>
+    <data name="EmailUpdateSubject" xml:space="preserve"><value>Update Your Email</value></data>
     <data name="AccountActivationValidityNotice" xml:space="preserve"><value>This link is valid for {0} minutes.</value></data>
+    <data name="AccountActivationManualLinkInstruction" xml:space="preserve"><value>If the button doesn't work, please copy the following link and open it in your browser:</value></data>
+    <data name="EmailUpdateEmailSendingGreeting" xml:space="preserve"><value>Hello, {0},</value></data>
+    <data name="EmailUpdateEmailSendingInstruction" xml:space="preserve"><value>You are changing your account email from {0} to {1}. Please click the button below to confirm your update.</value></data>
+    <data name="EmailUpdateEmailSendingCtaText" xml:space="preserve"><value>Confirm Update</value></data>
+    <data name="EmailUpdateEmailSendingValidityNotice" xml:space="preserve"><value>This link will expire in {0} minutes.</value></data>
+    <data name="EmailUpdateEmailSendingManualLinkInstruction" xml:space="preserve"><value>If the button does not work, you can also copy the following link into your browser:</value></data>
+    <data name="EmailUpdateEmailSendingFooter" xml:space="preserve"><value>This email was sent automatically by the system. Please do not reply directly.</value></data>
     
     <!-- Field Validation -->
     <data name="TokenIsRequired" xml:space="preserve"><value>Token is required</value></data>

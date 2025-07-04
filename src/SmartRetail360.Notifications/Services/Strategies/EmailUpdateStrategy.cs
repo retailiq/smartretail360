@@ -8,14 +8,14 @@ using SmartRetail360.Shared.Utils;
 
 namespace SmartRetail360.Notifications.Services.Strategies;
 
-public class AccountRegistrationActivationEmailStrategy : IEmailStrategy
+public class EmailUpdateStrategy : IEmailStrategy
 {
     private readonly IEmailSender _emailSender;
     private readonly AppOptions _appOptions;
 
-    public EmailTemplate StrategyKey => EmailTemplate.UserRegistrationActivation;
+    public EmailTemplate StrategyKey => EmailTemplate.EmailUpdate;
 
-    public AccountRegistrationActivationEmailStrategy(
+    public EmailUpdateStrategy(
         IEmailSender emailSender,
         IOptions<AppOptions> options)
     {
@@ -35,10 +35,7 @@ public class AccountRegistrationActivationEmailStrategy : IEmailStrategy
                 ["traceId"] = data["traceId"],
                 ["timestamp"] = data["timestamp"]
             });
-        
-        Console.WriteLine("Activation link: " + link);
-        
         var variables = new Dictionary<string, string>(data) { ["activation_link"] = link };
-        await _emailSender.SendAsync(toEmail, EmailTemplate.UserRegistrationActivation, variables);
+        await _emailSender.SendAsync(toEmail, EmailTemplate.EmailUpdate, variables);
     }
 }

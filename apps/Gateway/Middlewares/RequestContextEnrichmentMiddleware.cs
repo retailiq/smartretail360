@@ -22,8 +22,6 @@ public class RequestContextEnrichmentMiddleware
         context.Request.Headers["X-Env"] = env;
         context.Items["Env"] = env;
         
-        
-
         await _next(context);
     }
 }

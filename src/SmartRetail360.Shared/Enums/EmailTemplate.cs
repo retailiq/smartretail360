@@ -19,6 +19,6 @@ public enum EmailTemplate
     [EnumMember(Value = "marketing")]
     Marketing,
     
-    [EnumMember(Value = "userEmailUpdate")]
-    UseEmailUpdate
+    [EnumMember(Value = "emailUpdate")]
+    EmailUpdate
 }

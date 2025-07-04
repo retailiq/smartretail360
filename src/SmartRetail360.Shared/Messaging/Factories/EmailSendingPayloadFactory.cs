@@ -12,12 +12,14 @@ public static class EmailSendingPayloadFactory
         string token,
         string action,
         EmailTemplate template,
-        int minutes)
+        int minutes,
+        string? newEmail = null)
     {
         return new ActivationEmailPayload
         {
             Email = email,
             Token = token,
+            NewEmail = newEmail,
             Timestamp = DateTime.UtcNow.ToString("o"),
             Action = action,
             EmailTemplate = template.GetEnumMemberValue(),

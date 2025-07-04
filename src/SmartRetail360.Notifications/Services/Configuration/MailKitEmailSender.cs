@@ -1,7 +1,9 @@
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using SmartRetail360.Execution;
 using SmartRetail360.Notifications.Interfaces.Configuration;
+using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Enums;
 
 namespace SmartRetail360.Notifications.Services.Configuration;
@@ -10,11 +12,16 @@ public class MailKitEmailSender : IEmailSender
 {
     private readonly IConfiguration _config;
     private readonly IEmailTemplateProvider _templateProvider;
+    private readonly ISafeExecutor _safeExecutor;
 
-    public MailKitEmailSender(IConfiguration config, IEmailTemplateProvider templateProvider)
+    public MailKitEmailSender(
+        IConfiguration config,
+        IEmailTemplateProvider templateProvider,
+        ISafeExecutor safeExecutor)
     {
         _config = config;
         _templateProvider = templateProvider;
+        _safeExecutor = safeExecutor;
     }
 
     public async Task SendAsync(string to, EmailTemplate template, Dictionary<string, string> variables)
@@ -32,7 +39,12 @@ public class MailKitEmailSender : IEmailSender
         await client.ConnectAsync(_config["Mail:Smtp:Host"], int.Parse(_config["Mail:Smtp:Port"]!),
             MailKit.Security.SecureSocketOptions.StartTls);
         await client.AuthenticateAsync(_config["Mail:Smtp:User"], _config["Mail:Smtp:Password"]);
-        await client.SendAsync(message);
+        await _safeExecutor.ExecuteAsync(
+            async () => { await client.SendAsync(message); },
+            LogEventType.EmailActuallySendFailure,
+            LogReasons.EmailActuallySendFailure,
+            ErrorCodes.None
+        );
         await client.DisconnectAsync(true);
     }
 }

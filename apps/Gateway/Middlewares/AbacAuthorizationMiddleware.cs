@@ -108,7 +108,10 @@ public class AbacAuthorizationMiddleware
             environment = new { name = env },
             tenant_constraints = new { access_allowed = accessAllowed },
         };
-
+        
+        Console.WriteLine("resourceType: " + resourceType);
+        Console.WriteLine("action: " + action);
+        
         // Step 5: Evaluate policy
         var allowed = await evaluator.EvaluateAsync(tenantId, resourceType, action, evalContext);
         if (!allowed)
