@@ -102,14 +102,15 @@ public class AccountRegistrationService : IAccountRegistrationService
                 CreatedBy = user.Id,
             };
 
-            var accountActivationToken = new AccountActivationToken
+            var accountActivationToken = new AccountToken
             {
                 UserId = user.Id,
                 TenantId = tenant.Id,
                 Token = emailVerificationToken,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.AccountActivationLimitMinutes),
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_dep.AppOptions.EmailValidityPeriodMinutes),
                 TraceId = traceId,
-                SourceEnum = ActivationSource.Registration
+                SourceEnum = ActivationSource.Registration,
+                Email = user.Email,
             };
 
             _dep.UserContext.Inject(new UserExecutionContext
@@ -127,7 +128,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                     _dep.Db.Users.Add(user);
                     _dep.Db.Tenants.Add(tenant);
                     _dep.Db.TenantUsers.Add(tenantUser);
-                    _dep.Db.AccountActivationTokens.Add(accountActivationToken);
+                    _dep.Db.AccountTokens.Add(accountActivationToken);
                     await _dep.Db.SaveChangesAsync();
                     await _dep.AbacPolicyService.CreateDefaultPoliciesForTenantAsync(tenant.Id);
                     await _dep.RedisOperation.SetActivationTokenAsync(accountActivationToken);
@@ -140,17 +141,17 @@ public class AccountRegistrationService : IAccountRegistrationService
             if (!saveResult.IsSuccess)
                 return saveResult.ToObjectResponse().To<AccountRegisterResponse>();
 
-            var payload = ActivationEmailPayloadFactory.Create(
+            var payload = EmailSendingPayloadFactory.Create(
                 user.Email,
                 user.Name,
                 emailVerificationToken,
                 LogActions.UserRegistrationActivationEmailSend,
                 EmailTemplate.UserRegistrationActivation,
-                _dep.AppOptions.AccountActivationLimitMinutes
+                _dep.AppOptions.EmailValidityPeriodMinutes
             );
 
             var emailError =
-                await _dep.PlatformContext.SendRegistrationInvitationEmailAsync(emailVerificationToken, payload);
+                await _dep.PlatformContext.SendEmailSqsMessageAsync(emailVerificationToken, payload);
             if (emailError != null)
                 return emailError.To<AccountRegisterResponse>();
 
@@ -163,7 +164,7 @@ public class AccountRegistrationService : IAccountRegistrationService
                     Name = user.Name
                 },
                 _dep.Localizer.GetLocalizedText(LocalizedTextKey.AccountRegistered,
-                    _dep.AppOptions.AccountActivationLimitMinutes),
+                    _dep.AppOptions.EmailValidityPeriodMinutes),
                 traceId
             );
         }

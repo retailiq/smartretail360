@@ -21,7 +21,7 @@ public interface IPlatformContextService
     Task<(RefreshToken?, ApiResponse<object>?)> GetRefreshTokenAsync(string token);
     Task<(List<AbacPolicy>?, ApiResponse<object>?)> GetAbacPoliciesByTenantIdAsync(Guid tenantId);
 
-    Task<ApiResponse<object>?> SendRegistrationInvitationEmailAsync(string token, ActivationEmailPayload payload);
+    Task<ApiResponse<object>?> SendEmailSqsMessageAsync(string token, ActivationEmailPayload payload);
 
     Task<(AbacPolicy?, ApiResponse<object>?)> GetAbacPolicyByIdAsync(Guid policyId);
 

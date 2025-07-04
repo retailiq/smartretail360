@@ -710,6 +710,29 @@ public class DefaultLogWritePolicyProvider : ILogWritePolicyProvider
                 LogCategories = [LogCategory.Application, LogCategory.Behavior]
             }
         },
+        {
+            (LogEventType.EmailActuallySendFailure, LogReasons.EmailActuallySendFailure),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = false,
+                LogLevel = LogLevel.Warning,
+                LogCategories =
+                    [LogCategory.Security, LogCategory.Application, LogCategory.Behavior, LogCategory.System]
+            }
+        },
+        {
+            (LogEventType.EmailActuallySendSuccess, null),
+            new LogWriteRule
+            {
+                WriteAudit = true,
+                SendToSentry = false,
+                IsSuccess = true,
+                LogLevel = LogLevel.Information,
+                LogCategories = [LogCategory.Application, LogCategory.Behavior, LogCategory.System]
+            }
+        },
 
         #endregion
 

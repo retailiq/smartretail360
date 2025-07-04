@@ -20,7 +20,6 @@ public class EmailVerificationController : ControllerBase
         _accountActivationEmailVerification = accountActivationEmailVerification;
     }
 
-
     [HttpPost("verify")]
     public async Task<IActionResult> VerifyAccountActivationEmail([FromBody] EmailVerificationRequest request)
     {

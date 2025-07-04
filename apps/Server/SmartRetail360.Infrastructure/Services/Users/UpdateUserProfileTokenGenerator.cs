@@ -59,7 +59,10 @@ public class UpdateUserProfileTokenGenerator
             LogReasons.DatabaseRetrievalFailed,
             ErrorCodes.DatabaseUnavailable
         );
+        if (!tokenEntityResult.IsSuccess)
+            return (accessToken, null, null);
         var tokenEntity = tokenEntityResult.Response.Data;
+        
         var validityCheckResult = await _guardChecker
             .Check(() => tokenEntity == null,
                 LogEventType.RefreshTokenFailure, LogReasons.RefreshTokenMissing,

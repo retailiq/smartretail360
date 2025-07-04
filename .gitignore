@@ -32,7 +32,6 @@ appsettings.Production.json
 
 # VSCode / JetBrains
 .vscode/
-.idea/
 
 # System
 .DS_Store
@@ -52,6 +51,9 @@ data/tmp/
 *.sqlite
 *.db
 *.parquet
+/data/redis
+/data/postgres
+/data/logs
 
 # Build & coverage
 build/

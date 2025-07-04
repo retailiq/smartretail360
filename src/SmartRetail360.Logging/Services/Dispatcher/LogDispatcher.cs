@@ -30,16 +30,14 @@ public class LogDispatcher : ILogDispatcher
 
     public async Task Dispatch(LogEventType eventType, string? reason = null)
     {
-        if (_appOptions.LogSamplingLimitMinutes <= 0 ||
-            await _redisLogSampling.ShouldSampleAsync(eventType, reason, _appOptions))
+        var shouldSample = await _redisLogSampling.ShouldSampleAsync(eventType, reason, _appOptions);
+        if (_appOptions.LogSamplingLimitMinutes <= 0 || shouldSample)
         {
             var policy = _policyProvider.GetPolicy(eventType, reason);
-        
             var context = new LogContext
             {
                 Reason = reason
             };
-        
             await _writer.WriteAsync(context, policy);
         }
     }

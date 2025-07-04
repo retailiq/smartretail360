@@ -10,14 +10,14 @@ public class RedisOperationService : IRedisOperationService
     private readonly IRedisLimiterService _limiter;
     private readonly IRedisLockService _locker;
     private readonly IRoleCacheService _roleCache;
-    private readonly IActivationTokenCacheService _tokenCache;
+    private readonly IAccountTokenCacheService _tokenCache;
     private readonly ILoginFailureLimiter _loginFailureLimiter;
 
     public RedisOperationService(
         IRedisLimiterService limiter,
         IRedisLockService locker,
         IRoleCacheService roleCache,
-        IActivationTokenCacheService tokenCache,
+        IAccountTokenCacheService tokenCache,
         ILoginFailureLimiter loginFailureLimiter)
     {
         _limiter = limiter;
@@ -49,8 +49,8 @@ public class RedisOperationService : IRedisOperationService
         _roleCache.GetSystemRolesByIdsAsync(roleIds);
 
     // Activation token cache
-    public Task SetActivationTokenAsync(AccountActivationToken tokenEntity) => _tokenCache.SetTokenAsync(tokenEntity);
-    public Task<AccountActivationToken?> GetActivationTokenAsync(string token) => _tokenCache.GetTokenAsync(token);
+    public Task SetActivationTokenAsync(AccountToken tokenEntity) => _tokenCache.SetTokenAsync(tokenEntity);
+    public Task<AccountToken?> GetActivationTokenAsync(string token) => _tokenCache.GetTokenAsync(token);
     public Task InvalidateActivationTokenAsync(string token) => _tokenCache.InvalidateTokenAsync(token);
 
     // User Login Lock

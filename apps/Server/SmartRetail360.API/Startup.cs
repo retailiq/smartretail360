@@ -31,8 +31,9 @@ public class Startup
         services.AddAuthorization();
 
         // Register Layers and Shared Contexts
-        DependencyInjection.AddLogging(services
+        services
             .AddApplicationLayer()
+            .AddCustomLogging()
             .AddInfrastructureLayer(Configuration)
             .AddApiLayer(Configuration)
             .AddPersistence(Configuration)
@@ -43,7 +44,7 @@ public class Startup
             .AddNotifications()
             .AddSharedContexts()
             .AddCaching(Configuration)
-            .AddShared(Configuration));
+            .AddShared(Configuration);
 
         // Register SmartRetail Localization
         services.AddSmartRetailLocalization(Configuration);
@@ -73,8 +74,7 @@ public class Startup
                 }
             });
         }
-
-        // app.UseHttpsRedirection();
+        
         app.UseRouting();
         app.UseAuthorization();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

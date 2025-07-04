@@ -41,7 +41,7 @@ public class RedisRedisLimiterService : IRedisLimiterService
     public async Task SetAccountActivationLimitAsync(string token)
     {
         var key = RedisKeys.VerifyEmailRateLimit(token);
-        var ttl = TimeSpan.FromMinutes(_options.AccountActivationLimitMinutes);
+        var ttl = TimeSpan.FromMinutes(_options.EmailValidityPeriodMinutes);
         await _redis.StringSetAsync(key, "", ttl);
     }
 }

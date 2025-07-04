@@ -62,12 +62,16 @@ public static class LogReasons
     public const string UserNotExists = "USER_NOT_EXISTS";
     public const string TenantUserRecordNotFound = "TENANT_USER_RECORD_NOT_FOUND";
     public const string BasicProfileUnchanged = "BASIC_PROFILE_UNCHANGED";
+    public const string UserEmailUnchanged = "USER_EMAIL_UNCHANGED";
+    public const string UserPasswordUnchanged = "USER_PASSWORD_UNCHANGED";
+    public const string EmailAlreadyUsed = "EMAIL_ALREADY_USED";
 
     // Email & Notification
     public const string TooFrequentEmailRequest = "TOO_FREQUENT_EMAIL_REQUEST";
     public const string EmailSendFailed = "EMAIL_SEND_FAILED";
     public const string EmailStrategyNotFound = "EMAIL_STRATEGY_NOT_FOUND";
     public const string EmailTemplateNotFound = "EMAIL_TEMPLATE_NOT_FOUND";
+    public const string EmailActuallySendFailure = "EMAIL_ACTUALLY_SEND_FAILURE";
 
     // AWS SQS
     public const string SendSqsMessageFailed = "SEND_SQS_MESSAGE_FAILED";

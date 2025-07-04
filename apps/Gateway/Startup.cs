@@ -27,6 +27,17 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+        
         services.AddControllers().AddJsonOptions(options =>
         {
             // Ignore null values globally
@@ -51,7 +62,7 @@ public class Startup
         // Register SmartRetail Localization
         services.AddSmartRetailLocalization(Configuration);
 
-        DependencyInjection.AddLogging(services)
+        DependencyInjection.AddCustomLogging(services)
             .AddPersistence(Configuration)
             .AddAbac(Configuration)
             .AddPlatform()
@@ -73,6 +84,8 @@ public class Startup
         app.UseMiddleware<RequestLoggingMiddleware>();
 
         app.UseRouting();
+        
+        app.UseCors("AllowFrontend");
 
         app.UseEndpoints(endpoints =>
         {

@@ -16,7 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<TenantUser> TenantUsers => Set<TenantUser>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Role> Roles => Set<Role>();
-    public DbSet<AccountActivationToken> AccountActivationTokens => Set<AccountActivationToken>();
+    public DbSet<AccountToken> AccountTokens => Set<AccountToken>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<OAuthAccount> OAuthAccounts => Set<OAuthAccount>();
     public DbSet<AbacPolicy> AbacPolicies => Set<AbacPolicy>();

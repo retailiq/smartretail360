@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Retail 360 Frontend",
+  title: "Smart Retail 360 - Client",
   description: "Intelligent product recommendations, user insights, and data analytics services for merchants.",
 };
 

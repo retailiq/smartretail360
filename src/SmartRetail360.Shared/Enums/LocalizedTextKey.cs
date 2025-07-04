@@ -20,6 +20,21 @@ public enum LocalizedTextKey
     AbacPolicyUnchanged,
     AbacPoliciesRetrieved,
     TokenValid,
+    UpdateUserBasicProfileSuccessfully,
+    UpdateUserPasswordSuccessfully,
+    UpdateUserEmailSuccessfully,
+    UserEmailUnchanged,
+    UserProfileUnchanged,
+    UserPasswordUnchanged,
+    UserEmailUpdateVerificationLinkSent,
+    AccountActivationManualLinkInstruction,
+    EmailUpdateEmailSendingGreeting,
+    EmailUpdateEmailSendingInstruction,
+    EmailUpdateEmailSendingCtaText,
+    EmailUpdateEmailSendingValidityNotice,
+    EmailUpdateEmailSendingManualLinkInstruction,
+    EmailUpdateEmailSendingFooter,
+    EmailUpdateSubject,
     
     // Role descriptions
     RoleOwnerDescription,
@@ -67,8 +82,5 @@ public enum LocalizedTextKey
     PasswordMustBeDifferentFromCurrent,
     PhoneAndCountryCodeMustBeTogether,
     InvalidCountryCodeFormat,
-    UpdateUserBasicProfileSuccessfully,
-    UpdateUserPasswordSuccessfully,
-    UpdateUserEmailSuccessfully,
-    UserProfileUnchanged
+    NewEmailMustBeDifferentFromCurrent
 }

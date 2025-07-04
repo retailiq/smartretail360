@@ -13,8 +13,10 @@ public enum LogEventType
     AccountActivateSuccess,
     AccountActivateFailure,
     EmailSendSuccess,
+    EmailActuallySendSuccess,
     EmailSendFailure,
     WriteLogFailure,
+    EmailActuallySendFailure,
     RedisError,
     SqsError,
     RefreshTokenFailure,
@@ -33,4 +35,6 @@ public enum LogEventType
     GetAbacPoliciesSuccess,
     UpdateUserBasicProfileSuccess,
     UpdateUserBasicProfileFailure,
+    UpdateUserEmailFailure,
+    UpdateUserEmailSuccess,
 }

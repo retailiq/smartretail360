@@ -15,9 +15,7 @@ public static class RedisLogSamplingExtensions
     {
         var samplingKey = RedisKeys.LogSampling(eventType, reason ?? GeneralConstants.Unknown);
         var interval = TimeSpan.FromMinutes(options.LogSamplingLimitMinutes);
-
         if (await redisLogSampling.ExistsAsync(samplingKey)) return false;
-
         await redisLogSampling.SetStringAsync(samplingKey, "1", interval);
         return true;
     }

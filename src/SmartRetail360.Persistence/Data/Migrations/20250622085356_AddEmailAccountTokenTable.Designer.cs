@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartRetail360.Persistence.Data;
@@ -11,9 +12,11 @@ using SmartRetail360.Persistence.Data;
 namespace SmartRetail360.Persistence.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250622085356_AddEmailAccountTokenTable")]
+    partial class AddEmailAccountTokenTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,9 +284,6 @@ namespace SmartRetail360.Persistence.Data.Migrations
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NewEmail")
-                        .HasColumnType("text");
 
                     b.Property<string>("Source")
                         .IsRequired()
@@ -864,9 +864,6 @@ namespace SmartRetail360.Persistence.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
-
-                    b.Property<string>("NewEmail")
-                        .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(255)

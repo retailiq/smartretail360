@@ -17,5 +17,8 @@ public enum EmailTemplate
     PasswordReset,
 
     [EnumMember(Value = "marketing")]
-    Marketing
+    Marketing,
+    
+    [EnumMember(Value = "emailUpdate")]
+    EmailUpdate
 }

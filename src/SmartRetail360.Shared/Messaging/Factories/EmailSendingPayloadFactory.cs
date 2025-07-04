@@ -4,7 +4,7 @@ using SmartRetail360.Shared.Messaging.Payloads;
 
 namespace SmartRetail360.Shared.Messaging.Factories;
 
-public static class ActivationEmailPayloadFactory
+public static class EmailSendingPayloadFactory
 {
     public static ActivationEmailPayload Create(
         string email,
@@ -12,12 +12,14 @@ public static class ActivationEmailPayloadFactory
         string token,
         string action,
         EmailTemplate template,
-        int minutes)
+        int minutes,
+        string? newEmail = null)
     {
         return new ActivationEmailPayload
         {
             Email = email,
             Token = token,
+            NewEmail = newEmail,
             Timestamp = DateTime.UtcNow.ToString("o"),
             Action = action,
             EmailTemplate = template.GetEnumMemberValue(),

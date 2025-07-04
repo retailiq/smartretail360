@@ -137,6 +137,8 @@ public class EmailConsumerWorker : BackgroundService
             ["timestamp"] = payload.Timestamp,
             ["userName"] = payload.UserName,
             ["emailValidationMinutes"] = payload.EmailValidationMinutes,
+            ["oldEmail"] = payload.Email,
+            ["newEmail"] = payload.NewEmail ?? string.Empty,
         };
 
         var result = await safeExecutor.ExecuteAsync(
@@ -152,10 +154,10 @@ public class EmailConsumerWorker : BackgroundService
             LogReasons.EmailSendFailed,
             ErrorCodes.EmailSendFailed
         );
-
+        
         if (result.IsSuccess)
         {
-            await dispatcher.Dispatch(LogEventType.EmailSendSuccess);
+            await dispatcher.Dispatch(LogEventType.EmailActuallySendSuccess);
         }
 
         return result.IsSuccess;

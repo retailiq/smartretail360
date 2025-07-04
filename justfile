@@ -1,3 +1,7 @@
+# Add File
+add-client-file name:
+    cd apps/client && touch {{name}}
+
 # Dev Cmds
 dev-client:
     cd apps/client && pnpm dev
@@ -40,18 +44,11 @@ dev-all:
 	tmux select-window -t dev:0
 	tmux attach-session -t dev
 
-#	tmux new-session -d -s dev -n client 'cd apps/client && pnpm dev'
-#	tmux new-window -t dev:1 -n nestjs 'cd apps/data-gateway && pnpm start:dev'
-#	tmux new-window -t dev:2 -n .net 'cd apps/server/SmartRetail360.API && dotnet watch run'
-#	tmux new-window -t dev:3 -n ai 'cd apps/ai-services && uvicorn app:main --reload'
-#   tmux new-session -d -s dev -n email 'cd apps/workers/EmailWorker && dotnet watch run'
-
 # Kill Dev Session
 kill-dev:
     tmux kill-session -t dev || echo "Session already closed."
 
 # Add Dependencies
-
 # just add-client "-D openapi-typescript"
 add-client dep:
     pnpm add {{ dep }} -F client
@@ -70,80 +67,6 @@ add-client-dev dep:
 
 add-nestjs-dev dep:
     pnpm add -D {{ dep }} -F data-gateway
-    
-add-dotnet-logging pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./src/SmartRetail360.Logging/SmartRetail360.Logging.csproj package {{pkg}}; \
-    else \
-        dotnet add ./src/SmartRetail360.Logging/SmartRetail360.Logging.csproj package {{pkg}} --version {{ver}}; \
-    fi
-
-add-dotnet-shared pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./src/SmartRetail360.Shared/SmartRetail360.Shared.csproj package {{pkg}}; \
-    else \
-        dotnet add ./src/SmartRetail360.Shared/SmartRetail360.Shared.csproj package {{pkg}} --version {{ver}}; \
-    fi
-
-add-dotnet-abac pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./src/SmartRetail360.ABAC/SmartRetail360.ABAC.csproj package {{pkg}}; \
-    else \
-        dotnet add ./src/SmartRetail360.ABAC/SmartRetail360.ABAC.csproj package {{pkg}} --version {{ver}}; \
-    fi
-    
-add-dotnet-messaging pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./src/SmartRetail360.Messaging/SmartRetail360.Messaging.csproj package {{pkg}}; \
-    else \
-        dotnet add ./src/SmartRetail360.Messaging/SmartRetail360.Messaging.csproj package {{pkg}} --version {{ver}}; \
-    fi    
-    
-add-dotnet-persistence pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./src/SmartRetail360.Persistence/SmartRetail360.Persistence.csproj package {{pkg}}; \
-    else \
-        dotnet add ./src/SmartRetail360.Persistence/SmartRetail360.Persistence.csproj package {{pkg}} --version {{ver}}; \
-    fi    
-
-add-dotnet-app pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./apps/Server/SmartRetail360.Application/SmartRetail360.Application.csproj package {{pkg}}; \
-    else \
-        dotnet add ./apps/Server/SmartRetail360.Application/SmartRetail360.Application.csproj package {{pkg}} --version {{ver}}; \
-    fi
-    
-add-dotnet-server-api pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./apps/Gateway/SmartRetail360.Gateway.API/SmartRetail360.Gateway.API.csproj package {{pkg}}; \
-    else \
-        dotnet add ./apps/Server/SmartRetail360.Gateway.API/SmartRetail360.Gateway.API.csproj package {{pkg}} --version {{ver}}; \
-    fi    
-
-add-dotnet-server-infra pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./apps/Server/SmartRetail360.Infrastructure/SmartRetail360.Infrastructure.csproj package {{pkg}}; \
-    else \
-        dotnet add ./apps/Server/SmartRetail360.Infrastructure/SmartRetail360.Infrastructure.csproj package {{pkg}} --version {{ver}}; \
-    fi
-
-add-dotnet-worker-bootstrap pkg ver="":
-    if [ "{{ver}}" = "" ]; then \
-        dotnet add ./apps/workers/SmartRetail360.WorkerBootstrap/SmartRetail360.WorkerBootstrap.csproj package {{pkg}}; \
-    else \
-        dotnet add ./apps/workers/SmartRetail360.WorkerBootstrap/SmartRetail360.WorkerBootstrap.csproj package {{pkg}} --version {{ver}}; \
-    fi   
-
-# Lambda deploy
-deploy-auth:
-  bash scripts/deploy-lambda.sh SmartRetailAuthLambda lambdas/auth
-  
-deploy-traceId:
-  bash scripts/deploy-traceid-edge.sh InjectTraceIdLambdaEdge1 lambdas/traceId
-  
-# Create Lambda Layer 
-create-lambda-edge name path="lambdas/traceId":
-    bash scripts/create-lambda-edge.sh {{name}} {{path}}
     
 # Migrations
 migrate-update:

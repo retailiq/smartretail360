@@ -51,6 +51,10 @@ public static class ErrorCatalog
         { ErrorCodes.AccountExistsButNotActivated, "AccountExistsButNotActivated" },
         { ErrorCodes.TooFrequentActivationAttempt, "TooFrequentActivationAttempt" },
         { ErrorCodes.TenantNotFound, "TenantNotFound" },
+        
+        // Users
+        { ErrorCodes.EmailAlreadyUsed, "EmailAlreadyUsed" },
+        { ErrorCodes.UserNotExists, "UserNotExists" },
 
         // Email & Notification
         { ErrorCodes.EmailExists, "EmailExists" },

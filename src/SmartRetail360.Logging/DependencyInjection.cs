@@ -11,7 +11,7 @@ namespace SmartRetail360.Logging;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddLogging(this IServiceCollection services)
+    public static IServiceCollection AddCustomLogging(this IServiceCollection services)
     {
         services.AddScoped<ILogContextAccessor, LogContextAccessor>();
         services.AddScoped<ILogDispatcher, LogDispatcher>();

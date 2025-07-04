@@ -6,11 +6,11 @@ using SmartRetail360.Shared.Extensions;
 
 namespace SmartRetail360.Persistence.Data.Configurations;
 
-public class AccountActivationTokenConfiguration : IEntityTypeConfiguration<AccountActivationToken>
+public class AccountTokenConfiguration : IEntityTypeConfiguration<AccountToken>
 {
-    public void Configure(EntityTypeBuilder<AccountActivationToken> entity)
+    public void Configure(EntityTypeBuilder<AccountToken> entity)
     {
-        entity.ToTable("account_activation_tokens");
+        entity.ToTable("account_tokens");
         
         entity.HasKey(e => e.Id);
 

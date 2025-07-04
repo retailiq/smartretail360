@@ -1,8 +1,14 @@
+using System.Text.Json.Serialization;
+
 namespace SmartRetail360.Shared.Messaging.Payloads;
 
 public class ActivationEmailPayload
 {
     public string Email { get; set; } = string.Empty;
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? NewEmail { get; set; }
+
     public string Token { get; set; } = string.Empty;
     public string TraceId { get; set; } = string.Empty;
     public Guid TenantId { get; set; }

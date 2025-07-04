@@ -25,4 +25,5 @@ public static class GeneralConstants
     public const string OAuth = "OAuth";
     public const string JwtSecret = "JwtSecret";
     public const string TimestampWithTimeZone = "timestamp with time zone";
+    public const string User = "User";
 }

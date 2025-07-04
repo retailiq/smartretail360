@@ -14,7 +14,7 @@ using StackExchange.Redis;
 
 namespace SmartRetail360.Caching.Services;
 
-public class ActivationTokenCacheService : IActivationTokenCacheService
+public class AccountTokenCacheService : IAccountTokenCacheService
 {
     private readonly IDatabase _redis;
     private readonly AppDbContext _db;
@@ -22,7 +22,7 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
     private readonly AppOptions _options;
     private readonly ISafeExecutor  _safeExecutor;
 
-    public ActivationTokenCacheService(
+    public AccountTokenCacheService(
         IConnectionMultiplexer redis,
         AppDbContext db,
         IUserContextService userContext,
@@ -36,15 +36,15 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
         _safeExecutor = safeExecutor;
     }
 
-    public async Task SetTokenAsync(AccountActivationToken tokenEntity)
+    public async Task SetTokenAsync(AccountToken tokenEntity)
     {
         var key = RedisKeys.ActivationToken(tokenEntity.Token);
         var json = JsonSerializer.Serialize(tokenEntity);
-        var ttl = TimeSpan.FromMinutes(_options.AccountActivationLimitMinutes);
+        var ttl = TimeSpan.FromMinutes(_options.EmailValidityPeriodMinutes);
         await _redis.StringSetAsync(key, json, ttl);
     }
 
-    public async Task<AccountActivationToken?> GetTokenAsync(string token)
+    public async Task<AccountToken?> GetTokenAsync(string token)
     {
         var key = RedisKeys.ActivationToken(token);
 
@@ -54,7 +54,7 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
         {
             try
             {
-                return JsonSerializer.Deserialize<AccountActivationToken>(json!);
+                return JsonSerializer.Deserialize<AccountToken>(json!);
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ public class ActivationTokenCacheService : IActivationTokenCacheService
         }
         
         var tokenEntityResult = await _safeExecutor.ExecuteAsync(
-            () => _db.AccountActivationTokens
+            () => _db.AccountTokens
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Token == token),
             LogEventType.DatabaseError,

@@ -151,7 +151,7 @@ public class PlatformContextService : IPlatformContextService
         return (result.Response.Data, result.IsSuccess ? null : result.ToObjectResponse());
     }
 
-    public async Task<ApiResponse<object>?> SendRegistrationInvitationEmailAsync(string token,
+    public async Task<ApiResponse<object>?> SendEmailSqsMessageAsync(string token,
         ActivationEmailPayload payload)
     {
         var result = await _safeExecutor.ExecuteAsync(

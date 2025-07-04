@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Retail 360 Admin Panel",
+  title: "Smart Retail 360 Admin - Panel",
   description: "Manage platform settings, user permissions, and system-wide analytics for Smart Retail 360.",
 };
 

@@ -6,6 +6,7 @@ using Serilog;
 using SmartRetail360.Application;
 using SmartRetail360.Execution;
 using SmartRetail360.Infrastructure;
+using SmartRetail360.Logging;
 using SmartRetail360.Shared;
 using SmartRetail360.Logging.Interfaces;
 using SmartRetail360.Logging.Services.Context;
@@ -15,7 +16,7 @@ using SmartRetail360.Persistence;
 using SmartRetail360.Platform;
 using SmartRetail360.Shared.Constants;
 using SmartRetail360.Shared.Contexts;
-using DependencyInjection = SmartRetail360.Logging.DependencyInjection;
+using SmartRetail360.Logging.Extensions;
 
 namespace SmartRetail360.WorkerBootstrap.Hosting;
 
@@ -35,20 +36,14 @@ public static class WorkerHostFactory
                 config.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
                 config.AddEnvironmentVariables();
             })
-            .UseSerilog((context, loggerConfig) =>
-            {
-                loggerConfig
-                    .MinimumLevel.Debug()
-                    .ReadFrom.Configuration(context.Configuration)
-                    .Enrich.FromLogContext();
-            })
+            .UseSmartRetailSerilog() 
             .ConfigureServices((context, services) =>
             {
                 var configuration = context.Configuration;
 				services.AddLocalization(options => options.ResourcesPath = GeneralConstants.Localization);
                 services.AddShared(configuration);
                 services.AddSharedContexts();            
-                DependencyInjection.AddLogging(services);
+                services.AddCustomLogging();
                 services.AddApplicationLayer();
                 services.AddMessaging(configuration);
                 services.AddExecution();
@@ -56,9 +51,9 @@ public static class WorkerHostFactory
                 services.AddPlatform();
                 services.AddCaching(configuration);
                 services.AddInfrastructureLayer(configuration);
+                services.AddSmartRetailTelemetry(configuration);
                 services.AddPersistence(configuration);
                 services.AddScoped<ILogContextAccessor, LogContextAccessor>();
-                
                 services.AddHostedService<TWorker>();
             })
             .Build();

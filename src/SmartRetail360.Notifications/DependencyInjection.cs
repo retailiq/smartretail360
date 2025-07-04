@@ -14,11 +14,11 @@ public static class DependencyInjection
         services.AddScoped<IEmailSender, MailKitEmailSender>();
         services.AddScoped<IEmailTemplateProvider, DefaultEmailTemplateProvider>();
         services.AddScoped<AccountRegistrationActivationTemplate>();
-
-        services.AddScoped<EmailContext>();
-        services.AddScoped<AccountRegistrationActivationEmailStrategy>();
-        services.AddScoped<IEmailStrategy, AccountRegistrationActivationEmailStrategy>();
+        services.AddScoped<EmailUpdateTemplate>();
         
+        services.AddScoped<EmailContext>();
+        services.AddScoped<IEmailStrategy, AccountRegistrationActivationEmailStrategy>();
+        services.AddScoped<IEmailStrategy, EmailUpdateStrategy>();
         return services;
     }
 }
