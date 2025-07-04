@@ -1,0 +1,133 @@
+name: CI/CD (Monorepo Multi-Projects)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  changes:
+    name: Detect Changed Projects
+    runs-on: ubuntu-latest
+    outputs:
+      client: ${{ steps.filter.outputs.client }}
+      server: ${{ steps.filter.outputs.server }}
+      worker: ${{ steps.filter.outputs.worker }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            client:
+              - 'apps/client/**'
+            server:
+              - 'apps/server/**'
+            worker:
+              - 'apps/workers/**'
+
+  client:
+    name: Build & Deploy Client
+    needs: changes
+    if: needs.changes.outputs.client == 'true'
+    runs-on: [self-hosted, mac-studio]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Restore local Yarn cache (shared)
+        run: |
+          mkdir -p ~/.cache/yarn
+          [ -d /opt/yarn-cache ] && cp -r /opt/yarn-cache/* ~/.cache/yarn/ || true
+
+      - name: Restore local node_modules cache (project-specific)
+        run: |
+          mkdir -p /opt/node-modules-cache/smartretail360-client
+          [ -d /opt/node-modules-cache/smartretail360-client ] && cp -r /opt/node-modules-cache/smartretail360-client/* ./apps/client/node_modules/ || true
+
+      - name: Install dependencies
+        working-directory: ./apps/client
+        run: yarn install --frozen-lockfile --prefer-offline
+
+      - name: Save local Yarn cache (shared)
+        if: always()
+        run: |
+          mkdir -p /opt/yarn-cache
+          cp -r ~/.cache/yarn/* /opt/yarn-cache/ || true
+
+      - name: Save local node_modules cache (project-specific)
+        if: always()
+        run: |
+          mkdir -p /opt/node-modules-cache/smartretail360-client
+          cp -r ./apps/client/node_modules/* /opt/node-modules-cache/smartretail360-client/ || true
+
+      - name: Disable Docker keychain and inject login credentials
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: |
+          mkdir -p ~/.docker
+          echo '{"auths":{"https://index.docker.io/v1/":{"auth":"'"$(echo -n "$DOCKER_USERNAME:$DOCKER_TOKEN" | base64)"'"}},"credsStore":""}' > ~/.docker/config.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+          driver-opts: image=moby/buildkit:buildx-stable-1
+
+      - name: Build Docker image (local only)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/client
+          file: ./apps/client/Dockerfile
+          push: false
+          load: true
+          tags: smartretail360-client:local
+          build-args: |
+            NEXT_PUBLIC_BACKEND_SERVER_URL=/server/api
+            NEXT_PUBLIC_BACKEND_DATA_URL=/data/api
+            NODE_ENV=production
+          cache-from: type=local,src=/opt/docker-cache
+          cache-to: type=local,dest=/opt/docker-cache,mode=max
+          provenance: false
+
+      - name: Deploy container
+        working-directory: ./apps/client
+        run: make deploy
+
+      - name: Done
+        run: |
+          echo "======================================"
+          echo "✅ Client pipeline completed successfully!"
+          echo "📦 Image built locally: smartretail360-client:local"
+          echo "🚀 Container redeployed via make deploy"
+          echo "======================================"
+
+#  server:
+#    name: Build & Deploy Server
+#    needs: changes
+#    if: needs.changes.outputs.server == 'true'
+#    runs-on: [self-hosted, mac-studio]
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      # ✅ 这里你只需复制 client 的流程，改路径为 apps/server、改镜像名和缓存名即可
+#
+#  worker:
+#    name: Build & Deploy Worker
+#    needs: changes
+#    if: needs.changes.outputs.worker == 'true'
+#    runs-on: [self-hosted, mac-studio]
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      # ✅ 这里你只需复制 client 的流程，改路径为 apps/workers、改镜像名和缓存名即可

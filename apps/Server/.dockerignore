@@ -5,66 +5,49 @@
 .DS_Store
 LICENSE
 README.md
+*.md
+*.log
+*.tsbuildinfo
 
 # =============================
-# 🔧 Git / IDE / build system
+# 🔧 Git / IDE / Build system
 # =============================
 
-**/.git
-**/.gitignore
-**/.idea
-**/.vscode
-**/.vs
-**/.project
-**/.settings
-**/.toolstarget
-**/*.user
-
-# =============================
-# 🐍 Python specific
-# =============================
-
-**/__pycache__/
-**/*.py[cod]
-**/.venv/
+.git
+.gitignore
+.idea/
+.vscode/
+.vs/
+.project
+.settings
+.toolstarget
+*.user
+*.suo
 
 # =============================
 # 🟦 .NET specific
 # =============================
 
-**/bin/
-**/obj/
-**/*.dbmdl
-**/*.jfm
-**/*.csproj.user
-**/*.vbproj.user
-**/*.fsproj.user
+bin/
+obj/
+*.dbmdl
+*.jfm
+*.csproj.user
+*.vbproj.user
+*.fsproj.user
 
 # =============================
-# 🟨 Node.js / Next.js frontend
+# 🔐 Environment / Secrets
 # =============================
 
-**/node_modules/
-**/npm-debug.log
-**/.next/
-**/dist/
-**/build/
-**/.cache/
-
-# =============================
-# 🔐 Env files / secrets
-# =============================
-
-**/.env
-**/.env.*
-**/secrets.dev.yaml
-**/values.dev.yaml
+.env*
+docker-compose*
+.dockerignore
 
 # =============================
 # 🐳 Docker / Kubernetes
 # =============================
 
-**/Dockerfile*
-**/docker-compose*
-**/azds.yaml
-**/charts/
+Dockerfile*
+azds.yaml
+charts/

@@ -1,0 +1,10 @@
+services:
+  smartretail360-server:
+    image: smartretail360-server:local
+    container_name: smartretail360-server
+    ports:
+      - "65002:65002"
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:65002      
