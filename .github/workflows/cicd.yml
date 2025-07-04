@@ -112,22 +112,22 @@ jobs:
           echo "🚀 Container redeployed via make deploy"
           echo "======================================"
 
-  server:
-    name: Build & Deploy Server
-    needs: changes
-    if: needs.changes.outputs.server == 'true'
-    runs-on: [self-hosted, mac-studio]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      # ✅ 这里你只需复制 client 的流程，改路径为 apps/server、改镜像名和缓存名即可
-
-  worker:
-    name: Build & Deploy Worker
-    needs: changes
-    if: needs.changes.outputs.worker == 'true'
-    runs-on: [self-hosted, mac-studio]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      # ✅ 这里你只需复制 client 的流程，改路径为 apps/workers、改镜像名和缓存名即可
+#  server:
+#    name: Build & Deploy Server
+#    needs: changes
+#    if: needs.changes.outputs.server == 'true'
+#    runs-on: [self-hosted, mac-studio]
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      # ✅ 这里你只需复制 client 的流程，改路径为 apps/server、改镜像名和缓存名即可
+#
+#  worker:
+#    name: Build & Deploy Worker
+#    needs: changes
+#    if: needs.changes.outputs.worker == 'true'
+#    runs-on: [self-hosted, mac-studio]
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      # ✅ 这里你只需复制 client 的流程，改路径为 apps/workers、改镜像名和缓存名即可
