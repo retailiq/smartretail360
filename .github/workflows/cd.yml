@@ -37,15 +37,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Restore local Yarn cache (shared)
+      - name: Restore local pnpm cache
         run: |
-          mkdir -p ~/.cache/yarn
-          [ -d /opt/yarn-cache ] && cp -r /opt/yarn-cache/* ~/.cache/yarn/ || true
+          mkdir -p ~/.pnpm-store
+          [ -d /opt/pnpm-store ] && cp -r /opt/pnpm-store/* ~/.pnpm-store/ || true
 
       - name: Restore local node_modules cache (project-specific)
         run: |
@@ -54,13 +59,13 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./apps/client
-        run: yarn install --frozen-lockfile --prefer-offline
+        run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Save local Yarn cache (shared)
+      - name: Save local pnpm cache
         if: always()
         run: |
-          mkdir -p /opt/yarn-cache
-          cp -r ~/.cache/yarn/* /opt/yarn-cache/ || true
+          mkdir -p /opt/pnpm-store
+          cp -r ~/.pnpm-store/* /opt/pnpm-store/ || true
 
       - name: Save local node_modules cache (project-specific)
         if: always()
