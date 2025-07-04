@@ -1,25 +1,53 @@
-﻿**/.dockerignore
-**/.env
-**/.git
-**/.gitignore
-**/.project
-**/.settings
-**/.toolstarget
-**/.vs
-**/.vscode
-**/.idea
-**/*.*proj.user
-**/*.dbmdl
-**/*.jfm
-**/azds.yaml
-**/bin
-**/charts
-**/docker-compose*
-**/Dockerfile*
-**/node_modules
-**/npm-debug.log
-**/obj
-**/secrets.dev.yaml
-**/values.dev.yaml
+﻿# =============================
+# 🌐 General (all projects)
+# =============================
+
+.DS_Store
 LICENSE
 README.md
+*.md
+*.log
+*.tsbuildinfo
+
+# =============================
+# 🔧 Git / IDE / Build system
+# =============================
+
+.git
+.gitignore
+.idea/
+.vscode/
+.vs/
+.project
+.settings
+.toolstarget
+*.user
+*.suo
+
+# =============================
+# 🟦 .NET specific
+# =============================
+
+bin/
+obj/
+*.dbmdl
+*.jfm
+*.csproj.user
+*.vbproj.user
+*.fsproj.user
+
+# =============================
+# 🔐 Environment / Secrets
+# =============================
+
+.env*
+docker-compose*
+.dockerignore
+
+# =============================
+# 🐳 Docker / Kubernetes
+# =============================
+
+Dockerfile*
+azds.yaml
+charts/

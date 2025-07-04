@@ -1,0 +1,7 @@
+services:
+  smartretail360-emailworker:
+    image: smartretail360-emailworker:local
+    container_name: smartretail360-emailworker
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production

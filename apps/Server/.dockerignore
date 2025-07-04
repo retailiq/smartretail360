@@ -5,38 +5,49 @@
 .DS_Store
 LICENSE
 README.md
+*.md
+*.log
+*.tsbuildinfo
 
 # =============================
-# 🔧 Git / IDE / build system
+# 🔧 Git / IDE / Build system
 # =============================
 
-**/.git
-**/.gitignore
-**/.idea
-**/.vscode
-**/.vs
-**/.project
-**/.settings
-**/.toolstarget
-**/*.user
+.git
+.gitignore
+.idea/
+.vscode/
+.vs/
+.project
+.settings
+.toolstarget
+*.user
+*.suo
 
 # =============================
 # 🟦 .NET specific
 # =============================
 
-**/bin/
-**/obj/
-**/*.dbmdl
-**/*.jfm
-**/*.csproj.user
-**/*.vbproj.user
-**/*.fsproj.user
+bin/
+obj/
+*.dbmdl
+*.jfm
+*.csproj.user
+*.vbproj.user
+*.fsproj.user
+
+# =============================
+# 🔐 Environment / Secrets
+# =============================
+
+.env*
+docker-compose*
+.dockerignore
 
 # =============================
 # 🐳 Docker / Kubernetes
 # =============================
 
-**/Dockerfile*
-**/docker-compose*
-**/azds.yaml
-**/charts/
+Dockerfile*
+azds.yaml
+charts/
