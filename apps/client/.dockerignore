@@ -5,66 +5,53 @@
 .DS_Store
 LICENSE
 README.md
+*.log
+*.zip
+*.swp
 
 # =============================
 # 🔧 Git / IDE / build system
 # =============================
 
-**/.git
-**/.gitignore
-**/.idea
-**/.vscode
-**/.vs
-**/.project
-**/.settings
-**/.toolstarget
-**/*.user
-
-# =============================
-# 🐍 Python specific
-# =============================
-
-**/__pycache__/
-**/*.py[cod]
-**/.venv/
-
-# =============================
-# 🟦 .NET specific
-# =============================
-
-**/bin/
-**/obj/
-**/*.dbmdl
-**/*.jfm
-**/*.csproj.user
-**/*.vbproj.user
-**/*.fsproj.user
-
-# =============================
-# 🟨 Node.js / Next.js frontend
-# =============================
-
-**/node_modules/
-**/npm-debug.log
-**/.next/
-**/dist/
-**/build/
-**/.cache/
+.git
+.github
+.gitignore
+.vscode
+.idea
+.vs
+.project
+.settings
+.toolstarget
+*.user
+*.tsbuildinfo
 
 # =============================
 # 🔐 Env files / secrets
 # =============================
 
-**/.env
-**/.env.*
-**/secrets.dev.yaml
-**/values.dev.yaml
+.env
+.env.*
+*.local
+secrets.dev.yaml
+values.dev.yaml
 
 # =============================
 # 🐳 Docker / Kubernetes
 # =============================
 
-**/Dockerfile*
-**/docker-compose*
-**/azds.yaml
-**/charts/
+Dockerfile
+docker-compose*
+azds.yaml
+charts/
+
+# =============================
+# 📦 Dependencies / Build Artifacts
+# =============================
+
+node_modules
+/opt/
+.next
+.cache
+dist
+coverage
+tests

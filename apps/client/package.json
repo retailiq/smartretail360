@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "cross-env PORT=50004 HOST=0.0.0.0 next dev",
-    "build": "next build PORT=55004 HOST=0.0.0.0",
-    "start": "next start",
+    "build": "next build",
+    "start": "next start -p 55004 -H 0.0.0.0",
     "lint": "next lint",
     "generate:api": "openapi-typescript http://localhost:60002/swagger/v1/swagger.json -o src/types/api.d.ts"
   },

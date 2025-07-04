@@ -1,0 +1,9 @@
+services:
+  smartretail360-client:
+    image: smartretail360-client:local
+    container_name: smartretail360-client
+    ports:
+      - "55004:55004"
+    restart: always
+#    labels:
+#      - "com.centurylinklabs.watchtower.enable=true"

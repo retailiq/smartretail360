@@ -1,0 +1,13 @@
+services:
+  smartretail360-server:
+    build:
+      context: ./apps/server
+      dockerfile: Dockerfile
+    container_name: smartretail360-server
+    restart: always
+    ports:
+      - "60002:60002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    volumes:
+      - ./data/server-logs:/app/logs

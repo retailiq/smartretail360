@@ -21,14 +21,6 @@ README.md
 **/*.user
 
 # =============================
-# 🐍 Python specific
-# =============================
-
-**/__pycache__/
-**/*.py[cod]
-**/.venv/
-
-# =============================
 # 🟦 .NET specific
 # =============================
 
@@ -39,26 +31,6 @@ README.md
 **/*.csproj.user
 **/*.vbproj.user
 **/*.fsproj.user
-
-# =============================
-# 🟨 Node.js / Next.js frontend
-# =============================
-
-**/node_modules/
-**/npm-debug.log
-**/.next/
-**/dist/
-**/build/
-**/.cache/
-
-# =============================
-# 🔐 Env files / secrets
-# =============================
-
-**/.env
-**/.env.*
-**/secrets.dev.yaml
-**/values.dev.yaml
 
 # =============================
 # 🐳 Docker / Kubernetes
